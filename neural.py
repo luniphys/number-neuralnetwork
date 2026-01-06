@@ -47,9 +47,6 @@ getData()
 
 RES = 28 # 28x28 pixel canvas
 PIX_MAX = 255 # pixel strength 0-255
-LAYER_SIZE = 16 # number of layer neurons
-RAN_SIZE = 10 # interval [-RAN_SIZE, +RAN_SIZE] for initialization of weights & biases
-OUT_SIZE = 10 # number of output neurons
 
 
 train = pd.read_csv('MNIST/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = pixel number 0-784 (28*28=784) -> 60000 x 784
@@ -71,6 +68,11 @@ def makeWeightsBiases():
     if not os.path.exists("WeightsBiases"):
         os.mkdir("WeightsBiases")
 
+
+    RAN_SIZE = 10 # interval [-RAN_SIZE, +RAN_SIZE] for initialization of weights & biases
+    LAYER_SIZE = 16 # number of layer neurons (both)
+    OUT_SIZE = 10 # number of output neurons
+
     w1 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(SHAPE[1])] for j in range(LAYER_SIZE)]) # 16 x 784
     w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
     b1 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)]) # 16
@@ -85,22 +87,19 @@ def makeWeightsBiases():
     b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
 
 
-#makeWeightsBiases()
-
-
 
 def sigmoid(x):
 
     return 1 / (1 + np.exp(-x))
 
-# Today ReLU(x) used instead of sigmoid(x)
-def ReLU(x):
+
+def ReLU(x): # Today ReLU(x) used instead of sigmoid(x)
 
     return max(0,x)
 
 
 
-def oneRun(inp):
+def oneRun(inp, w1, b1, w2, b2, w3, b3):
 
     """
     Calculation for 1 run through network. Returns actual number in first element and output activation list as second
@@ -124,26 +123,14 @@ def oneRun(inp):
         return actNew
 
 
-    w1 = np.array(pd.read_csv("WeightsBiases/w1.csv"))
-    b1 = np.array(pd.read_csv("WeightsBiases/b1.csv"))
-    w2 = np.array(pd.read_csv("WeightsBiases/w2.csv"))
-    b2 = np.array(pd.read_csv("WeightsBiases/b2.csv"))
-    w3 = np.array(pd.read_csv("WeightsBiases/w3.csv"))
-    b3 = np.array(pd.read_csv("WeightsBiases/b3.csv"))
-
-
     act_num = inp.name
-    a1_inp = list(inp)
+    a1_inp = np.array(inp)
 
     a2 = activation(a1_inp, w1, b1)
     a3 = activation(a2, w2, b2)
     out = activation(a3, w3, b3)
 
     return act_num, out
-
-
-otp = oneRun(data.iloc[0])
-print("n =", otp[0], [round(float(i),2) for i in otp[1]])
 
 
 
@@ -163,21 +150,52 @@ def cost(act_num, neur_out):
     return zum
 
 
-print(cost(otp[0], otp[1]))
 
-
-
-def avg_cost():
+def train():
 
     """
-    Average cost over all data as measure of network performance
+    Training the weights and biases with the complete dataset
     """
+
+    w1 = np.array(pd.read_csv("WeightsBiases/w1.csv"))
+    b1 = np.array(pd.read_csv("WeightsBiases/b1.csv"))
+    w2 = np.array(pd.read_csv("WeightsBiases/w2.csv"))
+    b2 = np.array(pd.read_csv("WeightsBiases/b2.csv"))
+    w3 = np.array(pd.read_csv("WeightsBiases/w3.csv"))
+    b3 = np.array(pd.read_csv("WeightsBiases/b3.csv"))
 
     cost_lst = list()
     for i in range(SHAPE[0]):
-        cost_lst.append(cost(data.iloc[i].name, oneRun(data.iloc[i])[1]))
-    
-    return np.mean(cost_lst)
+
+        num, out = oneRun(data.iloc[i], w1, b1, w2, b2, w3, b3)
+
+        w1, b1, w2, b2, w3, b3 = gradient(w1, b1, w2, b2, w3, b3)
+        
+        cost_lst.append(cost(num, out))
 
 
-print(avg_cost())
+    avg_cost = np.mean(cost_lst)
+
+
+    w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
+    b1.to_csv("WeightsBiases/b1.csv", index=False, header=True)
+    w2.to_csv("WeightsBiases/w2.csv", index=False, header=True)
+    b2.to_csv("WeightsBiases/b2.csv", index=False, header=True)
+    w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
+    b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
+
+
+
+def gradient(w1, b1, w2, b2, w3, b3):
+    pass
+
+
+
+#makeWeightsBiases()
+
+
+"""
+otp = oneRun(data.iloc[0], w1, b1, w2, b2, w3, b3)
+print("n =", otp[0], [round(float(i),2) for i in otp[1]])
+print(cost(otp[0], otp[1]))
+"""
