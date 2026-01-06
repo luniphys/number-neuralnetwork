@@ -9,10 +9,10 @@ RAN_SIZE = 10 # interval [-RAN_SIZE, +RAN_SIZE] for initialization of weights & 
 OUT_SIZE = 10 # number of output neurons
 
 
-train = pd.read_csv('Test/MNIST_CSV/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = inc number 0-784 -> 10000x784
+train = pd.read_csv('MNIST_CSV/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = inc number 0-784 -> 10000x784
 train = train/PIX_MAX # set scale 0-1
 
-test = pd.read_csv('Test/MNIST_CSV/mnist_test.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = inc number 0-784 -> 10000x784
+test = pd.read_csv('MNIST_CSV/mnist_test.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = inc number 0-784 -> 10000x784
 test = test/PIX_MAX # set scale 0-1
 
 data = test
