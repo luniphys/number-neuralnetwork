@@ -62,14 +62,30 @@ data = test
 SHAPE = data.shape
 
 
+def makeWeightsBiases():
+    
+    """
+    Initialization of weights & biases
+    """
 
-# Initialization of weights & biases
-w1 = [[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(SHAPE[1])] for j in range(LAYER_SIZE)] # 16 x 784
-b1 = [rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] # 16
-w2 = [[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(LAYER_SIZE)] # 16 x 16
-b2 = [rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] # 16
-w3 = [[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(OUT_SIZE)] # 10 x 16
-b3 = [rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(OUT_SIZE)] # 10
+    if not os.path.exists("WeightsBiases"):
+        os.mkdir("WeightsBiases")
+
+    w1 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(SHAPE[1])] for j in range(LAYER_SIZE)]) # 16 x 784
+    w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
+    b1 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)]) # 16
+    b1.to_csv("WeightsBiases/b1.csv", index=False, header=True)
+    w2 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(LAYER_SIZE)]) # 16 x 16
+    w2.to_csv("WeightsBiases/w2.csv", index=False, header=True)
+    b2 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)]) # 16
+    b2.to_csv("WeightsBiases/b2.csv", index=False, header=True)
+    w3 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(OUT_SIZE)]) # 10 x 16
+    w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
+    b3 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(OUT_SIZE)]) # 10
+    b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
+
+
+#makeWeightsBiases()
 
 
 
@@ -84,41 +100,49 @@ def ReLU(x):
 
 
 
-def activation(a, weight, bias):
-
-    """
-    Returns activation vector of next layer out of old activation vector a, weight matrix and bias vector
-    """
-
-    a_new = [None for i in range(len(bias))]
-    index = 0
-
-    for w, b in zip(weight, bias):
-
-        a_new[index] = sigmoid(np.dot(w, a) + b)
-        index += 1
-
-    return a_new
-
-
-
-def output(input, w1, b1, w2, b2, w3, b3):
+def oneRun(inp):
 
     """
     Calculation for 1 run through network. Returns actual number in first element and output activation list as second
+
+    :return act_num: Actual drawn number
+    :return out: Activation of last 10 neurons as list
     """
 
-    act_num = input.name
-    act_inp = list(input)
+    def activation(act, weight, bias):
 
-    a1 = activation(act_inp, w1, b1)
-    a2 = activation(a1, w2, b2)
-    out = activation(a2, w3, b3)
+        """
+        Returns activation vector of next layer out of old activation vector a, weight matrix and bias vector
+        """
+
+        actNew = [None for i in range(len(bias))]
+
+        for idx, (w, b) in enumerate(zip(weight, bias)):
+
+            actNew[idx] = sigmoid(np.dot(act, w) + b[0])
+
+        return actNew
+
+
+    w1 = np.array(pd.read_csv("WeightsBiases/w1.csv"))
+    b1 = np.array(pd.read_csv("WeightsBiases/b1.csv"))
+    w2 = np.array(pd.read_csv("WeightsBiases/w2.csv"))
+    b2 = np.array(pd.read_csv("WeightsBiases/b2.csv"))
+    w3 = np.array(pd.read_csv("WeightsBiases/w3.csv"))
+    b3 = np.array(pd.read_csv("WeightsBiases/b3.csv"))
+
+
+    act_num = inp.name
+    a1_inp = list(inp)
+
+    a2 = activation(a1_inp, w1, b1)
+    a3 = activation(a2, w2, b2)
+    out = activation(a3, w3, b3)
 
     return act_num, out
 
 
-otp = output(data.iloc[0], w1, b1, w2, b2, w3, b3)
+otp = oneRun(data.iloc[0])
 print("n =", otp[0], [round(float(i),2) for i in otp[1]])
 
 
@@ -126,17 +150,17 @@ print("n =", otp[0], [round(float(i),2) for i in otp[1]])
 def cost(act_num, neur_out):
 
     """
-    Returns squared sum of neural output and the actual number as vector [0,0,..., 1,...]
+    Returns squared sum of neural output and the actual number as vector [0,0,..., 1,...] as measure of network performance for 1 single case
     """
 
     act_num_lst = [0 for j in range(len(neur_out))]
     act_num_lst[act_num] = 1
 
-    sum = 0
+    zum = 0
     for i in range(len(neur_out)):
-        sum += (neur_out[i] - act_num_lst[i])**2
+        zum += (neur_out[i] - act_num_lst[i])**2
    
-    return sum
+    return zum
 
 
 print(cost(otp[0], otp[1]))
@@ -151,7 +175,7 @@ def avg_cost():
 
     cost_lst = list()
     for i in range(SHAPE[0]):
-        cost_lst.append(cost(data.iloc[i].name, output(data.iloc[i], w1, b1, w2, b2, w3, b3)[1]))
+        cost_lst.append(cost(data.iloc[i].name, oneRun(data.iloc[i])[1]))
     
     return np.mean(cost_lst)
 
