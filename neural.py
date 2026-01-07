@@ -149,7 +149,7 @@ def cost(act_num, neur_out):
    
     return zum
 
-
+# Should caust function have all weights & biases as inputs? Above only really summed squared
 
 def train():
 
@@ -163,6 +163,7 @@ def train():
     b2 = np.array(pd.read_csv("WeightsBiases/b2.csv"))
     w3 = np.array(pd.read_csv("WeightsBiases/w3.csv"))
     b3 = np.array(pd.read_csv("WeightsBiases/b3.csv"))
+    
 
     cost_lst = list()
     for i in range(SHAPE[0]):
