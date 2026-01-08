@@ -70,7 +70,7 @@ def makeWeightsBiases():
 
 
     RAN_SIZE = 10 # interval [-RAN_SIZE, +RAN_SIZE] for initialization of weights & biases
-    LAYER_SIZE = 16 # number of layer neurons (both)
+    LAYER_SIZE = 16 # number of layer neurons (both) Later change to see performance difference?
     OUT_SIZE = 10 # number of output neurons
 
     w1 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(SHAPE[1])] for j in range(LAYER_SIZE)]) # 16 x 784
@@ -91,6 +91,10 @@ def makeWeightsBiases():
 def sigmoid(x):
 
     return 1 / (1 + np.exp(-x))
+
+def dsigmoid(x):
+
+    return np.exp(-x) / (1 + np.exp(-x))**2
 
 
 def ReLU(x): # Today ReLU(x) used instead of sigmoid(x)
@@ -140,12 +144,12 @@ def cost(act_num, neur_out):
     Returns squared sum of neural output and the actual number as vector [0,0,..., 1,...] as measure of network performance for 1 single case
     """
 
-    act_num_lst = [0 for j in range(len(neur_out))]
-    act_num_lst[act_num] = 1
+    act_lst = [0 for j in range(len(neur_out))]
+    act_lst[act_num] = 1
 
     zum = 0
     for i in range(len(neur_out)):
-        zum += (neur_out[i] - act_num_lst[i])**2
+        zum += (neur_out[i] - act_lst[i])**2
    
     return zum
 
@@ -170,7 +174,7 @@ def train():
 
         num, out = oneRun(data.iloc[i], w1, b1, w2, b2, w3, b3)
 
-        w1, b1, w2, b2, w3, b3 = gradient(w1, b1, w2, b2, w3, b3)
+        w1, b1, w2, b2, w3, b3 = backprop(w1, b1, w2, b2, w3, b3)
         
         cost_lst.append(cost(num, out))
 
@@ -185,11 +189,37 @@ def train():
     w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
     b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
 
+    
+train()
 
-
-def gradient(w1, b1, w2, b2, w3, b3):
+def backprop(w1, b1, w2, b2, w3, b3):
     pass
 
+
+
+def gradient(w1, b1, w2, b2, w3, b3, a1_inp, a2, a3, out, act_num):
+    
+    z3, z2, z1 = np.array(), np.array(), np.array()
+    for i in range(len(w3)):
+        z3.append(np.dot(a3, w3[i]) + b3[i][0])
+    for i in range(len(w2)):
+        z2.append(np.dot(a2, w2[i]) + b2[i][0])
+    for i in range(len(w1)):
+        z1.append(np.dot(a1_inp, w1[i]) + b1[i][0])
+
+    act_lst = [0 for j in range(len(out))]
+    act_lst[act_num] = 1
+
+    dw3 = np.array()
+    for i in range(len(w3)):
+        temp = np.array()
+        for j in range(len(w3[i])):
+            temp.append(2 * (out[j] - act_lst[j]) * dsigmoid(z3[j]) * a3[j])
+        dw3.append(temp)
+
+    
+
+    
 
 
 #makeWeightsBiases()
