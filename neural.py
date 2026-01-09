@@ -62,7 +62,7 @@ SHAPE = data.shape
 def makeWeightsBiases():
     
     """
-    Initialization of weights & biases
+    Initialization of weights & biases by random values
     """
 
     if not os.path.exists("WeightsBiases"):
@@ -103,38 +103,36 @@ def ReLU(x): # Today ReLU(x) used instead of sigmoid(x)
 
 
 
-def oneRun(inp, w1, b1, w2, b2, w3, b3):
+def activation(act, weight, bias):
 
     """
-    Calculation for 1 run through network. Returns actual number in first element and output activation list as second
-
-    :return act_num: Actual drawn number
-    :return out: Activation of last 10 neurons as list
+    Returns activation vector of next layer out of old activation vector a, weight matrix and bias vector
     """
 
-    def activation(act, weight, bias):
+    actNew = [None for i in range(len(bias))]
 
-        """
-        Returns activation vector of next layer out of old activation vector a, weight matrix and bias vector
-        """
+    for idx, (w, b) in enumerate(zip(weight, bias)):
 
-        actNew = [None for i in range(len(bias))]
+        actNew[idx] = sigmoid(np.dot(act, w) + b[0])
 
-        for idx, (w, b) in enumerate(zip(weight, bias)):
+    return actNew
 
-            actNew[idx] = sigmoid(np.dot(act, w) + b[0])
 
-        return actNew
 
+def getActivations(inp, w1, b1, w2, b2, w3, b3):
+
+    """
+    Calculation for 1 run through network. Returns actual number in first element and all activations as lists
+    """
 
     act_num = inp.name
-    a1_inp = np.array(inp)
+    a_in = np.array(inp)
 
-    a2 = activation(a1_inp, w1, b1)
+    a2 = activation(a_in, w1, b1)
     a3 = activation(a2, w2, b2)
-    out = activation(a3, w3, b3)
+    a_out = activation(a3, w3, b3)
 
-    return act_num, out
+    return act_num, a_in, a2, a3, a_out
 
 
 
@@ -153,7 +151,9 @@ def cost(act_num, neur_out):
    
     return zum
 
-# Should caust function have all weights & biases as inputs? Above only really summed squared
+# Should cost function have all weights & biases as inputs? Above only really summed squared
+
+
 
 def train():
 
@@ -172,11 +172,11 @@ def train():
     cost_lst = list()
     for i in range(SHAPE[0]):
 
-        num, out = oneRun(data.iloc[i], w1, b1, w2, b2, w3, b3)
+        act_num, a_in, a2, a3, a_out = getActivations(data.iloc[i], w1, b1, w2, b2, w3, b3)
 
         w1, b1, w2, b2, w3, b3 = backprop(w1, b1, w2, b2, w3, b3)
         
-        cost_lst.append(cost(num, out))
+        cost_lst.append(cost(act_num, a_out))
 
 
     avg_cost = np.mean(cost_lst)
@@ -197,7 +197,7 @@ def backprop(w1, b1, w2, b2, w3, b3):
 
 
 
-def gradient(w1, b1, w2, b2, w3, b3, a1_inp, a2, a3, out, act_num):
+def gradient(w1, b1, w2, b2, w3, b3, a_inp, a2, a3, a_out, act_num):
     
     z3, z2, z1 = np.array(), np.array(), np.array()
     for i in range(len(w3)):
@@ -205,16 +205,16 @@ def gradient(w1, b1, w2, b2, w3, b3, a1_inp, a2, a3, out, act_num):
     for i in range(len(w2)):
         z2.append(np.dot(a2, w2[i]) + b2[i][0])
     for i in range(len(w1)):
-        z1.append(np.dot(a1_inp, w1[i]) + b1[i][0])
+        z1.append(np.dot(a_inp, w1[i]) + b1[i][0])
 
-    act_lst = [0 for j in range(len(out))]
+    act_lst = [0 for j in range(len(a_out))]
     act_lst[act_num] = 1
 
     dw3 = np.array()
     for i in range(len(w3)):
         temp = np.array()
         for j in range(len(w3[i])):
-            temp.append(2 * (out[j] - act_lst[j]) * dsigmoid(z3[j]) * a3[j])
+            temp.append(2 * (a_out[j] - act_lst[j]) * dsigmoid(z3[j]) * a3[j])
         dw3.append(temp)
 
     
