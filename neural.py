@@ -197,22 +197,26 @@ def backprop(w1, b1, w2, b2, w3, b3):
 
 
 
-def gradient(w1, b1, w2, b2, w3, b3, a_inp, a2, a3, a_out, act_num):
+def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
     
-    z3, z2, z1 = np.array(), np.array(), np.array()
+    z3, z2, z1 = list(), list(), list()
     for i in range(len(w3)):
         z3.append(np.dot(a3, w3[i]) + b3[i][0])
     for i in range(len(w2)):
         z2.append(np.dot(a2, w2[i]) + b2[i][0])
     for i in range(len(w1)):
-        z1.append(np.dot(a_inp, w1[i]) + b1[i][0])
+        z1.append(np.dot(a_in, w1[i]) + b1[i][0])
+
+    z1 = np.array(z1)
+    z2 = np.array(z2)
+    z3 = np.array(z3)
 
     act_lst = [0 for j in range(len(a_out))]
     act_lst[act_num] = 1
 
-    dw3 = np.array()
+    dw3 = list()
     for i in range(len(w3)):
-        temp = np.array()
+        temp = list()
         for j in range(len(w3[i])):
             temp.append(2 * (a_out[j] - act_lst[j]) * dsigmoid(z3[j]) * a3[j])
         dw3.append(temp)
@@ -223,10 +227,3 @@ def gradient(w1, b1, w2, b2, w3, b3, a_inp, a2, a3, a_out, act_num):
 
 
 #makeWeightsBiases()
-
-
-"""
-otp = oneRun(data.iloc[0], w1, b1, w2, b2, w3, b3)
-print("n =", otp[0], [round(float(i),2) for i in otp[1]])
-print(cost(otp[0], otp[1]))
-"""
