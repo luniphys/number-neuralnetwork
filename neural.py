@@ -41,7 +41,6 @@ def getData():
         shutil.rmtree("MNIST/__MACOSX")
 
 
-getData()
 
 
 
@@ -87,9 +86,12 @@ def makeWeightsBiases():
     b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
 
 
-#makeWeightsBiases()
 
 
+
+def ReLU(x): # Today ReLU(x) used instead of sigmoid(x)
+
+    return max(0,x)
 
 def sigmoid(x):
 
@@ -100,9 +102,6 @@ def dsigmoid(x):
     return np.exp(-x) / (1 + np.exp(-x))**2
 
 
-def ReLU(x): # Today ReLU(x) used instead of sigmoid(x)
-
-    return max(0,x)
 
 
 
@@ -170,7 +169,11 @@ def train():
     b2 = np.array(pd.read_csv("WeightsBiases/b2.csv"))
     w3 = np.array(pd.read_csv("WeightsBiases/w3.csv"))
     b3 = np.array(pd.read_csv("WeightsBiases/b3.csv"))
-    
+
+    n_out = len(w3)
+    n3 = len(w2)
+    n2 = len(w1)
+    n_in = len(w1[0])
 
     cost_lst = list()
     for i in range(SHAPE[0]):
@@ -179,8 +182,15 @@ def train():
 
         act_num, a_in, a2, a3, a_out = getActivations(data.iloc[i], w1, b1, w2, b2, w3, b3)
 
-        w1, b1, w2, b2, w3, b3 = backprop(w1, b1, w2, b2, w3, b3)
+        dw1, db1, dw2, db2, dw3, db3 = gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num)
         
+        
+
+
+        if i % 10 == 0 and i != 0:
+            pass
+
+
         cost_lst.append(cost(act_num, a_out))
 
 
@@ -194,36 +204,120 @@ def train():
     w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
     b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
 
-    
-train()
-
-def backprop(w1, b1, w2, b2, w3, b3):
-    pass
-
 
 
 def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
+
+    n_out = len(a_out)
+    n3 = len(a3)
+    n2 = len(a2)
+    n_in = len(a_in)
     
     z3, z2, z1 = list(), list(), list()
-    for i in range(len(w3)):
+    for i in range(n_out):
         z3.append(np.dot(a3, w3[i]) + b3[i][0])
-    for i in range(len(w2)):
+    for i in range(n3):
         z2.append(np.dot(a2, w2[i]) + b2[i][0])
-    for i in range(len(w1)):
+    for i in range(n2):
         z1.append(np.dot(a_in, w1[i]) + b1[i][0])
 
     z1 = np.array(z1)
     z2 = np.array(z2)
     z3 = np.array(z3)
 
-    act_lst = [0 for j in range(len(a_out))]
+
+    act_lst = [0 for j in range(n_out)]
     act_lst[act_num] = 1
+    act_lst = np.array(act_lst)
 
+    """
     dw3 = list()
-    for i in range(len(w3)):
-        temp = list()
-        for j in range(len(w3[i])):
-            temp.append(2 * (a_out[j] - act_lst[j]) * dsigmoid(z3[j]) * a3[j])
-        dw3.append(temp)
+    for i in range(n_out):
+        jdx = list()
+        for j in range(n3):
+            jdx.append(2 * (a_out[i] - act_lst[i]) * dsigmoid(z3[i]) * a3[j])
+        dw3.append(jdx)
 
+    db3 = list()
+    for i in range(n_out):
+        db3.append(2 * (a_out[i] - act_lst[i]) * dsigmoid(z3[i]))
+    """
+
+    dw3, db3 = list(), list()
+    for i in range(n_out):
+        jdx = list()
+        temp = 2 * (a_out[i] - act_lst[i]) * dsigmoid(z3[i])
+        db3.append(temp)
+        for j in range(n3): 
+            jdx.append(temp * a3[j])
+        dw3.append(jdx)
     
+    """
+    dw2 = list()
+    for i in range(n3):
+        temp = list()
+        for j in range(n2):
+            k_sum = sum([2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * w3[k][i] for k in range(n_out)])
+            temp.append(dsigmoid(z2[i]) * a2[j] * k_sum)
+        dw2.append(temp)
+
+
+    db2 = list()
+    for i in range(n3):
+        k_sum = sum([2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * w3[k][i] for k in range(n_out)])
+        db2.append(dsigmoid(z2[i]) * k_sum)
+    """
+
+    dw2, db2 = list(), list()
+    for i in range(n3):
+        jdx = list()
+        k_sum = sum([2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * w3[k][i] for k in range(n_out)])
+        temp = dsigmoid(z2[i]) * k_sum
+        db2.append(temp)
+        for j in range(n2):
+            jdx.append(temp * a2[j])
+        dw2.append(jdx)
+
+    """
+    dw1 = list()
+    for i in range(n2):
+        jdx = list()
+        for j in range(n_in):
+            k_lst = list()
+            for k in range(n_out):
+                l_sum = sum([w3[k][l] * dsigmoid(z2[l]) * w2[l][i] for l in range(n3)])
+                k_lst.append(2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * l_sum)
+            jdx.append(dsigmoid(z1[i]) * a_in[j] * sum(k_lst))
+        dw1.append(jdx)
+
+    db1 = list()
+    for i in range(n2):
+        k_lst = list()
+        for k in range(n_out):
+            l_sum = sum([w3[k][l] * dsigmoid(z2[l]) * w2[l][i] for l in range(n3)])
+            k_lst.append( 2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * l_sum)
+        db1.append(dsigmoid(z1[i]) * sum(k_lst))
+    """
+
+
+    dw1, db1 = list(), list()
+    for i in range(n2):
+        jdx = list()
+        k_lst = list()
+        for k in range(n_out):
+            l_sum = sum([w3[k][l] * dsigmoid(z2[l]) * w2[l][i] for l in range(n3)])
+            k_lst.append(2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * l_sum)
+        temp = dsigmoid(z1[i]) * sum(k_lst)
+        db1.append(temp)
+        for j in range(n_in):
+            jdx.append(temp * a_in[j])
+        dw1.append(jdx)
+    
+    return dw3, db3, dw2, db2, dw1, db1
+
+
+getData()
+
+#makeWeightsBiases()
+
+train()
