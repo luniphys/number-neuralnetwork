@@ -1,4 +1,7 @@
 MNIST
 WeightsBiases
 venv
+<<<<<<< HEAD
 test.py
+=======
+>>>>>>> d0cca0fb31292c67c7c6826969af27d904e541c9
