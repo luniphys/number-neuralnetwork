@@ -172,6 +172,8 @@ def train():
     cost_lst = list()
     for i in range(SHAPE[0]):
 
+        print((i / SHAPE[0]) * 100, "%")
+
         act_num, a_in, a2, a3, a_out = getActivations(data.iloc[i], w1, b1, w2, b2, w3, b3)
 
         w1, b1, w2, b2, w3, b3 = backprop(w1, b1, w2, b2, w3, b3)
