@@ -175,26 +175,76 @@ def train():
     n2 = len(w1)
     n_in = len(w1[0])
 
+
+    # Make dictionaries for each weight and bias as key and their gradients as items in lists for 10 cases
+    dw3_dic, db3_dic = dict(), dict()
+    for i in range(n_out):
+        db3_dic[f"db3_{i}"] = list()
+        for j in range(n3):
+            dw3_dic[f"dw3_{i},{j}"] = list()
+
+    dw2_dic, db2_dic = dict(), dict()
+    for i in range(n3):
+        db2_dic[f"db2_{i}"] = list()
+        for j in range(n2):
+            dw2_dic[f"dw2_{i},{j}"] = list()
+
+    dw1_dic, db1_dic = dict(), dict()
+    for i in range(n2):
+        db1_dic[f"db1_{i}"] = list()
+        for j in range(n_in):
+            dw1_dic[f"dw1_{i},{j}"] = list()
+    
+
     cost_lst = list()
     for i in range(SHAPE[0]):
 
-        print((i / SHAPE[0]) * 100, "%")
+        print(round((i / SHAPE[0]) * 100, 2), "%")
 
         act_num, a_in, a2, a3, a_out = getActivations(data.iloc[i], w1, b1, w2, b2, w3, b3)
 
         dw1, db1, dw2, db2, dw3, db3 = gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num)
-        
-        
+
+        for i in range(n_out):
+            db3_dic[f"db3_{i}"].append(-db3[i])
+            for j in range(n3):
+                dw3_dic[f"dw3_{i},{j}"].append(-dw3[i][j])
+
+        for i in range(n3):
+            db2_dic[f"db2_{i}"].append(-db2[i])
+            for j in range(n2):
+                dw2_dic[f"dw2_{i},{j}"].append(-dw2[i][j])
+
+        for i in range(n2):
+            db1_dic[f"db1_{i}"].append(-db1[i])
+            for j in range(n_in):
+                dw1_dic[f"dw1_{i},{j}"].append(-dw1[i][j])
 
 
         if i % 10 == 0 and i != 0:
-            pass
 
+            for i in range(n_out):
+                b3[i] += np.mean(db3_dic[f"db3_{i}"])
+                db3_dic[f"db3_{i}"] = list()
+                for j in range(n3):
+                    w3[i][j] += np.mean(dw3_dic[f"dw3_{i},{j}"])
+                    dw3_dic[f"dw3_{i},{j}"] = list()
+
+            for i in range(n3):
+                b2[i] = np.mean(db2_dic[f"db2_{i}"])
+                db2_dic[f"db2_{i}"] = list()
+                for j in range(n2):
+                    w2[i][j] += np.mean(dw2_dic[f"dw2_{i},{j}"])
+                    dw2_dic[f"dw2_{i},{j}"] = list()
+
+            for i in range(n2):
+                b1[i] = np.mean(db1_dic[f"db1_{i}"])
+                db1_dic[f"db1_{i}"] = list()
+                for j in range(n_in):
+                    w1[i][j] += np.mean(dw1_dic[f"dw1_{i},{j}"])
+                    dw1_dic[f"dw1_{i},{j}"] = list()
 
         cost_lst.append(cost(act_num, a_out))
-
-
-    avg_cost = np.mean(cost_lst)
 
 
     w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
@@ -203,6 +253,11 @@ def train():
     b2.to_csv("WeightsBiases/b2.csv", index=False, header=True)
     w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
     b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
+
+
+    avg_cost = np.mean(cost_lst)
+
+
 
 
 
@@ -313,7 +368,7 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
             jdx.append(temp * a_in[j])
         dw1.append(jdx)
     
-    return dw3, db3, dw2, db2, dw1, db1
+    return dw1, db1, dw2, db2, dw3, db3
 
 
 getData()
