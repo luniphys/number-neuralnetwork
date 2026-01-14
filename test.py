@@ -12,25 +12,24 @@ def dsigmoid(x):
     return np.exp(-x) / (1 + np.exp(-x))**2
 
 
-w1 = np.array([[-4,  6,  1,  3],
-               [-3, -8,  3,  5],
-               [ 4,  0, -1, -1]])
+w1 = np.array([[-4,  6,  1,  7],
+               [-3, -8, -3,  5],
+               [ 2,  0, -1, -1]])
 b1 = np.array([[ 1],
                [-3],
                [-7]])
-w2 = np.array([[ 3, -4,  2],
+w2 = np.array([[ 3, -4,  7],
                [-3,  3,  4],
-               [10,  9,  2]])
+               [10, -9,  2]])
 b2 = np.array([[ -9],
                [  0],
-               [-10]])
+               [ -1]])
 w3 = np.array([[-10,  -7,   4],
                [  3,   0,  -1]])
 b3 = np.array([[ 8],
-               [-9]])
+               [-1]])
 
-a_in = np.array([1, 0, 0.5, 0])
-
+a_in = np.array([1, 0, 0.5, 0.79])
 
 
 def activation(act, weight, bias):
@@ -126,5 +125,3 @@ print()
 print("db3")
 print(db3)
 print()
-
-# TODO: different examples

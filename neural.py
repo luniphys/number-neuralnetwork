@@ -87,6 +87,9 @@ def makeWeightsBiases():
     b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
 
 
+#makeWeightsBiases()
+
+
 
 def sigmoid(x):
 
@@ -224,8 +227,3 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
         dw3.append(temp)
 
     
-
-    
-
-
-#makeWeightsBiases()
