@@ -1,4 +1,4 @@
 MNIST
 WeightsBiases
-venv
+venv/
 test.py
