@@ -1,4 +1,4 @@
 MNIST
-neural_venv/
 WeightsBiases
+venv
 test.py
