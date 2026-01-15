@@ -61,38 +61,31 @@ SHAPE = data.shape
 def makeWeightsBiases():
     
     """
-    Initialization of weights & biases by random values
+    Initialization of weights & biases by (small) random values
     """
 
     if not os.path.exists("WeightsBiases"):
         os.mkdir("WeightsBiases")
 
 
-    RAN_SIZE = 0.1 # interval [-RAN_SIZE, +RAN_SIZE] for initialization of weights & biases. Needs to be quite small for non vanishing gradients
     LAYER_SIZE = 16 # number of layer neurons (both) Later change to see performance difference?
     OUT_SIZE = 10 # number of output neurons
 
-    #w1 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(SHAPE[1])] for j in range(LAYER_SIZE)]) # 16 x 784
     w1 = pd.DataFrame(np.random.randn(LAYER_SIZE, SHAPE[1]) * np.sqrt(1 / SHAPE[1])) # 16 x 784
     w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
 
-    #b1 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)]) # 16
     b1 = pd.DataFrame(np.random.randn(LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 16
     b1.to_csv("WeightsBiases/b1.csv", index=False, header=True)
 
-    #w2 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(LAYER_SIZE)]) # 16 x 16
     w2 = pd.DataFrame(np.random.randn(LAYER_SIZE, LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 16 x 16
     w2.to_csv("WeightsBiases/w2.csv", index=False, header=True)
 
-    #b2 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)]) # 16
     b2 = pd.DataFrame(np.random.randn(LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 16
     b2.to_csv("WeightsBiases/b2.csv", index=False, header=True)
 
-    #w3 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(OUT_SIZE)]) # 10 x 16
     w3 = pd.DataFrame(np.random.randn(OUT_SIZE, LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 10 x 16
     w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
 
-    #b3 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(OUT_SIZE)]) # 10
     b3 = pd.DataFrame(np.random.randn(OUT_SIZE) * np.sqrt(1 / OUT_SIZE)) # 10
     b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
 
@@ -104,7 +97,7 @@ def ReLU(x): # Today ReLU(x) used instead of sigmoid(x)
 
     return max(0,x)
 
-def dRELU(x):
+def dReLU(x):
 
     if x <= 0:
         return 0
@@ -135,7 +128,7 @@ def activation(act, weight, bias):
 
     for idx, (w, b) in enumerate(zip(weight, bias)):
 
-        actNew[idx] = sigmoid(np.dot(act, w) + b[0])
+        actNew[idx] = ReLU(np.dot(act, w) + b[0])
 
     return actNew
 
@@ -195,7 +188,7 @@ def train():
     n2 = len(w1)
     n_in = len(w1[0])
 
-    LR = 0.1 # learning rate
+    LR = 0.01 # learning rate
 
 
     # Make dictionaries for each weight and bias as key and their gradients as items in lists for 10 cases
@@ -318,7 +311,7 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
     dw3, db3 = list(), list()
     for i in range(n_out):
         jdx = list()
-        temp = 2 * (a_out[i] - act_lst[i]) * dsigmoid(z3[i])
+        temp = 2 * (a_out[i] - act_lst[i]) * dReLU(z3[i])
         db3.append(temp)
         for j in range(n3): 
             jdx.append(temp * a3[j])
@@ -328,8 +321,8 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
     dw2, db2 = list(), list()
     for i in range(n3):
         jdx = list()
-        k_sum = sum([2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * w3[k][i] for k in range(n_out)])
-        temp = dsigmoid(z2[i]) * k_sum
+        k_sum = sum([2 * (a_out[k] - act_lst[k]) * dReLU(z3[k]) * w3[k][i] for k in range(n_out)])
+        temp = dReLU(z2[i]) * k_sum
         db2.append(temp)
         for j in range(n2):
             jdx.append(temp * a2[j])
@@ -341,9 +334,9 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
         jdx = list()
         k_lst = list()
         for k in range(n_out):
-            l_sum = sum([w3[k][l] * dsigmoid(z2[l]) * w2[l][i] for l in range(n3)])
-            k_lst.append(2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * l_sum)
-        temp = dsigmoid(z1[i]) * sum(k_lst)
+            l_sum = sum([w3[k][l] * dReLU(z2[l]) * w2[l][i] for l in range(n3)])
+            k_lst.append(2 * (a_out[k] - act_lst[k]) * dReLU(z3[k]) * l_sum)
+        temp = dReLU(z1[i]) * sum(k_lst)
         db1.append(temp)
         for j in range(n_in):
             jdx.append(temp * a_in[j])
