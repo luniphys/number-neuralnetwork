@@ -72,18 +72,28 @@ def makeWeightsBiases():
     LAYER_SIZE = 16 # number of layer neurons (both) Later change to see performance difference?
     OUT_SIZE = 10 # number of output neurons
 
-    w1 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(SHAPE[1])] for j in range(LAYER_SIZE)]) # 16 x 784
-    #w1 = pd.DataFrame(np.random.randn(LAYER_SIZE, SHAPE[1]) * np.sqrt(1 / SHAPE[1])) # 16 x 784
+    #w1 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(SHAPE[1])] for j in range(LAYER_SIZE)]) # 16 x 784
+    w1 = pd.DataFrame(np.random.randn(LAYER_SIZE, SHAPE[1]) * np.sqrt(1 / SHAPE[1])) # 16 x 784
     w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
-    b1 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)]) # 16
+
+    #b1 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)]) # 16
+    b1 = pd.DataFrame(np.random.randn(LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 16
     b1.to_csv("WeightsBiases/b1.csv", index=False, header=True)
-    w2 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(LAYER_SIZE)]) # 16 x 16
+
+    #w2 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(LAYER_SIZE)]) # 16 x 16
+    w2 = pd.DataFrame(np.random.randn(LAYER_SIZE, LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 16 x 16
     w2.to_csv("WeightsBiases/w2.csv", index=False, header=True)
-    b2 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)]) # 16
+
+    #b2 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)]) # 16
+    b2 = pd.DataFrame(np.random.randn(LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 16
     b2.to_csv("WeightsBiases/b2.csv", index=False, header=True)
-    w3 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(OUT_SIZE)]) # 10 x 16
+
+    #w3 = pd.DataFrame([[rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(LAYER_SIZE)] for j in range(OUT_SIZE)]) # 10 x 16
+    w3 = pd.DataFrame(np.random.randn(OUT_SIZE, LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 10 x 16
     w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
-    b3 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(OUT_SIZE)]) # 10
+
+    #b3 = pd.DataFrame([rn.uniform(-RAN_SIZE,RAN_SIZE) for i in range(OUT_SIZE)]) # 10
+    b3 = pd.DataFrame(np.random.randn(OUT_SIZE) * np.sqrt(1 / OUT_SIZE)) # 10
     b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
 
 
@@ -93,6 +103,15 @@ def makeWeightsBiases():
 def ReLU(x): # Today ReLU(x) used instead of sigmoid(x)
 
     return max(0,x)
+
+def dRELU(x):
+
+    if x <= 0:
+        return 0
+    
+    else:
+        return 1
+
 
 def sigmoid(x):
 
@@ -176,6 +195,8 @@ def train():
     n2 = len(w1)
     n_in = len(w1[0])
 
+    LR = 0.1 # learning rate
+
 
     # Make dictionaries for each weight and bias as key and their gradients as items in lists for 10 cases
     dw3_dic, db3_dic = dict(), dict()
@@ -227,24 +248,24 @@ def train():
         if i % 10 == 0 and i != 0 or i == SHAPE[0] - 1:
 
             for i in range(n_out):
-                b3[i] += np.mean(db3_dic[f"db3_{i}"])
+                b3[i] += LR * np.mean(db3_dic[f"db3_{i}"])
                 db3_dic[f"db3_{i}"] = list()
                 for j in range(n3):
-                    w3[i][j] += np.mean(dw3_dic[f"dw3_{i},{j}"])
+                    w3[i][j] += LR * np.mean(dw3_dic[f"dw3_{i},{j}"])
                     dw3_dic[f"dw3_{i},{j}"] = list()
 
             for i in range(n3):
-                b2[i] += np.mean(db2_dic[f"db2_{i}"])
+                b2[i] += LR * np.mean(db2_dic[f"db2_{i}"])
                 db2_dic[f"db2_{i}"] = list()
                 for j in range(n2):
-                    w2[i][j] += np.mean(dw2_dic[f"dw2_{i},{j}"])
+                    w2[i][j] += LR * np.mean(dw2_dic[f"dw2_{i},{j}"])
                     dw2_dic[f"dw2_{i},{j}"] = list()
 
             for i in range(n2):
-                b1[i] += np.mean(db1_dic[f"db1_{i}"])
+                b1[i] += LR * np.mean(db1_dic[f"db1_{i}"])
                 db1_dic[f"db1_{i}"] = list()
                 for j in range(n_in):
-                    w1[i][j] += np.mean(dw1_dic[f"dw1_{i},{j}"])
+                    w1[i][j] += LR * np.mean(dw1_dic[f"dw1_{i},{j}"])
                     dw1_dic[f"dw1_{i},{j}"] = list()
 
 
