@@ -174,7 +174,7 @@ def training():
     n2 = len(w1)
     n_in = len(w1[0])
 
-    LR = 0.01 # learning rate
+    LR = 0.1 # learning rate
 
 
     # Make dictionaries for each weight and bias as key and their gradients as items in lists for 10 cases
@@ -200,7 +200,7 @@ def training():
     cost_lst = list()
     for idx in range(SHAPE[0]):
 
-        print(round((idx / SHAPE[0]) * 100, 2), "%")
+        #print(round((idx / SHAPE[0]) * 100, 2), "%")
 
         act_num, a_in, a2, a3, a_out = getActivations(data.iloc[idx], w1, b1, w2, b2, w3, b3)
 
@@ -253,7 +253,6 @@ def training():
     avg_cost = np.mean(cost_lst)
     with open("cost.txt", "a", encoding="utf-8") as file:
         file.write(f"{avg_cost}" + "\n")
-    print(avg_cost)
 
 
     w1 = pd.DataFrame(w1)
@@ -358,6 +357,9 @@ SHAPE = data.shape
 if not os.path.exists("WeightsBiases"):
     makeWeightsBiases()
 
-cycles = 10
+cycles = 100
 for i in range(cycles):
+    print(i+1, "%")
     training()
+
+# 46 training cycles so far
