@@ -44,20 +44,6 @@ def getData():
 
 
 
-RES = 28 # 28x28 pixel canvas
-PIX_MAX = 255 # pixel strength 0-255
-
-
-train = pd.read_csv('MNIST/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = pixel number 0-784 (28*28=784) -> 60000 x 784
-train = train/PIX_MAX # set scale 0-1
-
-test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None) # -""- -> 10000 x 784
-test = test/PIX_MAX
-
-data = test
-SHAPE = data.shape
-
-
 def makeWeightsBiases():
     
     """
@@ -128,7 +114,7 @@ def activation(act, weight, bias):
 
     for idx, (w, b) in enumerate(zip(weight, bias)):
 
-        actNew[idx] = ReLU(np.dot(act, w) + b[0])
+        actNew[idx] = sigmoid(np.dot(act, w) + b[0])
 
     return actNew
 
@@ -170,7 +156,7 @@ def cost(act_num, neur_out):
 
 
 
-def train():
+def training():
 
     """
     Training the weights and biases with the complete dataset
@@ -212,15 +198,14 @@ def train():
     
 
     cost_lst = list()
-    for i in range(SHAPE[0]):
+    for idx in range(SHAPE[0]):
 
-        print(round((i / SHAPE[0]) * 100, 2), "%")
+        print(round((idx / SHAPE[0]) * 100, 2), "%")
 
-        act_num, a_in, a2, a3, a_out = getActivations(data.iloc[i], w1, b1, w2, b2, w3, b3)
+        act_num, a_in, a2, a3, a_out = getActivations(data.iloc[idx], w1, b1, w2, b2, w3, b3)
 
         dw1, db1, dw2, db2, dw3, db3 = gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num)
 
-        cost_lst.append(cost(act_num, a_out))
 
         for i in range(n_out):
             db3_dic[f"db3_{i}"].append(-db3[i])
@@ -238,7 +223,7 @@ def train():
                 dw1_dic[f"dw1_{i},{j}"].append(-dw1[i][j])
 
 
-        if i % 10 == 0 and i != 0 or i == SHAPE[0] - 1:
+        if idx % 10 == 0 and idx != 0 or idx == SHAPE[0] - 1:
 
             for i in range(n_out):
                 b3[i] += LR * np.mean(db3_dic[f"db3_{i}"])
@@ -262,7 +247,12 @@ def train():
                     dw1_dic[f"dw1_{i},{j}"] = list()
 
 
+        cost_lst.append(cost(act_num, a_out))
+
+
     avg_cost = np.mean(cost_lst)
+    with open("cost.txt", "a", encoding="utf-8") as file:
+        file.write(f"{avg_cost}" + "\n")
     print(avg_cost)
 
 
@@ -311,7 +301,7 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
     dw3, db3 = list(), list()
     for i in range(n_out):
         jdx = list()
-        temp = 2 * (a_out[i] - act_lst[i]) * dReLU(z3[i])
+        temp = 2 * (a_out[i] - act_lst[i]) * dsigmoid(z3[i])
         db3.append(temp)
         for j in range(n3): 
             jdx.append(temp * a3[j])
@@ -321,8 +311,8 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
     dw2, db2 = list(), list()
     for i in range(n3):
         jdx = list()
-        k_sum = sum([2 * (a_out[k] - act_lst[k]) * dReLU(z3[k]) * w3[k][i] for k in range(n_out)])
-        temp = dReLU(z2[i]) * k_sum
+        k_sum = sum([2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * w3[k][i] for k in range(n_out)])
+        temp = dsigmoid(z2[i]) * k_sum
         db2.append(temp)
         for j in range(n2):
             jdx.append(temp * a2[j])
@@ -334,9 +324,9 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
         jdx = list()
         k_lst = list()
         for k in range(n_out):
-            l_sum = sum([w3[k][l] * dReLU(z2[l]) * w2[l][i] for l in range(n3)])
-            k_lst.append(2 * (a_out[k] - act_lst[k]) * dReLU(z3[k]) * l_sum)
-        temp = dReLU(z1[i]) * sum(k_lst)
+            l_sum = sum([w3[k][l] * dsigmoid(z2[l]) * w2[l][i] for l in range(n3)])
+            k_lst.append(2 * (a_out[k] - act_lst[k]) * dsigmoid(z3[k]) * l_sum)
+        temp = dsigmoid(z1[i]) * sum(k_lst)
         db1.append(temp)
         for j in range(n_in):
             jdx.append(temp * a_in[j])
@@ -345,12 +335,29 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
     return dw1, db1, dw2, db2, dw3, db3
 
 
+
+
+
 getData()
+
+RES = 28 # 28x28 pixel canvas
+PIX_MAX = 255 # pixel strength 0-255
+
+
+train = pd.read_csv('MNIST/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = pixel number 0-784 (28*28=784) -> 60000 x 784
+train = train/PIX_MAX # set scale 0-1
+
+test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None) # -""- -> 10000 x 784
+test = test/PIX_MAX
+
+data = test
+SHAPE = data.shape
+
+
 
 if not os.path.exists("WeightsBiases"):
     makeWeightsBiases()
 
-train()
-
-for i in range(10):
-    train()
+cycles = 10
+for i in range(cycles):
+    training()
