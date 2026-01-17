@@ -2,4 +2,3 @@ MNIST
 WeightsBiases
 venv/
 cost.txt
-test.py
