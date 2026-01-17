@@ -19,7 +19,7 @@ The MNIST dataset provides a 28 x 28 = 784 pixel grid which are used as input ne
 
 The activation $a^{(n)}$ of layer $n$ is calculated with the weight matrix $W^{(n)}$, its bias $b^{(n)}$ and the previous activation vector $a^{(n-1)}$ via the following equation.
 
-$$a^{(n)} = W^{(n)} \cdot a^{(n-1)} + b^{(n)}, \; \; \; \; \; \; \; \; \; n = 1,2,3$$
+$$a^{(n)} = W^{(n)} \cdot a^{(n-1)} + b^{(n)}, \qquad n = 1,2,3$$
 
 Our goal is to minimize the cost function $C$.
 
