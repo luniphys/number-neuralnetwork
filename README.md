@@ -21,7 +21,7 @@ The activation $a^{(n)}$ of layer $n$ is calculated with the weight matrix $W^{(
 
 $$a^{(n)} = W^{(n)} \cdot a^{(n-1)} + b^{(n)}, \qquad n = 1,2,3$$
 
-Our goal is to minimize the cost function $C$.
+Our goal is to minimize the cost function $C$, which is a measure on how well the network performs. The smaller the better.
 
 $$C = \sum_{k=1}^{n_3} (a_k^{(3)} - y_k)^2$$
 
