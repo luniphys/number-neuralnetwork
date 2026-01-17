@@ -223,6 +223,7 @@ def training():
                 dw1_dic[f"dw1_{i},{j}"].append(-dw1[i][j])
 
 
+        # Stochastic gradient descent. Use mean of 10 samples for time efficiency
         if sample_idx % 10 == 0 and sample_idx != 0 or sample_idx == SHAPE[0] - 1:
 
             for i in range(n3):
