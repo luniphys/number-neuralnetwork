@@ -8,7 +8,7 @@ import zipfile as zipf
 
 
 
-def getData():
+def getMNISTData():
 
     """
     If the MNIST dataset is not on pc, this function will download and extract it
@@ -44,7 +44,7 @@ def getData():
 
 
 
-def makeWeightsBiases():
+def makeRandomWeightsBiases():
     
     """
     Initialization of weights & biases by (small) random values
@@ -107,16 +107,16 @@ def dsigmoid(x):
 def activation(act, weight, bias):
 
     """
-    Returns activation vector of next layer out of old activation vector a, weight matrix and bias vector
+    Returns activation vector of next layer out of old activation vector act, weight matrix and bias vector
     """
 
-    actNew = [None for i in range(len(bias))]
+    act_new = [None for i in range(len(bias))]
 
     for idx, (w, b) in enumerate(zip(weight, bias)):
 
-        actNew[idx] = sigmoid(np.dot(act, w) + b[0])
+        act_new[idx] = sigmoid(np.dot(act, w) + b[0])
 
-    return actNew
+    return act_new
 
 
 
@@ -126,31 +126,31 @@ def getActivations(inp, w1, b1, w2, b2, w3, b3):
     Calculation for 1 run through network. Returns actual number in first element and all activations as lists
     """
 
-    act_num = inp.name
+    drawn_num = inp.name
     a_in = np.array(inp)
 
-    a2 = activation(a_in, w1, b1)
-    a3 = activation(a2, w2, b2)
-    a_out = activation(a3, w3, b3)
+    a1 = activation(a_in, w1, b1)
+    a2 = activation(a1, w2, b2)
+    a3 = activation(a2, w3, b3)
 
-    return act_num, a_in, a2, a3, a_out
+    return drawn_num, a_in, a1, a2, a3
 
 
 
-def cost(act_num, neur_out):
+def cost(drawn_num, a3):
 
     """
-    Returns squared sum of neural output and the actual number as vector [0,0,..., 1,...] as measure of network performance for 1 single case
+    Returns squared sum of neural output and the actual drawn number as vector [0,0,..., 1,...] as measure of network performance for 1 single case
     """
 
-    act_lst = [0 for j in range(len(neur_out))]
-    act_lst[act_num] = 1
+    drawn_lst = [0 for j in range(len(a3))]
+    drawn_lst[drawn_num] = 1
 
-    zum = 0
-    for i in range(len(neur_out)):
-        zum += (neur_out[i] - act_lst[i])**2
+    squared_sum = 0
+    for i in range(len(a3)):
+        squared_sum += (a3[i] - drawn_lst[i])**2
    
-    return zum
+    return squared_sum
 
 # Should cost function have all weights & biases as inputs? Above only really summed squared
 
@@ -198,11 +198,11 @@ def training():
     
 
     cost_lst = list()
-    for idx in range(SHAPE[0]):
+    for sample_idx in range(SHAPE[0]):
 
-        #print(round((idx / SHAPE[0]) * 100, 2), "%")
+        #print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
 
-        act_num, a_in, a2, a3, a_out = getActivations(data.iloc[idx], w1, b1, w2, b2, w3, b3)
+        act_num, a_in, a2, a3, a_out = getActivations(data.iloc[sample_idx], w1, b1, w2, b2, w3, b3)
 
         dw1, db1, dw2, db2, dw3, db3 = gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num)
 
@@ -223,7 +223,7 @@ def training():
                 dw1_dic[f"dw1_{i},{j}"].append(-dw1[i][j])
 
 
-        if idx % 10 == 0 and idx != 0 or idx == SHAPE[0] - 1:
+        if sample_idx % 10 == 0 and sample_idx != 0 or sample_idx == SHAPE[0] - 1:
 
             for i in range(n_out):
                 b3[i] += LR * np.mean(db3_dic[f"db3_{i}"])
@@ -337,11 +337,10 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a2, a3, a_out, act_num):
 
 
 
-getData()
+getMNISTData()
 
-RES = 28 # 28x28 pixel canvas
+
 PIX_MAX = 255 # pixel strength 0-255
-
 
 train = pd.read_csv('MNIST/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = pixel number 0-784 (28*28=784) -> 60000 x 784
 train = train/PIX_MAX # set scale 0-1
@@ -355,11 +354,10 @@ SHAPE = data.shape
 
 
 if not os.path.exists("WeightsBiases"):
-    makeWeightsBiases()
+    makeRandomWeightsBiases()
 
 cycles = 100
 for i in range(cycles):
     print(i+1, "%")
     training()
 
-# 46 training cycles so far
