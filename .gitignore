@@ -2,5 +2,4 @@ MNIST
 WeightsBiases
 venv/
 cost.txt
-network_image.jpg
 test.py
