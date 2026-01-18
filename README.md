@@ -2,16 +2,15 @@
 
 This network will detect drawn numbers based on the MNIST dataset. In this code I will only implement basic Python functions and math (no nerual network/AI packages).
 
-
 (Since training the weights and biases takes a couple of hours, an already trained set is provided.) 
 
-<br>
+### Reference 3Blue1Brown 
 
 The mathematics and understanding behind the code and this network in general are based on the neural network series by 3Blue1Brown on YouTube.
 
 https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
 
-<br>
+### Mathematics & Theory
 
 ![image](network_image.jpg)
 
