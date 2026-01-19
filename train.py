@@ -354,7 +354,7 @@ if __name__ == "__main__":
         makeRandomWeightsBiases()
 
 
-    cycles = 100
+    cycles = 300
     for i in range(cycles):
         print(i)
         training()
