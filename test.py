@@ -16,12 +16,12 @@ def average_cost():
     cost_lst = list()
     for sample_idx in range(SHAPE[0]):
 
-        drawn_num, a3 = getActivations(data.iloc[sample_idx], w1, b1, w2, b2, w3, b3)[::4]
+        drawn_num, a3 = getActivations(test.iloc[sample_idx], w1, b1, w2, b2, w3, b3)[::4]
 
         cost_lst.append(cost(drawn_num, a3))
 
     avg_cost = np.mean(cost_lst)
-    print("Network error propability", round(avg_cost * 100, 2), "%")
+    print("Average Cost", round(avg_cost, 5))
 
 
 
@@ -44,7 +44,7 @@ def try_random_num():
     Get a random sample out of the test dataset and print the networks guess.
     """
 
-    ran_sample = data.iloc[rn.randint(0, SHAPE[0])]
+    ran_sample = test.iloc[rn.randint(0, SHAPE[0])]
     drawn_num = ran_sample.name
 
     print("The drawn number is", drawn_num, "!")
@@ -72,8 +72,7 @@ PIX_MAX = 255 # pixel strength 0-255
 test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None) # -""- -> 10000 x 784
 test = test/PIX_MAX
 
-data = test
-SHAPE = data.shape
+SHAPE = test.shape
 
 
 w1 = np.array(pd.read_csv("WeightsBiases/w1.csv"))
@@ -84,6 +83,6 @@ w3 = np.array(pd.read_csv("WeightsBiases/w3.csv"))
 b3 = np.array(pd.read_csv("WeightsBiases/b3.csv"))
 
 
-#average_cost()
+average_cost()
 
 try_random_num()

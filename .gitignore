@@ -1,5 +1,6 @@
 __pycache__
 MNIST
 WeightsBiases
+TrainedWBs/Trained_test
 venv/
 cost.txt

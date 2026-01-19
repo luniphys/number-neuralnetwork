@@ -202,7 +202,7 @@ def training():
 
         #print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
 
-        drawn_num, a_in, a1, a2, a3 = getActivations(data.iloc[sample_idx], w1, b1, w2, b2, w3, b3)
+        drawn_num, a_in, a1, a2, a3 = getActivations(train.iloc[sample_idx], w1, b1, w2, b2, w3, b3)
 
         dw1, db1, dw2, db2, dw3, db3 = gradient(w1, b1, w2, b2, w3, b3, a_in, a1, a2, a3, drawn_num)
 
@@ -347,11 +347,7 @@ if __name__ == "__main__":
     train = pd.read_csv('MNIST/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = pixel number 0-784 (28*28=784) -> 60000 x 784
     train = train/PIX_MAX # set scale 0-1
 
-    test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None) # -""- -> 10000 x 784
-    test = test/PIX_MAX
-
-    data = test
-    SHAPE = data.shape
+    SHAPE = train.shape
 
 
     if not os.path.exists("WeightsBiases"):
@@ -360,6 +356,5 @@ if __name__ == "__main__":
 
     cycles = 100
     for i in range(cycles):
-        print(i+1, "%")
+        print(i)
         training()
-

@@ -1,8 +1,4 @@
 import numpy as np
-import time
+import PyQt6 as qt
 
-print("The drawn number is!")
-for i in range(3):
-    time.sleep(0.75)
-    print(". ", end="", flush=True)
-print("\ng")
+

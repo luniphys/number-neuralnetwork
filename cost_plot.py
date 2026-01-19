@@ -6,5 +6,6 @@ with open("cost.txt", "r") as file:
 
 plt.plot(cost_lst)
 plt.ylabel("Cost")
-plt.xlabel("Training cycle")
+plt.xlabel("Training cycles")
+plt.grid()
 plt.show()
