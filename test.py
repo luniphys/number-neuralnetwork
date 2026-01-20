@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import random as rn
-import time
 
 from train import getActivations, cost
 
@@ -35,7 +34,9 @@ def get_guess(sample):
 
     a3 = getActivations(sample, w1, b1, w2, b2, w3, b3)[4]
 
-    return max(enumerate(a3), key = lambda x: x[1])[0]
+    perc_lst = [round(float(num * 100), 2) for num in a3]
+
+    return max(enumerate(a3), key = lambda x: x[1])[0], perc_lst
 
 
 def try_random_num():
@@ -47,23 +48,12 @@ def try_random_num():
     ran_sample = test.iloc[rn.randint(0, SHAPE[0])]
     drawn_num = ran_sample.name
 
-    print("The drawn number is", drawn_num, "!")
-    time.sleep(0.65)
-    print("Thinking ", end="")
-    for i in range(3):
-        print(". ", end="", flush=True)
-        time.sleep(0.65)
+    print("Drawn number is:  ", drawn_num)
 
-    guessed_num = get_guess(ran_sample)
+    guessed_num, guessed_lst = get_guess(ran_sample)
 
-    print("\nThe number should be", end=" ")
-    print(guessed_num, "!", end=" ")
-
-    if drawn_num == guessed_num:
-        print("Correct! :)")
-
-    else:
-        print("Wrong :(")
+    print("Guessed number is:", guessed_num)
+    print(guessed_lst)
 
 
 

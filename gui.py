@@ -1,8 +1,23 @@
-from train import train
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton
-from PyQt6.QtCore import Qt, QSize
+
 from PyQt6.QtGui import *
+from PyQt6.QtCore import *
+
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton,
+    QCheckBox,
+    QComboBox,
+    QDial,
+    QDoubleSpinBox,
+    QLabel, # One line text cell
+    QLineEdit,
+    QListWidget,
+    QSlider,
+    QSpinBox,
+)
+
+
+
+from train import training
 
 
 class MainWindow(QMainWindow):
@@ -11,13 +26,20 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Number Neural Network")
+        self.setGeometry(400, 200, 500, 700)
+        self.setMinimumSize(QSize(300, 500))
 
-        button = QPushButton("Draw!")
+        #draw_button = QPushButton("Draw!")
+        #draw_button.clicked.connect(self.draw_button_clicked)
+        #self.setCentralWidget(draw_button)
 
-        self.setMinimumSize(QSize(400, 300))
+        image_label = QLabel()
 
-        self.setCentralWidget(button)
+        image = QPixmap("network_image.jpg")
+        image_label.setPixmap(image)
+        image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        self.setCentralWidget(image_label)
 
 
 app = QApplication(sys.argv)
