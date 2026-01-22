@@ -6,14 +6,35 @@ from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
 
 
+class Pixel(QWidget):
+    
+    def __init__(self, color, row, col):
+        super().__init__()
+
+        self.row = row
+        self.col = col
+
+        self.setAutoFillBackground(True)
+        palette = self.palette()
+        palette.setColor(QPalette.ColorRole.Window, QColor(color))
+        self.setPalette(palette)
+
+    def mousePressEvent(self, e):
+        palette = self.palette()
+        palette.setColor(QPalette.ColorRole.Window, QColor("black"))
+        self.setPalette(palette)
+        print(self.row, self.col)
+
+
+
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("Number Neural Network")
-        self.setGeometry(400, 200, 700, 700)
-        self.setFixedSize(QSize(700, 700))
+        self.setGeometry(400, 200, 500, 500)
+        self.setFixedSize(QSize(500, 500))
 
         # Main Menu
         MainMenuLayout = QVBoxLayout()
@@ -37,7 +58,8 @@ class MainWindow(QMainWindow):
         Canvas = QGridLayout()
         for row in range(PIXELS):
             for col in range(PIXELS):
-                Canvas.addWidget(QCheckBox("e"), row, col)
+                Canvas.addWidget(Pixel("white", row, col), row, col)
+        Canvas.setSpacing(False)
 
 
 
@@ -47,6 +69,9 @@ class MainWindow(QMainWindow):
         DrawField = QWidget()
         DrawField.setLayout(Canvas)
         DrawLayout.addWidget(DrawField)
+
+        ClearButton = QPushButton("Clear")
+        DrawLayout.addWidget(ClearButton)
 
         GuessButton = QPushButton("Guess the number")
         DrawLayout.addWidget(GuessButton)
@@ -71,15 +96,11 @@ class MainWindow(QMainWindow):
 
 
 
-
-
     def DrawButton_Pressed(self):
         self.Layout.setCurrentIndex(1)
 
     def BackButton_Pressed(self):
         self.Layout.setCurrentIndex(0)
-
-
 
 
 PIXELS = 28
