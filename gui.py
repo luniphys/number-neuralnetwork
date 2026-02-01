@@ -8,21 +8,47 @@ from PyQt6.QtWidgets import *
 
 class Pixel(QWidget):
     
-    def __init__(self, row, column):
+    def __init__(self):
+
         super().__init__()
-
         self.color = QColor("white")
-        self.row = row
-        self.column = column
-
-    def paint(self, event):
+        #self.setFixedSize(15, 15)
+    
+    def paintEvent(self, event):
         painter = QPainter(self)
         painter.fillRect(self.rect(), self.color)
 
-    def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
+    def paint_black(self):
+        if self.color != QColor("black"):
             self.color = QColor("black")
             self.update()
+
+    def clear(self):
+        self.color = QColor("white")
+        self.update()
+
+
+
+class PixelCanvas(QWidget):
+
+    def __init__(self, pixels, grid):
+        super().__init__()
+        self.pixels = pixels
+        self.grid = grid
+        self.setMouseTracking(True)
+
+    def mousePressEvent(self, event):
+        if event.buttons() == Qt.MouseButton.LeftButton:
+            self.paint_at(event.position().toPoint())
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == Qt.MouseButton.LeftButton:
+            self.paint_at(event.position().toPoint())
+
+    def paint_at(self, pos):
+        widget = self.childAt(pos)
+        if isinstance(widget, Pixel):
+            widget.paint_black()
 
 
 class MainWindow(QMainWindow):
@@ -47,6 +73,7 @@ class MainWindow(QMainWindow):
 
         TrainButton = QPushButton("Training")
         MainMenuLayout.addWidget(TrainButton)
+        TrainButton.pressed.connect(self.TrainButton_Pressed)
 
         MainMenuWidget = QWidget()
         MainMenuWidget.setLayout(MainMenuLayout)
@@ -54,25 +81,33 @@ class MainWindow(QMainWindow):
 
         # Canvas
         Canvas = QGridLayout()
+        Canvas.setSpacing(0)
+        Canvas.setContentsMargins(0, 0, 0, 0)
+        
+        self.pixels = [Pixel() for _ in range(PIXELS**2)]
+
+        idx = 0
         for row in range(PIXELS):
             for col in range(PIXELS):
-                Canvas.addWidget(Pixel(row, col), row, col)
-        Canvas.setSpacing(False)
+                Canvas.addWidget(self.pixels[idx], row, col)
+                idx += 1
 
 
 
         # Draw Page
         DrawLayout = QVBoxLayout()
 
-        DrawField = QWidget()
+        DrawField = PixelCanvas(self.pixels, Canvas)
         DrawField.setLayout(Canvas)
         DrawLayout.addWidget(DrawField)
 
         ClearButton = QPushButton("Clear")
         DrawLayout.addWidget(ClearButton)
+        ClearButton.pressed.connect(self.ClearButton_Pressed)
 
         GuessButton = QPushButton("Guess the number")
         DrawLayout.addWidget(GuessButton)
+        GuessButton.pressed.connect(self.GuessButton_Pressed)
 
         BackButton = QPushButton("Back")
         DrawLayout.addWidget(BackButton)
@@ -97,9 +132,22 @@ class MainWindow(QMainWindow):
     def DrawButton_Pressed(self):
         self.Layout.setCurrentIndex(1)
 
+    def TrainButton_Pressed(self):
+        pass
+
+
+    def ClearButton_Pressed(self):
+        for pixel in self.pixels:
+            pixel.color = QColor("white")
+            pixel.update()
+
+    def GuessButton_Pressed(self):
+        pass
+    
     def BackButton_Pressed(self):
         self.Layout.setCurrentIndex(0)
 
+    
 
 PIXELS = 28
 
