@@ -22,24 +22,24 @@ $$a^{(n)} = \sigma \left( W^{(n)} \cdot a^{(n-1)} + b^{(n)} \right), \qquad n = 
 
 Our goal is to minimize the cost function $C$, which is a measure on how well the network performs. The smaller the better.
 
-$$C = \sum_{k=1}^{n_3} (a_k^{(3)} - y_k)^2$$
+$$C = \sum_{k=1}^{n_3} \left(a_k^{(3)} - y_k \right)^2$$
 
 $y$ is a vector that represents the actual drawn number. For example if the number is $3$, $y = (0,0,0,1,0,0,...)^{T} $.
 
 To minimize $C$ we need formulas for the gradient $\nabla C$, which are are listed below. ($\sigma$ represents the sigmoid function.)
 
-$$\frac{\partial C}{\partial w_{ij}^{(3)}} = 2 (a_i^{(3)} - y_i ) \cdot \sigma^{\prime}(z_i^{(3)}) \cdot a_j^{(2)}$$
+$$\frac{\partial C}{\partial w_{ij}^{(3)}} = 2 \left(a_i^{(3)} - y_i \right) \cdot \sigma^{\prime} \left(z_i^{(3)} \right) \cdot a_j^{(2)}$$
 
-$$\frac{\partial C}{\partial b_{i}^{(3)}} = 2 (a_i^{(3)} - y_i ) \cdot \sigma^{\prime}(z_i^{(3)})$$
-
-
-$$\frac{\partial C}{\partial w_{ij}^{(2)}} = \sigma^{\prime}(z_i^{(2)}) \cdot a_j^{(1)} \cdot \sum_{k=1}^{n_3} 2 (a_k^{(3)} - y_k ) \cdot \sigma^{\prime}(z_k^{(3)}) \cdot w_{ki}^{(3)}$$
-
-$$\frac{\partial C}{\partial b_{i}^{(2)}} = \sigma^{\prime}(z_i^{(2)}) \cdot \sum_{k=1}^{n_3} 2 (a_k^{(3)} - y_k ) \cdot \sigma^{\prime}(z_k^{(3)}) \cdot w_{ki}^{(3)}$$
+$$\frac{\partial C}{\partial b_{i}^{(3)}} = 2 \left(a_i^{(3)} - y_i \right) \cdot \sigma^{\prime} \left(z_i^{(3)} \right)$$
 
 
-$$\frac{\partial C}{\partial w_{ij}^{(1)}} = \sigma^{\prime}(z_i^{(1)}) \cdot a_j^{(\text{in})} \cdot \sum_{k=1}^{n_3} 2 (a_k^{(3)} - y_k ) \cdot \sigma^{\prime}(z_k^{(3)}) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime}(z_l^{(2)}) \cdot w_{li}^{(2)}$$
+$$\frac{\partial C}{\partial w_{ij}^{(2)}} = \sigma^{\prime} \left(z_i^{(2)} \right) \cdot a_j^{(1)} \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot w_{ki}^{(3)}$$
 
-$$\frac{\partial C}{\partial b_{i}^{(1)}} = \sigma^{\prime}(z_i^{(1)}) \cdot \sum_{k=1}^{n_3} 2 (a_k^{(3)} - y_k ) \cdot \sigma^{\prime}(z_k^{(3)}) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime}(z_l^{(2)}) \cdot w_{li}^{(2)}$$
+$$\frac{\partial C}{\partial b_{i}^{(2)}} = \sigma^{\prime} \left(z_i^{(2)} \right) \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot w_{ki}^{(3)}$$
+
+
+$$\frac{\partial C}{\partial w_{ij}^{(1)}} = \sigma^{\prime} \left(z_i^{(1)} \right) \cdot a_j^{(\text{in})} \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime} \left(z_l^{(2)} \right) \cdot w_{li}^{(2)}$$
+
+$$\frac{\partial C}{\partial b_{i}^{(1)}} = \sigma^{\prime} \left(z_i^{(1)} \right) \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime} \left(z_l^{(2)} \right) \cdot w_{li}^{(2)}$$
 
 $$\sigma(x) = \frac{1}{1+\text{e}^{-x}}$$
