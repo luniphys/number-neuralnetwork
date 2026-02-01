@@ -8,23 +8,21 @@ from PyQt6.QtWidgets import *
 
 class Pixel(QWidget):
     
-    def __init__(self, color, row, col):
+    def __init__(self, row, column):
         super().__init__()
 
+        self.color = QColor("white")
         self.row = row
-        self.col = col
+        self.column = column
 
-        self.setAutoFillBackground(True)
-        palette = self.palette()
-        palette.setColor(QPalette.ColorRole.Window, QColor(color))
-        self.setPalette(palette)
+    def paint(self, event):
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), self.color)
 
-    def mousePressEvent(self, e):
-        palette = self.palette()
-        palette.setColor(QPalette.ColorRole.Window, QColor("black"))
-        self.setPalette(palette)
-        print(self.row, self.col)
-
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.color = QColor("black")
+            self.update()
 
 
 class MainWindow(QMainWindow):
@@ -54,11 +52,11 @@ class MainWindow(QMainWindow):
         MainMenuWidget.setLayout(MainMenuLayout)
 
 
-        # Draw Field
+        # Canvas
         Canvas = QGridLayout()
         for row in range(PIXELS):
             for col in range(PIXELS):
-                Canvas.addWidget(Pixel("white", row, col), row, col)
+                Canvas.addWidget(Pixel(row, col), row, col)
         Canvas.setSpacing(False)
 
 

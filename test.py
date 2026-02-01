@@ -39,6 +39,24 @@ def get_guess(sample):
     return max(enumerate(a3), key = lambda x: x[1])[0], perc_lst
 
 
+
+def find_wrong():
+
+    count = 0
+    for sample_idx in range(SHAPE[0]):
+
+        drawn_num = test.iloc[sample_idx].name
+        guessed_num = get_guess(test.iloc[sample_idx])[0]
+
+        if drawn_num != guessed_num:
+            count += 1
+            #print("Sample", sample_idx, "wrong for number:", drawn_num, ". (Guess:", guessed_num, ")")
+
+    print("Total fails: ", count, " (out of ", SHAPE[0] ,")", sep="")
+    print("Network accuracy: ", round((SHAPE[0] - count) / SHAPE[0] * 100, 2), "%", sep="")
+
+
+
 def try_random_num():
 
     """
@@ -48,12 +66,13 @@ def try_random_num():
     ran_sample = test.iloc[rn.randint(0, SHAPE[0])]
     drawn_num = ran_sample.name
 
-    print("Drawn number is:  ", drawn_num)
+    print("\nDrawn number is:  ", drawn_num)
 
     guessed_num, guessed_lst = get_guess(ran_sample)
 
     print("Guessed number is:", guessed_num)
     print(guessed_lst)
+
 
 
 
@@ -65,14 +84,16 @@ test = test/PIX_MAX
 SHAPE = test.shape
 
 
-w1 = np.array(pd.read_csv("WeightsBiases/w1.csv"))
-b1 = np.array(pd.read_csv("WeightsBiases/b1.csv"))
-w2 = np.array(pd.read_csv("WeightsBiases/w2.csv"))
-b2 = np.array(pd.read_csv("WeightsBiases/b2.csv"))
-w3 = np.array(pd.read_csv("WeightsBiases/w3.csv"))
-b3 = np.array(pd.read_csv("WeightsBiases/b3.csv"))
+w1 = np.array(pd.read_csv("TrainedWBs/Trained_train/w1.csv"))
+b1 = np.array(pd.read_csv("TrainedWBs/Trained_train/b1.csv"))
+w2 = np.array(pd.read_csv("TrainedWBs/Trained_train/w2.csv"))
+b2 = np.array(pd.read_csv("TrainedWBs/Trained_train/b2.csv"))
+w3 = np.array(pd.read_csv("TrainedWBs/Trained_train/w3.csv"))
+b3 = np.array(pd.read_csv("TrainedWBs/Trained_train/b3.csv"))
 
 
 average_cost()
+
+find_wrong()
 
 try_random_num()
