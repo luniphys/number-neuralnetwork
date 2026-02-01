@@ -4,3 +4,4 @@ MNIST
 WeightsBiases
 TrainedWBs/Trained_test
 cost.txt
+cost_plot.py
