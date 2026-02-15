@@ -50,10 +50,6 @@ def makeRandomWeightsBiases():
     Initialization of weights & biases by (small) random values
     """
 
-    if not os.path.exists("WeightsBiases"):
-        os.mkdir("WeightsBiases")
-
-
     LAYER_SIZE = 16 # number of layer neurons (both) Later change to see performance difference?
     OUT_SIZE = 10 # number of output neurons
 
@@ -79,22 +75,10 @@ def makeRandomWeightsBiases():
 
 
 
-def ReLU(x): # Today ReLU(x) used instead of sigmoid(x)
-
-    return max(0,x)
-
-def dReLU(x):
-
-    if x <= 0:
-        return 0
-    
-    else:
-        return 1
-
-
 def sigmoid(x):
 
     return 1 / (1 + np.exp(-x))
+
 
 def dsigmoid(x):
 
@@ -351,6 +335,7 @@ if __name__ == "__main__":
 
 
     if not os.path.exists("WeightsBiases"):
+        os.mkdir("WeightsBiases")
         makeRandomWeightsBiases()
 
 

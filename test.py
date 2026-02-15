@@ -20,7 +20,7 @@ def average_cost():
         cost_lst.append(cost(drawn_num, a3))
 
     avg_cost = np.mean(cost_lst)
-    print("Average Cost", round(avg_cost, 5))
+    print("\nAverage Cost", round(avg_cost, 5))
 
 
 
@@ -52,7 +52,7 @@ def find_wrong():
             count += 1
             #print("Sample", sample_idx, "wrong for number:", drawn_num, ". (Guess:", guessed_num, ")")
 
-    print("Total fails: ", count, " (out of ", SHAPE[0] ,")", sep="")
+    print("\nTotal fails: ", count, " (out of ", SHAPE[0] ,")", sep="")
     print("Network accuracy: ", round((SHAPE[0] - count) / SHAPE[0] * 100, 2), "%", sep="")
 
 
@@ -76,24 +76,27 @@ def try_random_num():
 
 
 
-PIX_MAX = 255 # pixel strength 0-255
 
-test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None) # -""- -> 10000 x 784
-test = test/PIX_MAX
+if __name__ == "__main__":
 
-SHAPE = test.shape
+    PIX_MAX = 255 # pixel strength 0-255
 
+    test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None) # -""- -> 10000 x 784
+    test = test/PIX_MAX
 
-w1 = np.array(pd.read_csv("TrainedWBs/Trained_train/w1.csv"))
-b1 = np.array(pd.read_csv("TrainedWBs/Trained_train/b1.csv"))
-w2 = np.array(pd.read_csv("TrainedWBs/Trained_train/w2.csv"))
-b2 = np.array(pd.read_csv("TrainedWBs/Trained_train/b2.csv"))
-w3 = np.array(pd.read_csv("TrainedWBs/Trained_train/w3.csv"))
-b3 = np.array(pd.read_csv("TrainedWBs/Trained_train/b3.csv"))
+    SHAPE = test.shape
 
 
-average_cost()
+    w1 = np.array(pd.read_csv("TrainedWBs/Trained_train/w1.csv"))
+    b1 = np.array(pd.read_csv("TrainedWBs/Trained_train/b1.csv"))
+    w2 = np.array(pd.read_csv("TrainedWBs/Trained_train/w2.csv"))
+    b2 = np.array(pd.read_csv("TrainedWBs/Trained_train/b2.csv"))
+    w3 = np.array(pd.read_csv("TrainedWBs/Trained_train/w3.csv"))
+    b3 = np.array(pd.read_csv("TrainedWBs/Trained_train/b3.csv"))
 
-find_wrong()
 
-try_random_num()
+    average_cost()
+
+    find_wrong()
+
+    try_random_num()
