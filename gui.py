@@ -9,19 +9,17 @@ from PyQt6.QtWidgets import *
 class Pixel(QWidget):
     
     def __init__(self):
-
         super().__init__()
         self.color = QColor("white")
         #self.setFixedSize(15, 15)
-    
-    def paintEvent(self, event):
+
+    def paintEvent(self, event): # paintEvent is called everytime a Pixel object is called / updated
         painter = QPainter(self)
         painter.fillRect(self.rect(), self.color)
 
     def paint_black(self):
-        if self.color != QColor("black"):
-            self.color = QColor("black")
-            self.update()
+        self.color = QColor("black")
+        self.update()
 
     def clear(self):
         self.color = QColor("white")
@@ -51,13 +49,14 @@ class PixelCanvas(QWidget):
             widget.paint_black()
 
 
+
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("Number Neural Network")
-        self.setGeometry(400, 200, 500, 500)
+        self.setGeometry(400, 200, 500, 500) # position, size
         self.setFixedSize(QSize(500, 500))
 
         # Main Menu
@@ -95,32 +94,32 @@ class MainWindow(QMainWindow):
 
 
         # Draw Page
-        DrawLayout = QVBoxLayout()
+        DrawPageLayout = QVBoxLayout()
 
         DrawField = PixelCanvas(self.pixels, Canvas)
         DrawField.setLayout(Canvas)
-        DrawLayout.addWidget(DrawField)
+        DrawPageLayout.addWidget(DrawField)
 
         ClearButton = QPushButton("Clear")
-        DrawLayout.addWidget(ClearButton)
+        DrawPageLayout.addWidget(ClearButton)
         ClearButton.pressed.connect(self.ClearButton_Pressed)
 
         GuessButton = QPushButton("Guess the number")
-        DrawLayout.addWidget(GuessButton)
+        DrawPageLayout.addWidget(GuessButton)
         GuessButton.pressed.connect(self.GuessButton_Pressed)
 
         BackButton = QPushButton("Back")
-        DrawLayout.addWidget(BackButton)
+        DrawPageLayout.addWidget(BackButton)
         BackButton.pressed.connect(self.BackButton_Pressed)
 
-        DrawWidget = QWidget()
-        DrawWidget.setLayout(DrawLayout)
+        DrawPageWidget = QWidget()
+        DrawPageWidget.setLayout(DrawPageLayout)
 
 
         # Overall layout
         self.Layout = QStackedLayout()
         self.Layout.addWidget(MainMenuWidget)
-        self.Layout.addWidget(DrawWidget)
+        self.Layout.addWidget(DrawPageWidget)
 
         # Overall widget
         Widget = QWidget()
