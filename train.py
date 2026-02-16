@@ -104,14 +104,18 @@ def activation(act, weight, bias):
 
 
 
-def getActivations(inp, w1, b1, w2, b2, w3, b3):
+def getActivations(inp, w1, b1, w2, b2, w3, b3, pandasInp=True):
 
     """
     Calculation for 1 run through network. Returns actual number in first element and all activations as lists
     """
+    if pandasInp:
+        drawn_num = inp.name
+        a_in = np.array(inp)
 
-    drawn_num = inp.name
-    a_in = np.array(inp)
+    else:
+        drawn_num = None
+        a_in = np.array(inp)
 
     a1 = activation(a_in, w1, b1)
     a2 = activation(a1, w2, b2)

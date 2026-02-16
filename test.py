@@ -29,7 +29,7 @@ def get_guess(sample):
     """
     Returing the networks guessed number from an input sample 
     
-    :param a3: Description
+    :param sample: Description
     """
 
     a3 = getActivations(sample, w1, b1, w2, b2, w3, b3)[4]
