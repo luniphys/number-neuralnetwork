@@ -239,9 +239,6 @@ class MainWindow(QMainWindow):
     def BackButton_Pressed(self):
         self.Layout.setCurrentIndex(0)
 
-    def ExitButton_Pressed(self):
-        pass
-
 
 
 
