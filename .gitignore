@@ -5,3 +5,4 @@ WeightsBiases
 TrainedWBs/Trained_test
 cost.txt
 gui.ui
+guitest.py

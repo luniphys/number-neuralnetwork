@@ -1,3 +1,4 @@
+import os
 import sys
 import numpy as np
 import pandas as pd
@@ -11,7 +12,7 @@ from train import getActivations
 
 
 
-def getGuess(sample, alrTrained=True):
+def getGuess(sample, alrTrained):
 
     if alrTrained:
         w1 = np.array(pd.read_csv("TrainedWBs/Trained_train/w1.csv"))
@@ -319,7 +320,15 @@ class Ui_MainWindow(object):
         spacerItem13 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DataLayout.addItem(spacerItem13)
         self.YourNetworkButton = QPushButton(parent=self.DrawPageW)
-        self.YourNetworkButton.setEnabled(False)
+
+        selfTrainedDataExists = os.path.exists("WeightsBiases") \
+                                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b1.csv") \
+                                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b2.csv") \
+                                and os.path.isfile("WeightsBiases/w3.csv") and os.path.isfile("WeightsBiases/b3.csv")
+
+        if not selfTrainedDataExists:
+            self.YourNetworkButton.setEnabled(False)
+
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -448,6 +457,8 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.alrTrained = True
+
 
         # Page management
         self.ui.DrawButton.clicked.connect(self.DrawButton_Clicked)
@@ -462,6 +473,11 @@ class MainWindow(QMainWindow):
         # Pretrained & Your Network Button
         self.ui.PretrainedButton.clicked.connect(self.PretrainedButton_Clicked)
         self.ui.YourNetworkButton.clicked.connect(self.YourNetworkButton_Clicked)
+
+        self.PretrainedYourNetworkButtonGroup = QButtonGroup()
+        self.PretrainedYourNetworkButtonGroup.setExclusive(True)
+        self.PretrainedYourNetworkButtonGroup.addButton(self.ui.PretrainedButton)
+        self.PretrainedYourNetworkButtonGroup.addButton(self.ui.YourNetworkButton)
 
         # Start Training Button
         self.ui.StartButton.clicked.connect(self.StartButton_Clicked)
@@ -485,20 +501,20 @@ class MainWindow(QMainWindow):
         
     def GuessButton_Clicked(self):
         pixels = self.ui.Canvas.getPixels()
-        guessed_num, perc_lst = getGuess(pixels)
+        guessed_num, perc_lst = getGuess(pixels, self.alrTrained)
         self.ui.ResultLabel.setText("Guess: " + str(guessed_num))
         self.ui.BarChart.updateValues(perc_lst)
     
     # Pretrained & Your Network Button
     def PretrainedButton_Clicked(self):
-        print("Pretrained")
+        self.alrTrained = True
 
     def YourNetworkButton_Clicked(self):
-        print("Your Network")
+        self.alrTrained = False
 
     # Start Training Button
     def StartButton_Clicked(self):
-        print("Start Training")
+        pass
 
 
 
