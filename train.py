@@ -52,6 +52,10 @@ def makeRandomWeightsBiases():
 
     LAYER_SIZE = 16 # number of layer neurons (both) Later change to see performance difference?
     OUT_SIZE = 10 # number of output neurons
+    SHAPE = (60000, 784) # dimensions of training data
+
+    if not os.path.exists("WeightsBiases"):
+        os.mkdir("WeightsBiases")
 
     w1 = pd.DataFrame(np.random.randn(LAYER_SIZE, SHAPE[1]) * np.sqrt(1 / SHAPE[1])) # 16 x 784
     w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
@@ -149,6 +153,8 @@ def training():
     """
     Training the weights and biases with the complete dataset
     """
+
+    SHAPE = (60000, 784)
 
     w1 = np.array(pd.read_csv("WeightsBiases/w1.csv"))
     b1 = np.array(pd.read_csv("WeightsBiases/b1.csv"))
@@ -335,15 +341,19 @@ if __name__ == "__main__":
     train = pd.read_csv('MNIST/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = pixel number 0-784 (28*28=784) -> 60000 x 784
     train = train/PIX_MAX # set scale 0-1
 
-    SHAPE = train.shape
+    SHAPE = train.shape # (60000, 784)
 
 
-    if not os.path.exists("WeightsBiases"):
-        os.mkdir("WeightsBiases")
+    WBExists =  os.path.exists("WeightsBiases") \
+                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b1.csv") \
+                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b2.csv") \
+                and os.path.isfile("WeightsBiases/w3.csv") and os.path.isfile("WeightsBiases/b3.csv")
+
+    if not WBExists:
         makeRandomWeightsBiases()
 
 
     cycles = 250
     for i in range(cycles):
-        print(i)
+        print("Training cycle:", i)
         training()

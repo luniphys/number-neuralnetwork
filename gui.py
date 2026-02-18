@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 import numpy as np
 import pandas as pd
 
@@ -8,7 +9,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCharts import *
 
-from train import getActivations
+from train import makeRandomWeightsBiases, getActivations
 
 
 
@@ -151,6 +152,11 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.stackedWidget = QStackedWidget(parent=self.centralwidget)
         self.stackedWidget.setObjectName("stackedWidget")
+
+        selfTrainedDataExists = os.path.exists("WeightsBiases") \
+                                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b1.csv") \
+                                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b2.csv") \
+                                and os.path.isfile("WeightsBiases/w3.csv") and os.path.isfile("WeightsBiases/b3.csv")
 
         # Main Menu
         self.MainMenuW = QWidget()
@@ -320,15 +326,8 @@ class Ui_MainWindow(object):
         spacerItem13 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DataLayout.addItem(spacerItem13)
         self.YourNetworkButton = QPushButton(parent=self.DrawPageW)
-
-        selfTrainedDataExists = os.path.exists("WeightsBiases") \
-                                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b1.csv") \
-                                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b2.csv") \
-                                and os.path.isfile("WeightsBiases/w3.csv") and os.path.isfile("WeightsBiases/b3.csv")
-
         if not selfTrainedDataExists:
             self.YourNetworkButton.setEnabled(False)
-
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -346,19 +345,9 @@ class Ui_MainWindow(object):
         self.BackExitLayout.setSizeConstraint(QLayout.SizeConstraint.SetMaximumSize)
         self.BackExitLayout.setObjectName("BackExitLayout")
         self.BackButtonDraw = QPushButton(parent=self.DrawPageW)
-        font = QFont()
-        font.setPointSize(11)
-        font.setBold(False)
-        font.setWeight(50)
-        self.BackButtonDraw.setFont(font)
         self.BackButtonDraw.setObjectName("BackButtonDraw")
         self.BackExitLayout.addWidget(self.BackButtonDraw)
         self.ExitButtonDraw = QPushButton(parent=self.DrawPageW)
-        font = QFont()
-        font.setPointSize(11)
-        font.setBold(False)
-        font.setWeight(50)
-        self.ExitButtonDraw.setFont(font)
         self.ExitButtonDraw.setObjectName("ExitButtonDraw")
         self.BackExitLayout.addWidget(self.ExitButtonDraw)
         self.DrawPageL.addLayout(self.BackExitLayout)
@@ -373,6 +362,7 @@ class Ui_MainWindow(object):
         self.TrainingPageL = QVBoxLayout()
         self.TrainingPageL.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
         self.TrainingPageL.setObjectName("TrainingPageL")
+
         self.TrainingLabel = QLabel(parent=self.TrainingPageW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -382,25 +372,79 @@ class Ui_MainWindow(object):
         self.TrainingLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.TrainingLabel.setObjectName("TrainingLabel")
         self.TrainingPageL.addWidget(self.TrainingLabel)
+
         spacerItem16 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.TrainingPageL.addItem(spacerItem16)
-        self.StartLayout = QHBoxLayout()
-        self.StartLayout.setObjectName("StartLayout")
-        spacerItem17 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.StartLayout.addItem(spacerItem17)
-        self.StartButton = QPushButton(parent=self.TrainingPageW)
+
+        self.StopStartLayout = QHBoxLayout()
+        self.StopStartLayout.setObjectName("StopStartLayout")
+        spacerItem22 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.StopStartLayout.addItem(spacerItem22)
+        self.StopButton = QPushButton(parent=self.DrawPageW)
+        if not selfTrainedDataExists:
+            self.StopButton.setEnabled(False)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.StopButton.sizePolicy().hasHeightForWidth())
+        self.StopButton.setSizePolicy(sizePolicy)
+        self.StopButton.setCheckable(True)
+        self.StopButton.setObjectName("StopButton")
+        self.StopStartLayout.addWidget(self.StopButton)
+        spacerItem23 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.ClearGuessLayout.addItem(spacerItem23)
+        self.StartButton = QPushButton(parent=self.DrawPageW)
+        if not selfTrainedDataExists:
+            self.StartButton.setEnabled(False)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.StartButton.sizePolicy().hasHeightForWidth())
         self.StartButton.setSizePolicy(sizePolicy)
+        self.StartButton.setCheckable(True)
         self.StartButton.setObjectName("StartButton")
-        self.StartLayout.addWidget(self.StartButton)
+        self.StopStartLayout.addWidget(self.StartButton)
+        spacerItem24 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.StopStartLayout.addItem(spacerItem24)
+        self.TrainingPageL.addLayout(self.StopStartLayout)
+
+        self.InitializeLayout = QHBoxLayout()
+        self.InitializeLayout.setObjectName("InitializeLayout")
+        spacerItem17 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.InitializeLayout.addItem(spacerItem17)
+        self.InitializeButton = QPushButton(parent=self.TrainingPageW)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.InitializeButton.sizePolicy().hasHeightForWidth())
+        self.InitializeButton.setSizePolicy(sizePolicy)
+        self.InitializeButton.setObjectName("InitializeButton")
+        self.InitializeLayout.addWidget(self.InitializeButton)
         spacerItem18 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.StartLayout.addItem(spacerItem18)
-        self.TrainingPageL.addLayout(self.StartLayout)
+        self.InitializeLayout.addItem(spacerItem18)
+        self.TrainingPageL.addLayout(self.InitializeLayout)
+
+        self.DeleteLayout = QHBoxLayout()
+        self.DeleteLayout.setObjectName("DeleteLayout")
+        spacerItem25 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.DeleteLayout.addItem(spacerItem25)
+        self.DeleteButton = QPushButton(parent=self.TrainingPageW)
+        if not selfTrainedDataExists:
+            self.DeleteButton.setEnabled(False)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.DeleteButton.sizePolicy().hasHeightForWidth())
+        self.DeleteButton.setSizePolicy(sizePolicy)
+        self.DeleteButton.setObjectName("DeleteButton")
+        self.DeleteLayout.addWidget(self.DeleteButton)
+        spacerItem26 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.DeleteLayout.addItem(spacerItem26)
+        self.TrainingPageL.addLayout(self.DeleteLayout)
+
         spacerItem19 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.TrainingPageL.addItem(spacerItem19)
+
         self.BackButtonTrainingLayout = QHBoxLayout()
         self.BackButtonTrainingLayout.setObjectName("BackButtonTrainingLayout")
         spacerItem20 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -413,11 +457,15 @@ class Ui_MainWindow(object):
         self.BackButtonTraining.setSizePolicy(sizePolicy)
         self.BackButtonTraining.setObjectName("BackButtonTraining")
         self.BackButtonTrainingLayout.addWidget(self.BackButtonTraining)
+
         spacerItem21 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.BackButtonTrainingLayout.addItem(spacerItem21)
+
         self.TrainingPageL.addLayout(self.BackButtonTrainingLayout)
         self.verticalLayout_5.addLayout(self.TrainingPageL)
         self.stackedWidget.addWidget(self.TrainingPageW)
+
+
 
         self.verticalLayout.addWidget(self.stackedWidget)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -438,13 +486,16 @@ class Ui_MainWindow(object):
         self.ExitButtonMain.setText(_translate("MainWindow", "Exit"))
         self.ClearButton.setText(_translate("MainWindow", "Clear"))
         self.GuessButton.setText(_translate("MainWindow", "Guess the number!"))
-        self.DataLabel.setText(_translate("MainWindow", "Choose between a pretrained network or the network that you have trained"))
+        self.DataLabel.setText(_translate("MainWindow", "Choose between a pretrained network or a network you have trained"))
         self.PretrainedButton.setText(_translate("MainWindow", "Pretrained"))
         self.YourNetworkButton.setText(_translate("MainWindow", "Your Network"))
         self.BackButtonDraw.setText(_translate("MainWindow", "Back"))
         self.ExitButtonDraw.setText(_translate("MainWindow", "Exit"))
         self.TrainingLabel.setText(_translate("MainWindow", "Training Info"))
-        self.StartButton.setText(_translate("MainWindow", "Start Training!"))
+        self.StopButton.setText(_translate("MainWindow", "Stop Training"))
+        self.StartButton.setText(_translate("MainWindow", "Start Training"))
+        self.InitializeButton.setText(_translate("MainWindow", "Initialize Randomly"))
+        self.DeleteButton.setText(_translate("MainWindow", "Delete Network"))
         self.BackButtonTraining.setText(_translate("MainWindow", "Back"))
 
 
@@ -479,8 +530,18 @@ class MainWindow(QMainWindow):
         self.PretrainedYourNetworkButtonGroup.addButton(self.ui.PretrainedButton)
         self.PretrainedYourNetworkButtonGroup.addButton(self.ui.YourNetworkButton)
 
-        # Start Training Button
+        # Stop & Start Training Button
+        self.ui.StopButton.clicked.connect(self.StopButton_Clicked)
         self.ui.StartButton.clicked.connect(self.StartButton_Clicked)
+
+        self.StopStartButtonGroup = QButtonGroup()
+        self.StopStartButtonGroup.setExclusive(True)
+        self.StopStartButtonGroup.addButton(self.ui.StopButton)
+        self.StopStartButtonGroup.addButton(self.ui.StartButton)
+
+        # Initialize & Delete Button
+        self.ui.InitializeButton.clicked.connect(self.InitializeButton_Clicked)
+        self.ui.DeleteButton.clicked.connect(self.DeleteButton_Clicked)
 
 
     # Page management
@@ -512,10 +573,36 @@ class MainWindow(QMainWindow):
     def YourNetworkButton_Clicked(self):
         self.alrTrained = False
 
-    # Start Training Button
-    def StartButton_Clicked(self):
+    # Stop & Start Training Button
+    def StopButton_Clicked(self):
         pass
 
+    def StartButton_Clicked(self):
+        self.ui.StopButton.setEnabled(True)
+
+    def InitializeButton_Clicked(self):
+        makeRandomWeightsBiases()
+        self.ui.StartButton.setEnabled(True)
+        self.ui.DeleteButton.setEnabled(True)
+        self.ui.InitializeButton.setEnabled(False)
+        self.ui.YourNetworkButton.setEnabled(True)
+
+
+    def DeleteButton_Clicked(self):
+        if os.path.exists("WeightsBiases"):
+            shutil.rmtree("WeightsBiases")
+        self.ui.StopButton.setChecked(False)
+        self.ui.StartButton.setChecked(False)
+        self.ui.PretrainedButton.setChecked(True)
+        self.ui.StopButton.setEnabled(False)
+        self.ui.StartButton.setEnabled(False)
+        self.ui.InitializeButton.setEnabled(True)
+        self.ui.YourNetworkButton.setEnabled(False)
+        self.ui.DeleteButton.setEnabled(False)
+        
+
+
+        
 
 
 if __name__ == "__main__":
