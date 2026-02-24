@@ -5,6 +5,7 @@ import requests as req
 import os
 import shutil
 import zipfile as zipf
+import matplotlib.pyplot as plt
 
 
 
@@ -148,13 +149,13 @@ def cost(drawn_num, a3):
 
 
 
-def training():
+def training(data):
 
     """
     Training the weights and biases with the complete dataset
     """
 
-    SHAPE = (60000, 784)
+    SHAPE = data.shape
 
     w1 = np.array(pd.read_csv("WeightsBiases/w1.csv"))
     b1 = np.array(pd.read_csv("WeightsBiases/b1.csv"))
@@ -194,9 +195,9 @@ def training():
     cost_lst = list()
     for sample_idx in range(SHAPE[0]):
 
-        #print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
+        print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
 
-        drawn_num, a_in, a1, a2, a3 = getActivations(train.iloc[sample_idx], w1, b1, w2, b2, w3, b3)
+        drawn_num, a_in, a1, a2, a3 = getActivations(data.iloc[sample_idx], w1, b1, w2, b2, w3, b3)
 
         dw1, db1, dw2, db2, dw3, db3 = gradient(w1, b1, w2, b2, w3, b3, a_in, a1, a2, a3, drawn_num)
 
@@ -248,6 +249,12 @@ def training():
     avg_cost = np.mean(cost_lst)
     with open("cost.txt", "a", encoding="utf-8") as file:
         file.write(f"{avg_cost}" + "\n")
+
+    plt.plot(cost_lst)
+    plt.ylabel("Cost")
+    plt.xlabel("Training cycles")
+    plt.grid()
+    plt.savefig("cost_plot.jpg")
 
 
     w1 = pd.DataFrame(w1)
@@ -356,4 +363,4 @@ if __name__ == "__main__":
     cycles = 250
     for i in range(cycles):
         print("Training cycle:", i)
-        training()
+        training(train)

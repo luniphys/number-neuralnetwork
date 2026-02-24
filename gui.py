@@ -9,7 +9,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCharts import *
 
-from train import makeRandomWeightsBiases, getActivations
+from train import makeRandomWeightsBiases, getActivations, training
 
 
 
@@ -132,6 +132,10 @@ class ProbabilityBarChart(QWidget):
         for idx, val in enumerate(values):
             self.barset.replace(idx, val)
 
+
+
+class CostPlot(QWidget):
+    pass
 
 
 
@@ -363,8 +367,25 @@ class Ui_MainWindow(object):
         self.TrainingPageL.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
         self.TrainingPageL.setObjectName("TrainingPageL")
 
-        self.TrainingLabel = QLabel(parent=self.TrainingPageW)
+        self.CostPlotLabel = QLabel()
+        if not os.path.isfile("cost_plot.jpg"):
+            self.CostPlot = QPixmap("cost_plot_empty.jpg")
+        else:
+            self.CostPlot = QPixmap("cost_plot.jpg")
+        self.CostPlotLabel.setPixmap(self.CostPlot)
+        self.CostPlotLabel.setScaledContents(True)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        self.CostPlotLabel.setSizePolicy(sizePolicy)
+        self.CostPlotLabel.setObjectName("CostPlotLabel")
+        self.TrainingPageL.addWidget(self.CostPlotLabel)
+
+        spacerItem52 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.TrainingPageL.addItem(spacerItem52)
+
+        self.TrainingLabel = QLabel(parent=self.TrainingPageW)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.TrainingLabel.sizePolicy().hasHeightForWidth())
@@ -372,6 +393,10 @@ class Ui_MainWindow(object):
         self.TrainingLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.TrainingLabel.setObjectName("TrainingLabel")
         self.TrainingPageL.addWidget(self.TrainingLabel)
+
+        self.ProgressBar = QProgressBar(parent=self.TrainingPageW)
+        self.ProgressBar.setObjectName("ProgressBar")
+        self.TrainingPageL.addWidget(self.ProgressBar)
 
         spacerItem16 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.TrainingPageL.addItem(spacerItem16)
@@ -413,6 +438,8 @@ class Ui_MainWindow(object):
         spacerItem17 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.InitializeLayout.addItem(spacerItem17)
         self.InitializeButton = QPushButton(parent=self.TrainingPageW)
+        if selfTrainedDataExists:
+            self.InitializeButton.setEnabled(False)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -510,6 +537,10 @@ class MainWindow(QMainWindow):
 
         self.alrTrained = True
 
+        PIX_MAX = 255
+        self.test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None)
+        self.test = self.test/PIX_MAX
+
 
         # Page management
         self.ui.DrawButton.clicked.connect(self.DrawButton_Clicked)
@@ -579,6 +610,9 @@ class MainWindow(QMainWindow):
 
     def StartButton_Clicked(self):
         self.ui.StopButton.setEnabled(True)
+        for _ in range(1000):
+            training(self.test)
+            self.ui.CostPlot = QPixmap("cost_plot.jpg")
 
     def InitializeButton_Clicked(self):
         makeRandomWeightsBiases()
@@ -611,3 +645,6 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+
+
+    #TODO: only necessary packages
