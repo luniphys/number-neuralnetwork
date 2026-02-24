@@ -250,7 +250,11 @@ def training(data):
     with open("cost.txt", "a", encoding="utf-8") as file:
         file.write(f"{avg_cost}" + "\n")
 
-    plt.plot(cost_lst)
+    with open("cost.txt", "r", encoding="utf-8") as file:
+        avg_cost_lst = file.readlines()
+
+    avg_cost_lst = [float(line.strip()) for line in avg_cost_lst]
+    plt.plot(avg_cost_lst)
     plt.ylabel("Cost")
     plt.xlabel("Training cycles")
     plt.grid()
@@ -347,8 +351,6 @@ if __name__ == "__main__":
 
     train = pd.read_csv('MNIST/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = pixel number 0-784 (28*28=784) -> 60000 x 784
     train = train/PIX_MAX # set scale 0-1
-
-    SHAPE = train.shape # (60000, 784)
 
 
     WBExists =  os.path.exists("WeightsBiases") \

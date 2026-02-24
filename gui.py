@@ -369,7 +369,7 @@ class Ui_MainWindow(object):
 
         self.CostPlotLabel = QLabel()
         if not os.path.isfile("cost_plot.jpg"):
-            self.CostPlot = QPixmap("cost_plot_empty.jpg")
+            self.CostPlot = QPixmap("network_image.jpg")
         else:
             self.CostPlot = QPixmap("cost_plot.jpg")
         self.CostPlotLabel.setPixmap(self.CostPlot)
@@ -625,6 +625,12 @@ class MainWindow(QMainWindow):
     def DeleteButton_Clicked(self):
         if os.path.exists("WeightsBiases"):
             shutil.rmtree("WeightsBiases")
+        if os.path.isfile("cost.txt"):
+            os.remove("cost.txt")
+        if os.path.isfile("cost_plot.jpg"):
+            os.remove("cost_plot.jpg")
+        self.ui.CostPlot = QPixmap("cost_plot_empty.jpg")
+        
         self.ui.StopButton.setChecked(False)
         self.ui.StartButton.setChecked(False)
         self.ui.PretrainedButton.setChecked(True)
