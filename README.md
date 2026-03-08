@@ -2,9 +2,9 @@
 
 This network will detect drawn numbers based on the MNIST dataset. In this code I will only implement basic Python functions and math (no nerual network/AI packages).
 
-(Since training the weights and biases takes a couple of hours, an already trained set is provided.) 
+(Since training the weights and biases takes a couple of hours, an already trained set is provided.)
 
-### Reference 3Blue1Brown 
+### Reference 3Blue1Brown
 
 The mathematics and understanding behind the code and this network in general are based on the neural network series by 3Blue1Brown on YouTube.
 
@@ -12,7 +12,7 @@ https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
 
 ### Mathematics & Theory
 
-![image](network_image.jpg)
+![image](Images/network_image.jpg)
 
 The MNIST dataset provides a 28 x 28 = 784 pixel grid which are used as input neurons. Each pixel/neuron represents how "painted" the pixel is from 0-1. The two hidden layer sizes $n_1 = n_2 = 16$ are arbitrary. The activation of the last layer $a^{(3)}$ represents how sure the network is about each number being the drawn one.
 
@@ -32,11 +32,9 @@ $$\frac{\partial C}{\partial w_{ij}^{(3)}} = 2 \left(a_i^{(3)} - y_i \right) \cd
 
 $$\frac{\partial C}{\partial b_{i}^{(3)}} = 2 \left(a_i^{(3)} - y_i \right) \cdot \sigma^{\prime} \left(z_i^{(3)} \right)$$
 
-
 $$\frac{\partial C}{\partial w_{ij}^{(2)}} = \sigma^{\prime} \left(z_i^{(2)} \right) \cdot a_j^{(1)} \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot w_{ki}^{(3)}$$
 
 $$\frac{\partial C}{\partial b_{i}^{(2)}} = \sigma^{\prime} \left(z_i^{(2)} \right) \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot w_{ki}^{(3)}$$
-
 
 $$\frac{\partial C}{\partial w_{ij}^{(1)}} = \sigma^{\prime} \left(z_i^{(1)} \right) \cdot a_j^{(\text{in})} \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime} \left(z_l^{(2)} \right) \cdot w_{li}^{(2)}$$
 

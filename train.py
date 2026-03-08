@@ -258,7 +258,7 @@ def training(data):
     plt.ylabel("Cost")
     plt.xlabel("Training cycles")
     plt.grid()
-    plt.savefig("cost_plot.jpg")
+    plt.savefig("Images/cost_plot.jpg")
 
 
     w1 = pd.DataFrame(w1)

@@ -368,10 +368,10 @@ class Ui_MainWindow(object):
         self.TrainingPageL.setObjectName("TrainingPageL")
 
         self.CostPlotLabel = QLabel()
-        if not os.path.isfile("cost_plot.jpg"):
-            self.CostPlot = QPixmap("network_image.jpg")
+        if not os.path.isfile("Images/cost_plot.jpg"):
+            self.CostPlot = QPixmap("Images/network_image.jpg")
         else:
-            self.CostPlot = QPixmap("cost_plot.jpg")
+            self.CostPlot = QPixmap("Images/cost_plot.jpg")
         self.CostPlotLabel.setPixmap(self.CostPlot)
         self.CostPlotLabel.setScaledContents(True)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
@@ -612,7 +612,7 @@ class MainWindow(QMainWindow):
         self.ui.StopButton.setEnabled(True)
         for _ in range(1000):
             training(self.test)
-            self.ui.CostPlot = QPixmap("cost_plot.jpg")
+            self.ui.CostPlot = QPixmap("Images/cost_plot.jpg")
 
     def InitializeButton_Clicked(self):
         makeRandomWeightsBiases()
@@ -627,9 +627,9 @@ class MainWindow(QMainWindow):
             shutil.rmtree("WeightsBiases")
         if os.path.isfile("cost.txt"):
             os.remove("cost.txt")
-        if os.path.isfile("cost_plot.jpg"):
-            os.remove("cost_plot.jpg")
-        self.ui.CostPlot = QPixmap("cost_plot_empty.jpg")
+        if os.path.isfile("Images/cost_plot.jpg"):
+            os.remove("Images/cost_plot.jpg")
+        self.ui.CostPlot = QPixmap("Images/cost_plot_empty.jpg")
         
         self.ui.StopButton.setChecked(False)
         self.ui.StartButton.setChecked(False)
