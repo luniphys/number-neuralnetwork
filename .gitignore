@@ -1,9 +1,7 @@
-__pycache__
 venv/
+__pycache__
 MNIST
 WeightsBiases
 TrainedWBs/Trained_test
-cost.txt
+Cost
 gui.ui
-cost_plot.py
-testfile.py

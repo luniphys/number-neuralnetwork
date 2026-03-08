@@ -247,10 +247,10 @@ def training(data):
 
 
     avg_cost = np.mean(cost_lst)
-    with open("cost.txt", "a", encoding="utf-8") as file:
+    with open("Cost/cost.txt", "a", encoding="utf-8") as file:
         file.write(f"{avg_cost}" + "\n")
 
-    with open("cost.txt", "r", encoding="utf-8") as file:
+    with open("Cost/cost.txt", "r", encoding="utf-8") as file:
         avg_cost_lst = file.readlines()
 
     avg_cost_lst = [float(line.strip()) for line in avg_cost_lst]

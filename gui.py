@@ -625,8 +625,8 @@ class MainWindow(QMainWindow):
     def DeleteButton_Clicked(self):
         if os.path.exists("WeightsBiases"):
             shutil.rmtree("WeightsBiases")
-        if os.path.isfile("cost.txt"):
-            os.remove("cost.txt")
+        if os.path.isfile("Cost/cost.txt"):
+            os.remove("Cost/cost.txt")
         if os.path.isfile("Images/cost_plot.jpg"):
             os.remove("Images/cost_plot.jpg")
         self.ui.CostPlot = QPixmap("Images/cost_plot_empty.jpg")
