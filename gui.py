@@ -369,7 +369,7 @@ class Ui_MainWindow(object):
 
         self.CostPlotLabel = QLabel()
         if not os.path.isfile("Images/cost_plot.jpg"):
-            self.CostPlot = QPixmap("Images/network_image.jpg")
+            self.CostPlot = QPixmap("Images/cost_plot_empty.jpg")
         else:
             self.CostPlot = QPixmap("Images/cost_plot.jpg")
         self.CostPlotLabel.setPixmap(self.CostPlot)
@@ -630,6 +630,8 @@ class MainWindow(QMainWindow):
         if os.path.isfile("Images/cost_plot.jpg"):
             os.remove("Images/cost_plot.jpg")
         self.ui.CostPlot = QPixmap("Images/cost_plot_empty.jpg")
+
+        self.PretrainedButton_Clicked()
         
         self.ui.StopButton.setChecked(False)
         self.ui.StartButton.setChecked(False)

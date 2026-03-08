@@ -246,6 +246,9 @@ def training(data):
         cost_lst.append(cost(drawn_num, a3))
 
 
+    if not os.path.exists("Cost"):
+        os.mkdir("Cost")
+
     avg_cost = np.mean(cost_lst)
     with open("Cost/cost.txt", "a", encoding="utf-8") as file:
         file.write(f"{avg_cost}" + "\n")
@@ -361,8 +364,6 @@ if __name__ == "__main__":
     if not WBExists:
         makeRandomWeightsBiases()
 
-    if not os.path.exists("Cost"):
-        os.mkdir("Cost")
 
     cycles = 250
     for i in range(cycles):
