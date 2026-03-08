@@ -361,6 +361,8 @@ if __name__ == "__main__":
     if not WBExists:
         makeRandomWeightsBiases()
 
+    if not os.path.exists("Cost"):
+        os.mkdir("Cost")
 
     cycles = 250
     for i in range(cycles):
