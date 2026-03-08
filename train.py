@@ -373,3 +373,7 @@ if __name__ == "__main__":
         training(train)
         end = time.time()
         print(f"Cycle {i} took {round((end-start) / 60, 2)} min.")
+
+
+
+# Total training time for training data in 281 cycles: ~ 60 hours

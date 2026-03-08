@@ -19,23 +19,58 @@
   </head>
   <body>
     <h1 class="head">Neural Network for Handwritten Digits</h1>
+    <p>example image of drawn number on canvas</p>
     <img src="Images/network_image.jpg" alt="Neural Network Image" />
+    <p>Draw / Training Buttons</p>
     <p class="info">
       Welcome to my little AI project, where I've created and trained a neural
-      network from scratch only by math and basic programming.<br/>
-      This network is capable of detecting handwritten numbers between 0-9 by either an already
-      trained network or <em>YOUR</em> own network.<br /><br />
+      network from scratch only by math and basic programming.<br />
+      This network is capable of detecting handwritten numbers between 0-9. You
+      can choose between a pretrained network or train the network
+      <em>YOURSELF</em>.<br />
       The pretrained network has been trained by the
-      <em><a href="https://en.wikipedia.org/wiki/MNIST_database" target="_blank">MNIST</a></em>
-      dataset for about 60 hours. The MNIST dataset consists of 60.000 handwritten
-      digits within a 28x28 pixel canvas. Above you can see its layout. It has
-      784 input neurons, 1 for each pixel of the 28x28 canvas
+      <em
+        ><a href="https://en.wikipedia.org/wiki/MNIST_database" target="_blank"
+          >MNIST</a
+        ></em
+      >
+      dataset for about 60 hours. This dataset consists of 60.000 digits,
+      handwritten on a 28x28 pixel canvas. <br /><br />
+      Above, you can see the networks layout. It has 784 (=28x28) input neurons,
+      which represent the font weight of a given pixel. These inputs run through
+      the network, leading to new
+      <em>activation values</em> a<sup>(i)</sup> in the next layer. This goes on
+      until we reach the output layer where the activation values represent how
+      likely the network thinks a certain number is the one that was drawn.
+      <br /><br />
+      The activation values are determined by rather simple matrix
+      multiplication with the weights W<sup>(i)</sup> and biases
+      b<sup>(i)</sup>. At the output layer we want to reduce the activation
+      values for wrong numbers and raise the one for the correct number. For
+      this, the weights and biases undergo value changes depending on complex
+      mathematics (see
+      <a
+        href="https://github.com/luniphys/number-neuralnetwork/blob/main/README.md"
+        target="_blank"
+        >README</a
+      >). This process is referred to as <em>backpropagation</em>. When you
+      train your own network you will start with random values for all 13.002
+      weights and biases, which then can be trained via backpropagation with
+      some included test data. You should see that it doesn't need that much
+      training cycles to get promising results. <br /><br /><br />
+
+      Thanks for trying out my program :) <em>luniphys</em>
     </p>
-    <p>Buttons</p>
     <p class="reference">
       The mathematical theory behind this project was heavily inspired by the
-      legend 3Blue1Browns' series:
-      <em><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi" target="_blank">NEURAL NETWORKS</a></em>
+      legend 3Blue1Browns' series
+      <em
+        ><a
+          href="https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi"
+          target="_blank"
+          >NEURAL NETWORKS</a
+        ></em
+      >
     </p>
   </body>
 </html>
