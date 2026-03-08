@@ -6,6 +6,7 @@ import os
 import shutil
 import zipfile as zipf
 import matplotlib.pyplot as plt
+import time
 
 
 
@@ -195,7 +196,7 @@ def training(data):
     cost_lst = list()
     for sample_idx in range(SHAPE[0]):
 
-        print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
+        #print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
 
         drawn_num, a_in, a1, a2, a3 = getActivations(data.iloc[sample_idx], w1, b1, w2, b2, w3, b3)
 
@@ -368,4 +369,7 @@ if __name__ == "__main__":
     cycles = 250
     for i in range(cycles):
         print("Training cycle:", i)
+        start = time.time()
         training(train)
+        end = time.time()
+        print(f"Cycle {i} took {round((end-start) / 60, 2)} min.")
