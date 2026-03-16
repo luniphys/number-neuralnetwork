@@ -25,6 +25,7 @@ img {
   width: 50%;
 }
 .info {
+  font-size: large;
   margin-left: 10%;
   margin-right: 10%;
   border-radius: 0.3vw;
