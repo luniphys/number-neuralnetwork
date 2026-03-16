@@ -51,6 +51,8 @@ class Canvas(QWidget):
         self.length = round(self.window_size / self.PIXELSIZE)
         self.setMouseTracking(True)
         self.setMinimumSize(0, 0)
+        self.lastPos = None
+        self.BrushRadius = 1
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -61,12 +63,20 @@ class Canvas(QWidget):
             for col in range(self.PIXELSIZE):
                 color = QColor("white") if self.pixels[idx] == 0 else QColor("black")
                 painter.fillRect(col * self.length, row * self.length, self.length + 1, self.length + 1, color)
+
+                # Grid
+                #painter.setPen(QPen(QColor("lightgray"), 1))
+                #painter.drawRect(col * self.length, row * self.length, self.length, self.length)
+
                 idx += 1
 
     def mouseMoveEvent(self, event):
-        self.paint(event)
+        if self.lastPos is not None:
+            self.interpolate_paint(self.lastPos, event.position(), event)
+        self.lastPos = event.position()
 
     def mousePressEvent(self, event):
+        self.lastPos = event.position()
         self.paint(event)
 
     def paint(self, event):
@@ -77,22 +87,71 @@ class Canvas(QWidget):
 
         if 0 <= x < self.PIXELSIZE and 0 <= y < self.PIXELSIZE:
             if event.buttons() & Qt.MouseButton.LeftButton:
-                for dx, dy in [(0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)]:
-                    nx = x + dx
-                    ny = y + dy
-                    if 0 <= nx < self.PIXELSIZE and 0 <= ny < self.PIXELSIZE:
-                        self.pixels[ny * self.PIXELSIZE + nx] = 1
+                self.drawBrush(x, y)
             elif event.buttons() & Qt.MouseButton.RightButton:
                 self.pixels[y * self.PIXELSIZE + x] = 0
             self.update()
 
+    def interpolate_paint(self, start_pos, end_pos, event):
+        self.length = round(min(self.width(), self.height()) / self.PIXELSIZE)
+
+        dx = end_pos.x() - start_pos.x()
+        dy = end_pos.y() - start_pos.y()
+        coverage = (dx**2 + dy**2)**0.5
+
+        if coverage < 1:
+            return
+        
+        steps = max(int(coverage) + 1, 2)
+
+        for i in range(steps):
+            t = i / steps
+            x = int((start_pos.x() + dx * t) // self.length)
+            y = int((start_pos.y() + dy * t) // self.length)
+
+            if 0 <= x < self.PIXELSIZE and 0 <= y < self.PIXELSIZE:
+                if event.buttons() & Qt.MouseButton.LeftButton:
+                    self.drawBrush(x, y)
+                elif event.buttons() & Qt.MouseButton.RightButton:
+                    self.pixels[y * self.PIXELSIZE + x] = 0
+                self.update()
+
+    def drawBrush(self, x, y):
+        for dx in range(-self.BrushRadius, self.BrushRadius + 1):
+            for dy in range(-self.BrushRadius, self.BrushRadius + 1):
+                coverage = (dx**2 + dy**2)**0.5
+                if coverage <= self.BrushRadius:
+                    nx = x + dx
+                    ny = y + dy
+                    if 0 <= nx < self.PIXELSIZE and 0 <= ny < self.PIXELSIZE:
+                        self.pixels[ny * self.PIXELSIZE + nx] = 1
+    
+
     def clearAll(self):
-        for idx in range(self.PIXELSIZE**2):
-            self.pixels[idx] = 0
+        self.pixels = [0 for _ in range(self.PIXELSIZE**2)]
         self.update()
 
     def getPixels(self):
-        return self.pixels
+
+        pixels_array = np.array(self.pixels, dtype=np.float32)
+
+        pixel_matrix = pixels_array.reshape(self.PIXELSIZE, self.PIXELSIZE)
+        rows = np.any(pixel_matrix, axis=1)
+        cols = np.any(pixel_matrix, axis=0)
+
+        if not rows.any() or not cols.any():
+            return self.pixels
+        
+        rmin, rmax = np.where(rows)[0][[0, -1]]
+        cmin, cmax = np.where(cols)[0][[0, -1]]
+
+        digit = pixel_matrix[rmin:rmax+1, cmin:cmax+1]
+
+        target_size = 20
+        old_size = max(digit.shape)
+        scale = target_size / old_size if old_size > 0 else 1
+
+        return (pixels_array * 255).astype(int).tolist()
 
 
 
@@ -361,7 +420,7 @@ class Ui_MainWindow(object):
         spacerItem14 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DataLayout.addItem(spacerItem14)
         self.DrawPageL.addLayout(self.DataLayout)
-        
+
         spacerItem15 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DrawPageL.addItem(spacerItem15)
 
