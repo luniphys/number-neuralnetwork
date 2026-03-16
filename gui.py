@@ -46,21 +46,21 @@ class Canvas(QWidget):
     def __init__(self):
         super().__init__()
         self.window_size = 500
-        #self.setFixedSize(QSize(self.window_size, self.window_size))
         self.PIXELSIZE = 28
         self.pixels = [0 for _ in range(self.PIXELSIZE**2)]
         self.length = round(self.window_size / self.PIXELSIZE)
         self.setMouseTracking(True)
+        self.setMinimumSize(0, 0)
 
     def paintEvent(self, event):
         painter = QPainter(self)
+        self.length = round(min(self.width(), self.height()) / self.PIXELSIZE)
+
         idx = 0
         for row in range(self.PIXELSIZE):
             for col in range(self.PIXELSIZE):
-                if self.pixels[idx] == 0:
-                    painter.fillRect(col * self.length, row * self.length, self.length + 1, self.length + 1, QColor("white"))
-                if self.pixels[idx] == 1:
-                    painter.fillRect(col * self.length, row * self.length, self.length + 1, self.length + 1, QColor("black"))
+                color = QColor("white") if self.pixels[idx] == 0 else QColor("black")
+                painter.fillRect(col * self.length, row * self.length, self.length + 1, self.length + 1, color)
                 idx += 1
 
     def mouseMoveEvent(self, event):
@@ -70,15 +70,18 @@ class Canvas(QWidget):
         self.paint(event)
 
     def paint(self, event):
+        self.length = round(min(self.width(), self.height()) / self.PIXELSIZE)
+
         x = int(event.position().x() // self.length)
         y = int(event.position().y() // self.length)
+
         if 0 <= x < self.PIXELSIZE and 0 <= y < self.PIXELSIZE:
             if event.buttons() & Qt.MouseButton.LeftButton:
-                self.pixels[y * self.PIXELSIZE + x] = 1
-                self.pixels[y * self.PIXELSIZE + x + 1] = 1
-                self.pixels[y * self.PIXELSIZE + x - 1] = 1
-                self.pixels[y * self.PIXELSIZE + x + self.PIXELSIZE] = 1
-                self.pixels[y * self.PIXELSIZE + x - self.PIXELSIZE] = 1
+                for dx, dy in [(0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)]:
+                    nx = x + dx
+                    ny = y + dy
+                    if 0 <= nx < self.PIXELSIZE and 0 <= ny < self.PIXELSIZE:
+                        self.pixels[ny * self.PIXELSIZE + nx] = 1
             elif event.buttons() & Qt.MouseButton.RightButton:
                 self.pixels[y * self.PIXELSIZE + x] = 0
             self.update()
@@ -145,7 +148,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
 
         MainWindow.setObjectName("MainWindow")
-        MainWindow.setGeometry(900, 80, 600, 850)
+        MainWindow.setGeometry(900, 80, 500, 900)
         font = QFont()
         font.setPointSize(12)
         MainWindow.setFont(font)
@@ -170,6 +173,7 @@ class Ui_MainWindow(object):
         self.MainMenuL = QVBoxLayout()
         self.MainMenuL.setSpacing(8)
         self.MainMenuL.setObjectName("MainMenuL")
+
         self.InfoLabel = QLabel(parent=self.MainMenuW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -179,6 +183,7 @@ class Ui_MainWindow(object):
         self.InfoLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.InfoLabel.setObjectName("InfoLabel")
         self.MainMenuL.addWidget(self.InfoLabel)
+
         self.DrawLayout = QHBoxLayout()
         self.DrawLayout.setObjectName("DrawLayout")
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -194,6 +199,7 @@ class Ui_MainWindow(object):
         spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DrawLayout.addItem(spacerItem1)
         self.MainMenuL.addLayout(self.DrawLayout)
+
         self.TrainingLayout = QHBoxLayout()
         self.TrainingLayout.setObjectName("TrainingLayout")
         spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -209,6 +215,7 @@ class Ui_MainWindow(object):
         spacerItem3 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.TrainingLayout.addItem(spacerItem3)
         self.MainMenuL.addLayout(self.TrainingLayout)
+
         spacerItem4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         self.MainMenuL.addItem(spacerItem4)
         self.horizontalLayout_2 = QHBoxLayout()
@@ -242,18 +249,26 @@ class Ui_MainWindow(object):
         self.DrawPageL = QVBoxLayout()
         self.DrawPageL.setSpacing(8)
         self.DrawPageL.setObjectName("DrawPageL")
-        #self.Canvas = QWidget(parent=self.DrawPageW)
+
         self.Canvas = Canvas()
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(3)
         sizePolicy.setHeightForWidth(self.Canvas.sizePolicy().hasHeightForWidth())
         self.Canvas.setSizePolicy(sizePolicy)
-        self.Canvas.setMinimumSize(QSize(0, 0))
+        self.Canvas.setMinimumSize(QSize(200, 200))
+        self.Canvas.setMaximumWidth(550)
         self.Canvas.setBaseSize(QSize(0, 0))
         self.Canvas.setMouseTracking(False)
         self.Canvas.setObjectName("Canvas")
-        self.DrawPageL.addWidget(self.Canvas)
+        self.CanvasLayout = QHBoxLayout()
+        self.CanvasLayout.setContentsMargins(0, 0, 0, 0)
+        self.CanvasLayout.setSpacing(0)
+        self.CanvasLayout.addStretch()
+        self.CanvasLayout.addWidget(self.Canvas, 1)
+        self.CanvasLayout.addStretch()
+        self.DrawPageL.addLayout(self.CanvasLayout, 3)
+
         self.ClearGuessLayout = QHBoxLayout()
         self.ClearGuessLayout.setObjectName("ClearGuessLayout")
         spacerItem7 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -279,6 +294,7 @@ class Ui_MainWindow(object):
         spacerItem9 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.ClearGuessLayout.addItem(spacerItem9)
         self.DrawPageL.addLayout(self.ClearGuessLayout)
+
         self.ResultLayout = QHBoxLayout()
         self.ResultLayout.setObjectName("ResultLayout")
         spacerItem10 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -296,7 +312,7 @@ class Ui_MainWindow(object):
         spacerItem11 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.ResultLayout.addItem(spacerItem11)
         self.DrawPageL.addLayout(self.ResultLayout)
-        #self.BarChart = QWidget(parent=self.DrawPageW)
+
         self.BarChart = ProbabilityBarChart()
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -306,6 +322,7 @@ class Ui_MainWindow(object):
         self.BarChart.setSizeIncrement(QSize(0, 0))
         self.BarChart.setObjectName("BarChart")
         self.DrawPageL.addWidget(self.BarChart)
+
         self.DataLabel = QLabel(parent=self.DrawPageW)
         font = QFont()
         font.setPointSize(10)
@@ -313,6 +330,7 @@ class Ui_MainWindow(object):
         self.DataLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.DataLabel.setObjectName("DataLabel")
         self.DrawPageL.addWidget(self.DataLabel)
+
         self.DataLayout = QHBoxLayout()
         self.DataLayout.setObjectName("DataLayout")
         spacerItem12 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -343,8 +361,10 @@ class Ui_MainWindow(object):
         spacerItem14 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DataLayout.addItem(spacerItem14)
         self.DrawPageL.addLayout(self.DataLayout)
+        
         spacerItem15 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DrawPageL.addItem(spacerItem15)
+
         self.BackExitLayout = QHBoxLayout()
         self.BackExitLayout.setSizeConstraint(QLayout.SizeConstraint.SetMaximumSize)
         self.BackExitLayout.setObjectName("BackExitLayout")
@@ -535,6 +555,8 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.setMinimumSize(450, 600)
+
         self.alrTrained = True
 
         PIX_MAX = 255
@@ -612,7 +634,7 @@ class MainWindow(QMainWindow):
         self.ui.StopButton.setEnabled(True)
         for _ in range(1000):
             training(self.test)
-            self.ui.CostPlot = QPixmap("Images/cost_plot.jpg")
+            self.ui.CostPlotLabel.setPixmap("Images/cost_plot.jpg")
 
     def InitializeButton_Clicked(self):
         makeRandomWeightsBiases()
