@@ -61,7 +61,7 @@ class Canvas(QWidget):
         idx = 0
         for row in range(self.PIXELSIZE):
             for col in range(self.PIXELSIZE):
-                gray_val = int(self.pixels[idx] * 255)
+                gray_val = int(1.0 - self.pixels[idx] * 255)
                 color = QColor(gray_val, gray_val, gray_val)
                 #color = QColor("white") if self.pixels[idx] == 0 else QColor("black")
                 painter.fillRect(col * self.length, row * self.length, self.length + 1, self.length + 1, color)
@@ -99,12 +99,12 @@ class Canvas(QWidget):
 
         dx = end_pos.x() - start_pos.x()
         dy = end_pos.y() - start_pos.y()
-        coverage = (dx**2 + dy**2)**0.5
+        distance = (dx**2 + dy**2)**0.5
 
-        if coverage < 1:
+        if distance < 1:
             return
         
-        steps = max(int(coverage) + 1, 2)
+        steps = max(int(distance) + 1, 2)
 
         for i in range(steps):
             t = i / steps
@@ -119,8 +119,8 @@ class Canvas(QWidget):
                 self.update()
 
     def drawBrush(self, x, y):
-        for dx in range(-self.BrushRadius, self.BrushRadius + 1):
-            for dy in range(-self.BrushRadius * 2, self.BrushRadius + 1):
+        for dx in range(-self.BrushRadius * 2, self.BrushRadius * 2 + 1):
+            for dy in range(-self.BrushRadius * 2, self.BrushRadius * 2 + 1):
                 distance = (dx**2 + dy**2)**0.5
                 if distance <= self.BrushRadius:
                     intensity = np.exp(-(distance / self.BrushRadius**2))
