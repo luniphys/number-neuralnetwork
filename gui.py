@@ -132,26 +132,9 @@ class Canvas(QWidget):
         self.update()
 
     def getPixels(self):
-
         pixels_array = np.array(self.pixels, dtype=np.float32)
 
-        pixel_matrix = pixels_array.reshape(self.PIXELSIZE, self.PIXELSIZE)
-        rows = np.any(pixel_matrix, axis=1)
-        cols = np.any(pixel_matrix, axis=0)
-
-        if not rows.any() or not cols.any():
-            return self.pixels
-        
-        rmin, rmax = np.where(rows)[0][[0, -1]]
-        cmin, cmax = np.where(cols)[0][[0, -1]]
-
-        digit = pixel_matrix[rmin:rmax+1, cmin:cmax+1]
-
-        target_size = 20
-        old_size = max(digit.shape)
-        scale = target_size / old_size if old_size > 0 else 1
-
-        return (pixels_array * 255).astype(int).tolist()
+        return pixels_array.tolist()
 
 
 
