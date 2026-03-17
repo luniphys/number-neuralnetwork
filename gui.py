@@ -3,6 +3,7 @@ import sys
 import shutil
 import numpy as np
 import pandas as pd
+from threading import Thread
 
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
@@ -680,6 +681,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(450, 600)
 
         self.alrTrained = True
+        self.shouldStop = False
 
         PIX_MAX = 255
         self.test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None)
@@ -749,14 +751,22 @@ class MainWindow(QMainWindow):
         self.alrTrained = False
 
     # Stop & Start Training Button
-    def StopButton_Clicked(self):
-        pass
-
     def StartButton_Clicked(self):
         self.ui.StopButton.setEnabled(True)
+        self.shouldStop = False
+
+        self.trainingThread = Thread(target=self.trainInThread, daemon=True)
+        self.trainingThread.start()
+
+    def trainInThread(self):
         for _ in range(1000):
+            if self.shouldStop:
+                break
             training(self.test)
             self.ui.CostPlotLabel.setPixmap("Images/cost_plot.jpg")
+
+    def StopButton_Clicked(self):
+        self.shouldStop = True
 
     def InitializeButton_Clicked(self):
         makeRandomWeightsBiases()
