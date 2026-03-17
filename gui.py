@@ -47,12 +47,12 @@ class Canvas(QWidget):
         super().__init__()
         self.window_size = 500
         self.PIXELSIZE = 28
-        self.pixels = [0 for _ in range(self.PIXELSIZE**2)]
+        self.pixels = [0.0 for _ in range(self.PIXELSIZE**2)]
         self.length = round(self.window_size / self.PIXELSIZE)
         self.setMouseTracking(True)
         self.setMinimumSize(0, 0)
         self.lastPos = None
-        self.BrushRadius = 1
+        self.BrushRadius = 1.5
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -61,7 +61,9 @@ class Canvas(QWidget):
         idx = 0
         for row in range(self.PIXELSIZE):
             for col in range(self.PIXELSIZE):
-                color = QColor("white") if self.pixels[idx] == 0 else QColor("black")
+                gray_val = int(self.pixels[idx] * 255)
+                color = QColor(gray_val, gray_val, gray_val)
+                #color = QColor("white") if self.pixels[idx] == 0 else QColor("black")
                 painter.fillRect(col * self.length, row * self.length, self.length + 1, self.length + 1, color)
 
                 # Grid
@@ -118,13 +120,16 @@ class Canvas(QWidget):
 
     def drawBrush(self, x, y):
         for dx in range(-self.BrushRadius, self.BrushRadius + 1):
-            for dy in range(-self.BrushRadius, self.BrushRadius + 1):
-                coverage = (dx**2 + dy**2)**0.5
-                if coverage <= self.BrushRadius:
+            for dy in range(-self.BrushRadius * 2, self.BrushRadius + 1):
+                distance = (dx**2 + dy**2)**0.5
+                if distance <= self.BrushRadius:
+                    intensity = np.exp(-(distance / self.BrushRadius**2))
+
                     nx = x + dx
                     ny = y + dy
                     if 0 <= nx < self.PIXELSIZE and 0 <= ny < self.PIXELSIZE:
-                        self.pixels[ny * self.PIXELSIZE + nx] = 1
+                        idx = ny * self.PIXELSIZE + nx
+                        self.pixels[idx] = min(self.pixels[idx] + intensity, 1.0)
     
 
     def clearAll(self):
@@ -132,10 +137,52 @@ class Canvas(QWidget):
         self.update()
 
     def getPixels(self):
-        pixels_array = np.array(self.pixels, dtype=np.float32)
+        pixels_array = np.array(self.pixels, dtype=np.float32).reshape((self.PIXELSIZE, self.PIXELSIZE))
 
-        return pixels_array.tolist()
-
+        pixels_array = np.array(self.pixels, dtype=np.float32).reshape((self.PIXELSIZE, self.PIXELSIZE))
+    
+        rows = np.any(pixels_array, axis=1)
+        cols = np.any(pixels_array, axis=0)
+        
+        if not rows.any() or not cols.any():
+            return np.zeros(784).tolist()
+        
+        rmin, rmax = np.where(rows)[0][[0, -1]]
+        cmin, cmax = np.where(cols)[0][[0, -1]]
+        
+        digit = pixels_array[rmin:rmax+1, cmin:cmax+1]
+        digit_h, digit_w = digit.shape
+        
+        max_dim = max(digit_h, digit_w)
+        pad_h = (max_dim - digit_h) // 2
+        pad_w = (max_dim - digit_w) // 2
+        
+        digit_square = np.zeros((max_dim, max_dim), dtype=np.float32)
+        digit_square[pad_h:pad_h+digit_h, pad_w:pad_w+digit_w] = digit
+        
+        target_size = 20
+        if max_dim > target_size:
+            scale_factor = target_size / max_dim
+            new_size = target_size
+            binned = np.zeros((new_size, new_size), dtype=np.float32)
+            bin_size = max_dim / new_size
+            for i in range(new_size):
+                for j in range(new_size):
+                    start_i = int(i * bin_size)
+                    end_i = int((i + 1) * bin_size)
+                    start_j = int(j * bin_size)
+                    end_j = int((j + 1) * bin_size)
+                    binned[i, j] = digit_square[start_i:end_i, start_j:end_j].mean()
+            digit_square = binned
+        
+        final = np.zeros((self.PIXELSIZE, self.PIXELSIZE), dtype=np.float32)
+        offset = (self.PIXELSIZE - digit_square.shape[0]) // 2
+        final[offset:offset+digit_square.shape[0], offset:offset+digit_square.shape[1]] = digit_square
+        
+        if final.max() > 0:
+            final = final / final.max()
+        
+        return final.flatten().tolist()
 
 
 class ProbabilityBarChart(QWidget):
