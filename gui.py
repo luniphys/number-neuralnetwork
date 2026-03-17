@@ -54,6 +54,7 @@ class Canvas(QWidget):
         self.lastPos = None
         self.BrushRadius = 1
 
+
     def paintEvent(self, event):
         painter = QPainter(self)
         self.length = round(min(self.width(), self.height()) / self.PIXELSIZE)
@@ -61,16 +62,13 @@ class Canvas(QWidget):
         idx = 0
         for row in range(self.PIXELSIZE):
             for col in range(self.PIXELSIZE):
-                gray_val = int(1.0 - self.pixels[idx] * 255)
-                color = QColor(255 - gray_val, 255 - gray_val, 255 - gray_val)
-                #color = QColor("white") if self.pixels[idx] == 0 else QColor("black")
+                color = QColor("black") if self.pixels[idx] > 0 else QColor("white")
                 painter.fillRect(col * self.length, row * self.length, self.length + 1, self.length + 1, color)
+                idx += 1
 
                 # Grid
                 #painter.setPen(QPen(QColor("lightgray"), 1))
                 #painter.drawRect(col * self.length, row * self.length, self.length, self.length)
-
-                idx += 1
 
     def mouseMoveEvent(self, event):
         if self.lastPos is not None:
@@ -138,8 +136,6 @@ class Canvas(QWidget):
 
     def getPixels(self):
         pixels_array = np.array(self.pixels, dtype=np.float32).reshape((self.PIXELSIZE, self.PIXELSIZE))
-
-        pixels_array = np.array(self.pixels, dtype=np.float32).reshape((self.PIXELSIZE, self.PIXELSIZE))
     
         rows = np.any(pixels_array, axis=1)
         cols = np.any(pixels_array, axis=0)
@@ -162,7 +158,6 @@ class Canvas(QWidget):
         
         target_size = 20
         if max_dim > target_size:
-            scale_factor = target_size / max_dim
             new_size = target_size
             binned = np.zeros((new_size, new_size), dtype=np.float32)
             bin_size = max_dim / new_size
@@ -183,6 +178,7 @@ class Canvas(QWidget):
             final = final / final.max()
         
         return final.flatten().tolist()
+
 
 
 class ProbabilityBarChart(QWidget):
