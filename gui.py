@@ -371,6 +371,17 @@ class Ui_MainWindow(object):
         self.CanvasLayout.addStretch()
         self.DrawPageL.addLayout(self.CanvasLayout, 3)
 
+        self.CanvasInfoLabel = QLabel(parent=self.DrawPageW)
+        font = QFont()
+        font.setPointSize(10)
+        self.CanvasInfoLabel.setFont(font)
+        self.CanvasInfoLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.CanvasInfoLabel.setObjectName("CanvasInfoLabel")
+        self.DrawPageL.addWidget(self.CanvasInfoLabel)
+
+        spacerItem69 = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.DrawPageL.addItem(spacerItem69)
+
         self.ClearGuessLayout = QHBoxLayout()
         self.ClearGuessLayout.setObjectName("ClearGuessLayout")
         spacerItem7 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -425,14 +436,6 @@ class Ui_MainWindow(object):
         self.BarChart.setObjectName("BarChart")
         self.DrawPageL.addWidget(self.BarChart)
 
-        self.DataLabel = QLabel(parent=self.DrawPageW)
-        font = QFont()
-        font.setPointSize(10)
-        self.DataLabel.setFont(font)
-        self.DataLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.DataLabel.setObjectName("DataLabel")
-        self.DrawPageL.addWidget(self.DataLabel)
-
         self.DataLayout = QHBoxLayout()
         self.DataLayout.setObjectName("DataLayout")
         spacerItem12 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -463,6 +466,14 @@ class Ui_MainWindow(object):
         spacerItem14 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DataLayout.addItem(spacerItem14)
         self.DrawPageL.addLayout(self.DataLayout)
+
+        self.DataLabel = QLabel(parent=self.DrawPageW)
+        font = QFont()
+        font.setPointSize(10)
+        self.DataLabel.setFont(font)
+        self.DataLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.DataLabel.setObjectName("DataLabel")
+        self.DrawPageL.addWidget(self.DataLabel)
 
         spacerItem15 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DrawPageL.addItem(spacerItem15)
@@ -635,6 +646,7 @@ class Ui_MainWindow(object):
         self.ExitButtonMain.setText(_translate("MainWindow", "Exit"))
         self.ClearButton.setText(_translate("MainWindow", "Clear"))
         self.GuessButton.setText(_translate("MainWindow", "Guess the number!"))
+        self.CanvasInfoLabel.setText(_translate("MainWindow", "Try to draw large and precise. (1 & 9 are <i>problem numbers</i>)"))
         self.DataLabel.setText(_translate("MainWindow", "Choose between a pretrained network or a network you have trained"))
         self.PretrainedButton.setText(_translate("MainWindow", "Pretrained"))
         self.YourNetworkButton.setText(_translate("MainWindow", "Your Network"))
