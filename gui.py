@@ -134,8 +134,25 @@ class Canvas(QWidget):
         self.pixels = [0 for _ in range(self.PIXELSIZE**2)]
         self.update()
 
+    def applySmoothing(self, pixels_array):
+        smoothed = np.copy(pixels_array)
+        
+        for i in range(self.PIXELSIZE):
+            for j in range(self.PIXELSIZE):
+                neighbors = []
+                for di in [-1, 0, 1]:
+                    for dj in [-1, 0, 1]:
+                        ni, nj = i + di, j + dj
+                        if 0 <= ni < self.PIXELSIZE and 0 <= nj < self.PIXELSIZE:
+                            neighbors.append(pixels_array[ni, nj])
+                smoothed[i, j] = np.mean(neighbors)
+        
+        return smoothed
+
     def getPixels(self):
         pixels_array = np.array(self.pixels, dtype=np.float32).reshape((self.PIXELSIZE, self.PIXELSIZE))
+
+        pixels_array = self.applySmoothing(pixels_array)
     
         rows = np.any(pixels_array, axis=1)
         cols = np.any(pixels_array, axis=0)
