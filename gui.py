@@ -52,7 +52,7 @@ class Canvas(QWidget):
         self.setMouseTracking(True)
         self.setMinimumSize(0, 0)
         self.lastPos = None
-        self.BrushRadius = 1.5
+        self.BrushRadius = 1
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -62,7 +62,7 @@ class Canvas(QWidget):
         for row in range(self.PIXELSIZE):
             for col in range(self.PIXELSIZE):
                 gray_val = int(1.0 - self.pixels[idx] * 255)
-                color = QColor(gray_val, gray_val, gray_val)
+                color = QColor(255 - gray_val, 255 - gray_val, 255 - gray_val)
                 #color = QColor("white") if self.pixels[idx] == 0 else QColor("black")
                 painter.fillRect(col * self.length, row * self.length, self.length + 1, self.length + 1, color)
 
@@ -767,3 +767,4 @@ if __name__ == "__main__":
 
 
     #TODO: only necessary packages
+    # 1, 7, 9 are problem numbers
