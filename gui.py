@@ -70,14 +70,17 @@ class Canvas(QWidget):
                 #painter.setPen(QPen(QColor("lightgray"), 1))
                 #painter.drawRect(col * self.length, row * self.length, self.length, self.length)
 
+
     def mouseMoveEvent(self, event):
         if self.lastPos is not None:
             self.interpolate_paint(self.lastPos, event.position(), event)
         self.lastPos = event.position()
 
+
     def mousePressEvent(self, event):
         self.lastPos = event.position()
         self.paint(event)
+
 
     def paint(self, event):
         self.length = round(min(self.width(), self.height()) / self.PIXELSIZE)
@@ -91,6 +94,7 @@ class Canvas(QWidget):
             elif event.buttons() & Qt.MouseButton.RightButton:
                 self.pixels[y * self.PIXELSIZE + x] = 0
             self.update()
+
 
     def interpolate_paint(self, start_pos, end_pos, event):
         self.length = round(min(self.width(), self.height()) / self.PIXELSIZE)
@@ -116,6 +120,7 @@ class Canvas(QWidget):
                     self.pixels[y * self.PIXELSIZE + x] = 0
                 self.update()
 
+
     def drawBrush(self, x, y):
         for dx in range(-self.BrushRadius * 2, self.BrushRadius * 2 + 1):
             for dy in range(-self.BrushRadius * 2, self.BrushRadius * 2 + 1):
@@ -134,6 +139,7 @@ class Canvas(QWidget):
         self.pixels = [0 for _ in range(self.PIXELSIZE**2)]
         self.update()
 
+
     def applySmoothing(self, pixels_array):
         smoothed = np.copy(pixels_array)
         
@@ -149,11 +155,12 @@ class Canvas(QWidget):
         
         return smoothed
 
+
     def getPixels(self):
         pixels_array = np.array(self.pixels, dtype=np.float32).reshape((self.PIXELSIZE, self.PIXELSIZE))
 
         pixels_array = self.applySmoothing(pixels_array)
-    
+
         rows = np.any(pixels_array, axis=1)
         cols = np.any(pixels_array, axis=0)
         
@@ -250,7 +257,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
 
         MainWindow.setObjectName("MainWindow")
-        MainWindow.setGeometry(900, 80, 500, 900)
+        MainWindow.setGeometry(900, 50, 450, 850)
         font = QFont()
         font.setPointSize(12)
         MainWindow.setFont(font)
@@ -640,6 +647,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Number Neural Network"))
+        MainWindow.setWindowIcon(QIcon("Images/neural_icon.png"))
         self.InfoLabel.setText(_translate("MainWindow", "Info text."))
         self.DrawButton.setText(_translate("MainWindow", "Draw!"))
         self.TrainingButton.setText(_translate("MainWindow", "Training"))
@@ -793,3 +801,4 @@ if __name__ == "__main__":
 
     #TODO: only necessary packages
     # 1, 7, 9 are problem numbers
+    # only using test data for time efficiency

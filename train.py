@@ -196,7 +196,7 @@ def training(data):
     cost_lst = list()
     for sample_idx in range(SHAPE[0]):
 
-        #print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
+        print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
 
         drawn_num, a_in, a1, a2, a3 = getActivations(data.iloc[sample_idx], w1, b1, w2, b2, w3, b3)
 
