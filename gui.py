@@ -122,14 +122,14 @@ class Canvas(QWidget):
         for dx in range(-self.BrushRadius * 2, self.BrushRadius * 2 + 1):
             for dy in range(-self.BrushRadius * 2, self.BrushRadius * 2 + 1):
                 distance = (dx**2 + dy**2)**0.5
-                if distance <= self.BrushRadius:
-                    intensity = np.exp(-(distance / self.BrushRadius**2))
 
+                if distance <= self.BrushRadius:
+                    intensity = np.exp(-(distance**2) / (2 * self.BrushRadius**2))
                     nx = x + dx
                     ny = y + dy
                     if 0 <= nx < self.PIXELSIZE and 0 <= ny < self.PIXELSIZE:
                         idx = ny * self.PIXELSIZE + nx
-                        self.pixels[idx] = min(self.pixels[idx] + intensity, 1.0)
+                        self.pixels[idx] = max(self.pixels[idx], intensity)
     
 
     def clearAll(self):
