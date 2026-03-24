@@ -652,7 +652,16 @@ class Ui_MainWindow(object):
         self.YourNetworkButton.setText(_translate("MainWindow", "Your Network"))
         self.BackButtonDraw.setText(_translate("MainWindow", "Back"))
         self.ExitButtonDraw.setText(_translate("MainWindow", "Exit"))
-        self.TrainingLabel.setText(_translate("MainWindow", "Training Info"))
+        self.TrainingLabel.setText(_translate("MainWindow", "The <b>Cost</b> values above show how your current network <br>" \
+                                                            "performs (on some hidden example numbers). These <i>cost <br> values</i> can be seen as a measure for the networks <br>" \
+                                                            "mistakes. The lower the cost value, the less mistakes it <br>" \
+                                                            "makes. <br>" \
+                                                            "Start your network with <b>Initialize Randomly</b> for an <br>" \
+                                                            "untrained network with random value association, and <br>" \
+                                                            "check how it performs on the <b>Draw</b> page. <br>" \
+                                                            "<b>Start Training</b> and see how quickly the <i>cost value</i> drops <br>" \
+                                                            "after each training cycle and watch the networks growth <br>"
+                                                            "in confidence about your drawn numbers."))
         self.StopButton.setText(_translate("MainWindow", "Stop Training"))
         self.StartButton.setText(_translate("MainWindow", "Start Training"))
         self.InitializeButton.setText(_translate("MainWindow", "Initialize Randomly"))
@@ -669,7 +678,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setMinimumSize(450, 600)
+        self.setMinimumSize(450, 720)
 
         self.alrTrained = True
 
@@ -792,4 +801,4 @@ if __name__ == "__main__":
 
 
     #TODO: only necessary packages
-    # 1, 7, 9 are problem numbers
+    # 1, 9 are problem numbers
