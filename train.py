@@ -150,7 +150,7 @@ def cost(drawn_num, a3):
 
 
 
-def training(data, active_flag=None):
+def training(data, active_flag=None, progress_callback=None):
 
     """
     Training the weights and biases with the complete dataset
@@ -202,7 +202,11 @@ def training(data, active_flag=None):
         if not active_flag["Active"]:
             break
 
-        print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
+        percentage = round((sample_idx / SHAPE[0]) * 100, 2)
+
+        if progress_callback:
+            progress_callback(percentage)
+
 
         drawn_num, a_in, a1, a2, a3 = getActivations(data.iloc[sample_idx], w1, b1, w2, b2, w3, b3)
 

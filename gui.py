@@ -536,6 +536,7 @@ class Ui_MainWindow(object):
 
         self.ProgressBar = QProgressBar(parent=self.TrainingPageW)
         self.ProgressBar.setObjectName("ProgressBar")
+        self.ProgressBar.setValue(0)
         self.TrainingPageL.addWidget(self.ProgressBar)
 
         self.CycleLabel = QLabel(parent=self.TrainingPageW)
@@ -778,8 +779,15 @@ class MainWindow(QMainWindow):
         while True:
             if not self.ActiveTraining["Active"]:
                 break
-            training(self.test, self.ActiveTraining)
-            self.ui.CostPlotLabel.setPixmap("Images/cost_plot.jpg")
+
+            def updateProgress(percentage):
+                self.ui.ProgressBar.setValue(int(percentage))
+                self.ui.CycleLabel.setText("Training Cycle: " + str(self.ui.CycleNum))
+
+            training(self.test, self.ActiveTraining, progress_callback=updateProgress)
+            #self.ui.CostPlotLabel.setPixmap("Images/cost_plot.jpg")
+
+            self.ui.CycleNum += 1
 
     def StopButton_Clicked(self):
         self.ActiveTraining["Active"] = False
@@ -800,6 +808,9 @@ class MainWindow(QMainWindow):
         if os.path.isfile("Images/cost_plot.jpg"):
             os.remove("Images/cost_plot.jpg")
         self.ui.CostPlot = QPixmap("Images/cost_plot_empty.jpg")
+
+        self.ui.ProgressBar.setValue(0)
+        self.ui.CycleLabel.setText("Training Cycle: 0")
 
         self.PretrainedButton_Clicked()
         
