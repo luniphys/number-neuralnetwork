@@ -257,6 +257,8 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
 
+        self.CycleNum = 0
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.setGeometry(900, 50, 450, 850)
         font = QFont()
@@ -522,9 +524,6 @@ class Ui_MainWindow(object):
         self.CostPlotLabel.setObjectName("CostPlotLabel")
         self.TrainingPageL.addWidget(self.CostPlotLabel)
 
-        spacerItem52 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.TrainingPageL.addItem(spacerItem52)
-
         self.TrainingLabel = QLabel(parent=self.TrainingPageW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -539,6 +538,16 @@ class Ui_MainWindow(object):
         self.ProgressBar.setObjectName("ProgressBar")
         self.TrainingPageL.addWidget(self.ProgressBar)
 
+        self.CycleLabel = QLabel(parent=self.TrainingPageW)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.CycleLabel.sizePolicy().hasHeightForWidth())
+        self.CycleLabel.setSizePolicy(sizePolicy)
+        self.CycleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.CycleLabel.setObjectName("CycleLabel")
+        self.TrainingPageL.addWidget(self.CycleLabel)
+
         spacerItem16 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.TrainingPageL.addItem(spacerItem16)
 
@@ -547,8 +556,7 @@ class Ui_MainWindow(object):
         spacerItem22 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.StopStartLayout.addItem(spacerItem22)
         self.StopButton = QPushButton(parent=self.DrawPageW)
-        if not selfTrainedDataExists:
-            self.StopButton.setEnabled(False)
+        self.StopButton.setEnabled(False)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -650,27 +658,27 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Number Neural Network"))
         MainWindow.setWindowIcon(QIcon("Images/neural_icon.png"))
         self.InfoLabel.setText(_translate("MainWindow", "Info text."))
-        self.DrawButton.setText(_translate("MainWindow", "Draw!"))
+        self.DrawButton.setText(_translate("MainWindow", "Draw"))
         self.TrainingButton.setText(_translate("MainWindow", "Training"))
         self.ExitButtonMain.setText(_translate("MainWindow", "Exit"))
         self.ClearButton.setText(_translate("MainWindow", "Clear"))
         self.GuessButton.setText(_translate("MainWindow", "Guess the number!"))
-        self.CanvasInfoLabel.setText(_translate("MainWindow", "Try to draw large and precise. (1 & 9 are <i>problem numbers</i>)"))
+        self.CanvasInfoLabel.setText(_translate("MainWindow", "Try to draw large and precise. (1 & 9 are <i>problem numbers</i>.)"))
         self.DataLabel.setText(_translate("MainWindow", "Choose between a pretrained network or a network you have trained"))
         self.PretrainedButton.setText(_translate("MainWindow", "Pretrained"))
         self.YourNetworkButton.setText(_translate("MainWindow", "Your Network"))
         self.BackButtonDraw.setText(_translate("MainWindow", "Back"))
         self.ExitButtonDraw.setText(_translate("MainWindow", "Exit"))
-        self.TrainingLabel.setText(_translate("MainWindow", "The <b>Cost</b> values above show how your current network <br>" \
+        self.TrainingLabel.setText(_translate("MainWindow", "<br>The <b>Cost</b> values above show how your current network <br>" \
                                                             "performs (on some hidden example numbers). These <i>cost <br> values</i> can be seen as a measure for the networks <br>" \
-                                                            "mistakes. The lower the cost value, the less mistakes it <br>" \
-                                                            "makes. <br>" \
+                                                            "mistakes. The lower the value, the less mistakes it makes. <br> <br>" \
                                                             "Start your network with <b>Initialize Randomly</b> for an <br>" \
                                                             "untrained network with random value association, and <br>" \
                                                             "check how it performs on the <b>Draw</b> page. <br>" \
                                                             "<b>Start Training</b> and see how quickly the <i>cost value</i> drops <br>" \
                                                             "after each training cycle and watch the networks growth <br>"
-                                                            "in confidence about your drawn numbers."))
+                                                            "in confidence about your drawn numbers. <br>"))
+        self.CycleLabel.setText(_translate("MainWindow", f"Training Cycle: {self.CycleNum}"))
         self.StopButton.setText(_translate("MainWindow", "Stop Training"))
         self.StartButton.setText(_translate("MainWindow", "Start Training"))
         self.InitializeButton.setText(_translate("MainWindow", "Initialize Randomly"))
@@ -687,10 +695,9 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setMinimumSize(450, 720)
+        self.setMinimumSize(450, 750)
 
         self.alrTrained = True
-        self.shouldStop = False
 
         PIX_MAX = 255
         self.test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None)
@@ -762,20 +769,17 @@ class MainWindow(QMainWindow):
     # Stop & Start Training Button
     def StartButton_Clicked(self):
         self.ui.StopButton.setEnabled(True)
-        self.shouldStop = False
 
         self.trainingThread = Thread(target=self.trainInThread, daemon=True)
         self.trainingThread.start()
 
     def trainInThread(self):
         for _ in range(1000):
-            if self.shouldStop:
-                break
             training(self.test)
             self.ui.CostPlotLabel.setPixmap("Images/cost_plot.jpg")
 
     def StopButton_Clicked(self):
-        self.shouldStop = True
+        pass
 
     def InitializeButton_Clicked(self):
         makeRandomWeightsBiases()
@@ -819,9 +823,4 @@ if __name__ == "__main__":
 
 
     #TODO: only necessary packages
-<<<<<<< HEAD
     # 1, 9 are problem numbers
-=======
-    # 1, 7, 9 are problem numbers
-    # only using test data for time efficiency
->>>>>>> a8ca14269f57119d4efb01d2a0bd8feedb82ccc1
