@@ -150,7 +150,7 @@ def cost(drawn_num, a3):
 
 
 
-def training(data, active_flag=True):
+def training(data, active_flag=None):
 
     """
     Training the weights and biases with the complete dataset
@@ -191,12 +191,15 @@ def training(data, active_flag=True):
         db1_dic[f"db1_{i}"] = list()
         for j in range(n_in):
             dw1_dic[f"dw1_{i},{j}"] = list()
+
+    if active_flag == None:
+        active_flag = {"Active": True}
     
 
     cost_lst = list()
     for sample_idx in range(SHAPE[0]):
 
-        if not active_flag:
+        if not active_flag["Active"]:
             break
 
         print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
@@ -224,6 +227,9 @@ def training(data, active_flag=True):
 
         # Stochastic gradient descent. Use mean of 10 samples for time efficiency
         if sample_idx % 10 == 0 and sample_idx != 0 or sample_idx == SHAPE[0] - 1:
+
+            if not active_flag["Active"]:
+                break
 
             for i in range(n3):
                 b3[i] += LR * np.mean(db3_dic[f"db3_{i}"])
