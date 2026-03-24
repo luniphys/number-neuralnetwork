@@ -769,17 +769,20 @@ class MainWindow(QMainWindow):
     # Stop & Start Training Button
     def StartButton_Clicked(self):
         self.ui.StopButton.setEnabled(True)
+        self.ActiveTraining = True
 
         self.trainingThread = Thread(target=self.trainInThread, daemon=True)
         self.trainingThread.start()
 
     def trainInThread(self):
         for _ in range(1000):
-            training(self.test)
+            if not self.ActiveTraining:
+                break
+            training(self.test, self.ActiveTraining)
             self.ui.CostPlotLabel.setPixmap("Images/cost_plot.jpg")
 
     def StopButton_Clicked(self):
-        pass
+        self.ActiveTraining = False
 
     def InitializeButton_Clicked(self):
         makeRandomWeightsBiases()

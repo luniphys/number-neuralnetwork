@@ -150,7 +150,7 @@ def cost(drawn_num, a3):
 
 
 
-def training(data):
+def training(data, active_flag=True):
 
     """
     Training the weights and biases with the complete dataset
@@ -195,6 +195,9 @@ def training(data):
 
     cost_lst = list()
     for sample_idx in range(SHAPE[0]):
+
+        if not active_flag:
+            break
 
         print(round((sample_idx / SHAPE[0]) * 100, 2), "%")
 
