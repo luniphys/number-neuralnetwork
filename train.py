@@ -192,6 +192,7 @@ def training(data, active_flag=None, progress_callback=None):
         for j in range(n_in):
             dw1_dic[f"dw1_{i},{j}"] = list()
 
+
     if active_flag == None:
         active_flag = {"Active": True}
     
@@ -200,12 +201,15 @@ def training(data, active_flag=None, progress_callback=None):
     for sample_idx in range(SHAPE[0]):
 
         if not active_flag["Active"]:
-            break
+            return
 
         percentage = round((sample_idx / SHAPE[0]) * 100, 2)
 
         if progress_callback:
             progress_callback(percentage)
+
+        if sample_idx == SHAPE[0] - 1:
+            FullRun = True
 
 
         drawn_num, a_in, a1, a2, a3 = getActivations(data.iloc[sample_idx], w1, b1, w2, b2, w3, b3)
@@ -233,7 +237,7 @@ def training(data, active_flag=None, progress_callback=None):
         if sample_idx % 10 == 0 and sample_idx != 0 or sample_idx == SHAPE[0] - 1:
 
             if not active_flag["Active"]:
-                break
+                return
 
             for i in range(n3):
                 b3[i] += LR * np.mean(db3_dic[f"db3_{i}"])
@@ -259,9 +263,13 @@ def training(data, active_flag=None, progress_callback=None):
 
         cost_lst.append(cost(drawn_num, a3))
 
-
+    
     if not os.path.exists("Cost"):
         os.mkdir("Cost")
+
+    if not os.path.isfile("Cost/cost.txt"): # Non visivle dot to start actual dots at x=1 not x=0
+        with open("Cost/cost.txt", "w", encoding="utf-8") as file:
+            file.write("100\n")
 
     avg_cost = np.mean(cost_lst)
     with open("Cost/cost.txt", "a", encoding="utf-8") as file:
@@ -271,11 +279,20 @@ def training(data, active_flag=None, progress_callback=None):
         avg_cost_lst = file.readlines()
 
     avg_cost_lst = [float(line.strip()) for line in avg_cost_lst]
-    plt.plot(avg_cost_lst)
+
+    plt.scatter(range(len(avg_cost_lst)), avg_cost_lst, s=100, color="red", zorder=3)
     plt.ylabel("Cost")
     plt.xlabel("Training cycles")
+    if len(avg_cost_lst) < 5:
+        plt.xlim(0, 5)
+    else:
+        plt.xlim(0, len(avg_cost_lst))
+    pad = max((1 - min(avg_cost_lst)) * 0.03, 0.01)
+    ymin = min(0, min(avg_cost_lst) - pad)
+    plt.ylim(ymin, 1)
     plt.grid()
-    plt.savefig("Cost/cost_plot.jpg")
+    plt.savefig("Cost/cost_plot.svg")
+    plt.close()
 
 
     w1 = pd.DataFrame(w1)

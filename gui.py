@@ -11,6 +11,8 @@ from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCharts import *
 
+from PyQt6.QtSvgWidgets import QSvgWidget
+
 from train import makeRandomWeightsBiases, getActivations, training
 
 
@@ -515,19 +517,18 @@ class Ui_MainWindow(object):
         self.TrainingPageL.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
         self.TrainingPageL.setObjectName("TrainingPageL")
 
-        self.CostPlotLabel = QLabel()
-        if not os.path.isfile("Cost/cost_plot.jpg"):
-            self.CostPlot = QPixmap("Images/cost_plot_empty.jpg")
+        self.CostPlotWidget = QSvgWidget()
+        if not os.path.isfile("Cost/cost_plot.svg"):
+            self.CostPlotWidget.load("Images/cost_plot_empty.svg")
         else:
-            self.CostPlot = QPixmap("Cost/cost_plot.jpg")
-        self.CostPlotLabel.setPixmap(self.CostPlot)
-        self.CostPlotLabel.setScaledContents(True)
+            self.CostPlotWidget.load("Cost/cost_plot.svg")
+        self.TrainingPageL.addWidget(self.CostPlotWidget)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        self.CostPlotLabel.setSizePolicy(sizePolicy)
-        self.CostPlotLabel.setObjectName("CostPlotLabel")
-        self.TrainingPageL.addWidget(self.CostPlotLabel)
+        self.CostPlotWidget.setSizePolicy(sizePolicy)
+        self.CostPlotWidget.setObjectName("CostPlotWidget")
+        self.TrainingPageL.addWidget(self.CostPlotWidget)
 
         self.TrainingLabel = QLabel(parent=self.TrainingPageW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
@@ -788,7 +789,7 @@ class MainWindow(QMainWindow):
     def trainInThread(self):
         while True:
             if not self.ActiveTraining["Active"]:
-                break
+                return
 
             def updateProgress(percentage):
                 self.ui.ProgressBar.setValue(int(percentage))
@@ -796,7 +797,7 @@ class MainWindow(QMainWindow):
 
             training(self.test, self.ActiveTraining, progress_callback=updateProgress)
             
-            #self.ui.CostPlotLabel.setPixmap("Cost/cost_plot.jpg")
+            self.ui.CostPlotWidget.load("Cost/cost_plot.svg")
             if self.ui.ProgressBar.value() >= 99:
                 self.ui.CycleNum += 1
                 with open("WeightsBiases/cycles.json", "w", encoding="utf-8") as file:
@@ -821,9 +822,9 @@ class MainWindow(QMainWindow):
             shutil.rmtree("WeightsBiases")
         if os.path.isfile("Cost/cost.txt"):
             os.remove("Cost/cost.txt")
-        if os.path.isfile("Cost/cost_plot.jpg"):
-            os.remove("Cost/cost_plot.jpg")
-        self.ui.CostPlot = QPixmap("Images/cost_plot_empty.jpg")
+        if os.path.isfile("Cost/cost_plot.svg"):
+            os.remove("Cost/cost_plot.svg")
+        self.ui.CostPlotWidget.load("Images/cost_plot_empty.svg")
 
         self.ui.ProgressBar.setValue(0)
         self.ui.CycleNum = 0
@@ -855,4 +856,4 @@ if __name__ == "__main__":
 
 
     #TODO: only necessary packages
-    # 1, 9 are problem numbers
+    #TODO: Delete cost_plot.py and in DeleteButton remove Cost folder
