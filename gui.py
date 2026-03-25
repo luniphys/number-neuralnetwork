@@ -3,6 +3,7 @@ import sys
 import shutil
 import numpy as np
 import pandas as pd
+import json
 from threading import Thread
 
 from PyQt6.QtGui import *
@@ -257,10 +258,14 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
 
-        self.CycleNum = 0
+        if os.path.exists("WeightsBiases/cycles.json"):
+            with open("WeightsBiases/cycles.json", "r", encoding="utf-8") as file:
+                self.CycleNum = json.load(file).get("cycles", 0)
+        else:
+            self.CycleNum = 0
 
         MainWindow.setObjectName("MainWindow")
-        MainWindow.setGeometry(900, 50, 450, 850)
+        MainWindow.setGeometry(900, 50, 450, 870)
         font = QFont()
         font.setPointSize(12)
         MainWindow.setFont(font)
@@ -511,10 +516,10 @@ class Ui_MainWindow(object):
         self.TrainingPageL.setObjectName("TrainingPageL")
 
         self.CostPlotLabel = QLabel()
-        if not os.path.isfile("Images/cost_plot.jpg"):
+        if not os.path.isfile("Cost/cost_plot.jpg"):
             self.CostPlot = QPixmap("Images/cost_plot_empty.jpg")
         else:
-            self.CostPlot = QPixmap("Images/cost_plot.jpg")
+            self.CostPlot = QPixmap("Cost/cost_plot.jpg")
         self.CostPlotLabel.setPixmap(self.CostPlot)
         self.CostPlotLabel.setScaledContents(True)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
@@ -678,10 +683,15 @@ class Ui_MainWindow(object):
                                                             "check how it performs on the <b>Draw</b> page. <br>" \
                                                             "<b>Start Training</b> and see how quickly the <i>cost value</i> drops <br>" \
                                                             "after each training cycle and watch the networks growth <br>"
-                                                            "in confidence about your drawn numbers. <br>"))
-        self.CycleLabel.setText(_translate("MainWindow", f"Training Cycle: {self.CycleNum}"))
+                                                            "in confidence about your drawn numbers. <br> <br>" \
+                                                            "<b>Important!</b> Note that only <b>completed</b> training cycles will <br>" \
+                                                            "have an effect on your network! <br>"))
+        self.CycleLabel.setText(_translate("MainWindow", f"Training Cycles: {self.CycleNum}"))
         self.StopButton.setText(_translate("MainWindow", "Stop Training"))
-        self.StartButton.setText(_translate("MainWindow", "Start Training"))
+        if self.CycleNum > 0:
+            self.StartButton.setText(_translate("MainWindow", "Continue Training"))
+        else:
+            self.StartButton.setText(_translate("MainWindow", "Start Training"))
         self.InitializeButton.setText(_translate("MainWindow", "Initialize Randomly"))
         self.DeleteButton.setText(_translate("MainWindow", "Delete Network"))
         self.BackButtonTraining.setText(_translate("MainWindow", "Back"))
@@ -696,7 +706,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setMinimumSize(450, 750)
+        self.setMinimumSize(450, 850)
 
         self.alrTrained = True
 
@@ -782,15 +792,21 @@ class MainWindow(QMainWindow):
 
             def updateProgress(percentage):
                 self.ui.ProgressBar.setValue(int(percentage))
-                self.ui.CycleLabel.setText("Training Cycle: " + str(self.ui.CycleNum))
+                self.ui.CycleLabel.setText("Training Cycles: " + str(self.ui.CycleNum))
 
             training(self.test, self.ActiveTraining, progress_callback=updateProgress)
-            #self.ui.CostPlotLabel.setPixmap("Images/cost_plot.jpg")
-
-            self.ui.CycleNum += 1
+            
+            #self.ui.CostPlotLabel.setPixmap("Cost/cost_plot.jpg")
+            if self.ui.ProgressBar.value() >= 99:
+                self.ui.CycleNum += 1
+                with open("WeightsBiases/cycles.json", "w", encoding="utf-8") as file:
+                    json.dump({"cycles": self.ui.CycleNum}, file)
 
     def StopButton_Clicked(self):
         self.ActiveTraining["Active"] = False
+        self.ui.ProgressBar.setValue(0)
+        if self.ui.CycleNum > 0:
+            self.ui.StartButton.setText("Continue Training")
 
     def InitializeButton_Clicked(self):
         makeRandomWeightsBiases()
@@ -805,12 +821,14 @@ class MainWindow(QMainWindow):
             shutil.rmtree("WeightsBiases")
         if os.path.isfile("Cost/cost.txt"):
             os.remove("Cost/cost.txt")
-        if os.path.isfile("Images/cost_plot.jpg"):
-            os.remove("Images/cost_plot.jpg")
+        if os.path.isfile("Cost/cost_plot.jpg"):
+            os.remove("Cost/cost_plot.jpg")
         self.ui.CostPlot = QPixmap("Images/cost_plot_empty.jpg")
 
         self.ui.ProgressBar.setValue(0)
-        self.ui.CycleLabel.setText("Training Cycle: 0")
+        self.ui.CycleNum = 0
+        self.ui.CycleLabel.setText("Training Cycles: " + str(self.ui.CycleNum))
+        self.ui.StartButton.setText("Start Training")
 
         self.PretrainedButton_Clicked()
         
