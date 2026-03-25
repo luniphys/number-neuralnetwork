@@ -280,6 +280,7 @@ def training(data, active_flag=None, progress_callback=None):
 
     avg_cost_lst = [float(line.strip()) for line in avg_cost_lst]
 
+    plt.figure()
     plt.scatter(range(len(avg_cost_lst)), avg_cost_lst, s=100, color="red", zorder=3)
     plt.ylabel("Cost")
     plt.xlabel("Training cycles")

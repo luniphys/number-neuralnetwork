@@ -522,7 +522,6 @@ class Ui_MainWindow(object):
             self.CostPlotWidget.load("Images/cost_plot_empty.svg")
         else:
             self.CostPlotWidget.load("Cost/cost_plot.svg")
-        self.TrainingPageL.addWidget(self.CostPlotWidget)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
