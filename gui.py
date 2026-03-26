@@ -61,18 +61,24 @@ class Canvas(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        self.length = round(min(self.width(), self.height()) / self.PIXELSIZE)
+        self.length = max(1, round(min(self.width(), self.height()) / self.PIXELSIZE))
+
+        grid_size = self.length * self.PIXELSIZE
+        x_offset = (self.width() - grid_size) // 2
+        y_offset = (self.height() - grid_size) // 2
 
         idx = 0
         for row in range(self.PIXELSIZE):
             for col in range(self.PIXELSIZE):
                 color = QColor("black") if self.pixels[idx] > 0 else QColor("white")
-                painter.fillRect(col * self.length, row * self.length, self.length + 1, self.length + 1, color)
+                painter.fillRect(
+                    x_offset + col * self.length,
+                    y_offset + row * self.length,
+                    self.length + 1,
+                    self.length + 1,
+                    color
+                )
                 idx += 1
-
-                # Grid
-                #painter.setPen(QPen(QColor("lightgray"), 1))
-                #painter.drawRect(col * self.length, row * self.length, self.length, self.length)
 
 
     def mouseMoveEvent(self, event):
@@ -87,10 +93,14 @@ class Canvas(QWidget):
 
 
     def paint(self, event):
-        self.length = round(min(self.width(), self.height()) / self.PIXELSIZE)
+        self.length = max(1, round(min(self.width(), self.height()) / self.PIXELSIZE))
 
-        x = int(event.position().x() // self.length)
-        y = int(event.position().y() // self.length)
+        grid_size = self.length * self.PIXELSIZE
+        x_offset = (self.width() - grid_size) // 2
+        y_offset = (self.height() - grid_size) // 2
+
+        x = int((event.position().x() - x_offset) // self.length)
+        y = int((event.position().y() - y_offset) // self.length)
 
         if 0 <= x < self.PIXELSIZE and 0 <= y < self.PIXELSIZE:
             if event.buttons() & Qt.MouseButton.LeftButton:
@@ -101,7 +111,11 @@ class Canvas(QWidget):
 
 
     def interpolate_paint(self, start_pos, end_pos, event):
-        self.length = round(min(self.width(), self.height()) / self.PIXELSIZE)
+        self.length = max(1, round(min(self.width(), self.height()) / self.PIXELSIZE))
+
+        grid_size = self.length * self.PIXELSIZE
+        x_offset = (self.width() - grid_size) // 2
+        y_offset = (self.height() - grid_size) // 2
 
         dx = end_pos.x() - start_pos.x()
         dy = end_pos.y() - start_pos.y()
@@ -109,13 +123,16 @@ class Canvas(QWidget):
 
         if distance < 1:
             return
-        
+
         steps = max(int(distance) + 1, 2)
 
         for i in range(steps):
             t = i / steps
-            x = int((start_pos.x() + dx * t) // self.length)
-            y = int((start_pos.y() + dy * t) // self.length)
+            px = start_pos.x() + dx * t
+            py = start_pos.y() + dy * t
+
+            x = int((px - x_offset) // self.length)
+            y = int((py - y_offset) // self.length)
 
             if 0 <= x < self.PIXELSIZE and 0 <= y < self.PIXELSIZE:
                 if event.buttons() & Qt.MouseButton.LeftButton:
@@ -241,6 +258,7 @@ class ProbabilityBarChart(QWidget):
         chartview.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(chartview)
         self.setLayout(layout)
     
@@ -251,7 +269,7 @@ class ProbabilityBarChart(QWidget):
 
 
 
-# Qt Designer Code
+
 class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
@@ -386,22 +404,20 @@ class Ui_MainWindow(object):
         self.DrawPageL.setSpacing(8)
         self.DrawPageL.setObjectName("DrawPageL")
 
+        self.CanvasLayout = QHBoxLayout()
+        self.CanvasLayout.setContentsMargins(0, 0, 0, 0)
+        self.CanvasLayout.setSpacing(0)
+        self.CanvasLayout.addStretch()
         self.Canvas = Canvas()
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(3)
         sizePolicy.setHeightForWidth(self.Canvas.sizePolicy().hasHeightForWidth())
         self.Canvas.setSizePolicy(sizePolicy)
-        #self.Canvas.setMinimumSize(int(self.target_width * 0.5), int(self.target_height * 0.5))
         self.Canvas.setMaximumWidth(int(self.target_width * 0.9))
-        self.Canvas.setMaximumHeight(int(self.target_height * 0.9))
         self.Canvas.setBaseSize(QSize(0, 0))
         self.Canvas.setMouseTracking(False)
         self.Canvas.setObjectName("Canvas")
-        self.CanvasLayout = QHBoxLayout()
-        self.CanvasLayout.setContentsMargins(0, 0, 0, 0)
-        self.CanvasLayout.setSpacing(0)
-        self.CanvasLayout.addStretch()
         self.CanvasLayout.addWidget(self.Canvas, 1)
         self.CanvasLayout.addStretch()
         self.DrawPageL.addLayout(self.CanvasLayout, 3)
@@ -468,13 +484,17 @@ class Ui_MainWindow(object):
         self.DrawPageL.addLayout(self.ResultLayout)
 
         self.BarChartLayout = QHBoxLayout()
-        self.BarChartLayout.addStretch()
+        self.BarChartLayout.setObjectName("BarChartLayout")
+        spacerItem28 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.BarChartLayout.addItem(spacerItem28)
         self.BarChart = ProbabilityBarChart()
-        self.BarChart.setMinimumWidth(int(self.target_width * 0.9))
-        self.BarChart.setMinimumHeight(int(self.target_height * 0.17))
         self.BarChart.setObjectName("BarChart")
+        self.BarChart.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.BarChart.setMaximumWidth(int(self.target_width))
+        self.BarChart.setMinimumHeight(int(self.target_height * 0.17))
         self.BarChartLayout.addWidget(self.BarChart)
-        self.BarChartLayout.addStretch()
+        spacerItem29 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.BarChartLayout.addItem(spacerItem29)
         self.DrawPageL.addLayout(self.BarChartLayout)
 
         self.DataLayout = QHBoxLayout()
@@ -571,7 +591,9 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         self.CostPlotWidget.setSizePolicy(sizePolicy)
         self.CostPlotWidget.setMinimumWidth(int(self.target_width * 0.8))
-        self.CostPlotWidget.setMinimumHeight(int(self.target_width * 9/16 * 0.8))
+        self.CostPlotWidget.setMinimumHeight(int(self.target_width * 691/922 * 0.8)) # 922/691: aspect ratio of original plot
+        self.CostPlotWidget.setMaximumWidth(int(self.target_width))
+        self.CostPlotWidget.setMaximumHeight(int(self.target_width * 691/922))
         self.CostPlotWidget.setObjectName("CostPlotWidget")
         self.PlotLayout.addWidget(self.CostPlotWidget)
         self.PlotLayout.addStretch()
@@ -593,8 +615,8 @@ class Ui_MainWindow(object):
         self.TrainingInfoLayout.addStretch()
         self.TrainingPageL.addLayout(self.TrainingInfoLayout)
 
-        spacerItem72 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.TrainingPageL.addItem(spacerItem72)
+        #spacerItem72 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        #self.TrainingPageL.addItem(spacerItem72)
 
         self.ProgressLayout = QHBoxLayout()
         self.ProgressLayout.addStretch()
@@ -740,12 +762,12 @@ class Ui_MainWindow(object):
         self.YourNetworkButton.setText(_translate("MainWindow", "Your Network"))
         self.BackButtonDraw.setText(_translate("MainWindow", "Back"))
         self.ExitButtonDraw.setText(_translate("MainWindow", "Exit"))
-        self.TrainingLabel.setText(_translate("MainWindow", "The <b>Cost</b> values above show how your current network performs (on some hidden example numbers). " \
-                                                            "These <i>cost <br> values</i> can be seen as a measure for the networks mistakes. " \
+        self.TrainingLabel.setText(_translate("MainWindow", "The <b>Cost</b> values above shows your current network performance. " \
+                                                            "These <i>cost values</i> can are a measure for the networks mistakes. <br> " \
                                                             "The lower the value, the less mistakes it makes. <br><br>" \
                                                             "Start your network with <b>Initialize Randomly</b> for an untrained network with random value association, " \
                                                             "and check how it performs on the <b>Draw</b> page. " \
-                                                            "<b>Start Training</b> and see how quickly the <i>cost value</i> drops after each training cycle and " \
+                                                            "<b>Start Training</b> and see how the <i>cost value</i> drops after each training cycle and " \
                                                             "watch the networks growth in confidence about your drawn numbers. <br><br>" \
                                                             "<b>Important!</b> Note that only <b>completed</b> training cycles will have an effect on your network!"))
         self.CycleLabel.setText(_translate("MainWindow", f"Training Cycles: {self.CycleNum}"))
