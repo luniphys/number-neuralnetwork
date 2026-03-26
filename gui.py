@@ -517,6 +517,8 @@ class Ui_MainWindow(object):
         self.TrainingPageL.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
         self.TrainingPageL.setObjectName("TrainingPageL")
 
+        self.PlotLayout = QHBoxLayout()
+        self.PlotLayout.addStretch()
         self.CostPlotWidget = QSvgWidget()
         if not os.path.isfile("Cost/cost_plot.svg"):
             self.CostPlotWidget.load("Images/cost_plot_empty.svg")
@@ -526,8 +528,11 @@ class Ui_MainWindow(object):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         self.CostPlotWidget.setSizePolicy(sizePolicy)
+        self.CostPlotWidget.setMaximumWidth(650)
         self.CostPlotWidget.setObjectName("CostPlotWidget")
-        self.TrainingPageL.addWidget(self.CostPlotWidget)
+        self.PlotLayout.addWidget(self.CostPlotWidget)
+        self.PlotLayout.addStretch()
+        self.TrainingPageL.addLayout(self.PlotLayout)
 
         self.TrainingLabel = QLabel(parent=self.TrainingPageW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)

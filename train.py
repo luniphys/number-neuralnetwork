@@ -263,38 +263,8 @@ def training(data, active_flag=None, progress_callback=None):
 
         cost_lst.append(cost(drawn_num, a3))
 
-    
-    if not os.path.exists("Cost"):
-        os.mkdir("Cost")
-
-    if not os.path.isfile("Cost/cost.txt"): # Non visivle dot to start actual dots at x=1 not x=0
-        with open("Cost/cost.txt", "w", encoding="utf-8") as file:
-            file.write("100\n")
-
     avg_cost = np.mean(cost_lst)
-    with open("Cost/cost.txt", "a", encoding="utf-8") as file:
-        file.write(f"{avg_cost}" + "\n")
-
-    with open("Cost/cost.txt", "r", encoding="utf-8") as file:
-        avg_cost_lst = file.readlines()
-
-    avg_cost_lst = [float(line.strip()) for line in avg_cost_lst]
-
-    plt.figure()
-    plt.scatter(range(len(avg_cost_lst)), avg_cost_lst, s=100, color="red", zorder=3)
-    plt.ylabel("Cost")
-    plt.xlabel("Training cycles")
-    if len(avg_cost_lst) < 5:
-        plt.xlim(0, 5)
-    else:
-        plt.xlim(0, len(avg_cost_lst))
-    pad = max((1 - min(avg_cost_lst)) * 0.03, 0.01)
-    ymin = min(0, min(avg_cost_lst) - pad)
-    plt.ylim(ymin, 1)
-    plt.grid()
-    plt.savefig("Cost/cost_plot.svg")
-    plt.close()
-
+    dotplot(avg_cost)
 
     w1 = pd.DataFrame(w1)
     w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
@@ -308,8 +278,6 @@ def training(data, active_flag=None, progress_callback=None):
     w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
     b3 = pd.DataFrame(b3)
     b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
-
-
 
 
 
@@ -373,6 +341,38 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a1, a2, a3, drawn_num):
         dw1.append(jdx)
     
     return dw1, db1, dw2, db2, dw3, db3
+
+
+
+def dotplot(avg_cost):
+    
+    if not os.path.exists("Cost"):
+        os.mkdir("Cost")
+    
+    with open("Cost/cost.txt", "a", encoding="utf-8") as file:
+        file.write(f"{avg_cost}" + "\n")
+
+    with open("Cost/cost.txt", "r", encoding="utf-8") as file:
+        avg_cost_lst = file.readlines()
+
+    avg_cost_lst = [float(line.strip()) for line in avg_cost_lst]
+    
+    x_values = range(1, len(avg_cost_lst) + 1)
+
+    plt.figure()
+    plt.scatter(x_values, avg_cost_lst, s=100, color="red", zorder=3)
+    plt.ylabel("Cost")
+    plt.xlabel("Training cycles")
+    if len(avg_cost_lst) < 5:
+        plt.xlim(0, 5)
+    else:
+        plt.xlim(0, len(avg_cost_lst))
+    pad = max((1 - min(avg_cost_lst)) * 0.03, 0.01)
+    ymin = min(0, min(avg_cost_lst) - pad)
+    plt.ylim(ymin, 1)
+    plt.grid()
+    plt.savefig("Cost/cost_plot.svg")
+    plt.close()
 
 
 
