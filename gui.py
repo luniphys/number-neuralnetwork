@@ -250,10 +250,6 @@ class ProbabilityBarChart(QWidget):
 
 
 
-class CostPlot(QWidget):
-    pass
-
-
 
 # Qt Designer Code
 class Ui_MainWindow(object):
@@ -266,8 +262,14 @@ class Ui_MainWindow(object):
         else:
             self.CycleNum = 0
 
+        self.resolution = QApplication.primaryScreen().size()
+        self.res_width = int(self.resolution.width())
+        self.res_height = int(self.resolution.height())
+        self.target_width = int(self.res_width * 0.28)
+        self.target_height = int(self.res_height * 0.89)
+
         MainWindow.setObjectName("MainWindow")
-        MainWindow.setGeometry(900, 50, 450, 870)
+        MainWindow.setGeometry(int(self.res_width/2 - self.target_width/2), int(self.res_height/2 - self.target_height/2), self.target_width, self.target_height)
         font = QFont()
         font.setPointSize(12)
         MainWindow.setFont(font)
@@ -293,6 +295,17 @@ class Ui_MainWindow(object):
         self.MainMenuL.setSpacing(8)
         self.MainMenuL.setObjectName("MainMenuL")
 
+        self.NetworkLabel = QLabel(parent=self.MainMenuW)
+        self.NetworkLabel.setPixmap(QPixmap("Images/network_image.jpg").scaledToWidth(self.target_width, Qt.TransformationMode.SmoothTransformation))
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.NetworkLabel.sizePolicy().hasHeightForWidth())
+        self.NetworkLabel.setSizePolicy(sizePolicy)
+        self.NetworkLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.NetworkLabel.setObjectName("NetworkLabel")
+        self.MainMenuL.addWidget(self.NetworkLabel)
+
         self.InfoLabel = QLabel(parent=self.MainMenuW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -300,6 +313,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.InfoLabel.sizePolicy().hasHeightForWidth())
         self.InfoLabel.setSizePolicy(sizePolicy)
         self.InfoLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.InfoLabel.setWordWrap(True)
         self.InfoLabel.setObjectName("InfoLabel")
         self.MainMenuL.addWidget(self.InfoLabel)
 
@@ -313,6 +327,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.DrawButton.sizePolicy().hasHeightForWidth())
         self.DrawButton.setSizePolicy(sizePolicy)
+        self.DrawButton.setMaximumWidth(int(self.target_width))
         self.DrawButton.setObjectName("DrawButton")
         self.DrawLayout.addWidget(self.DrawButton)
         spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -329,6 +344,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.TrainingButton.sizePolicy().hasHeightForWidth())
         self.TrainingButton.setSizePolicy(sizePolicy)
+        self.TrainingButton.setMaximumWidth(int(self.target_width))
         self.TrainingButton.setObjectName("TrainingButton")
         self.TrainingLayout.addWidget(self.TrainingButton)
         spacerItem3 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -350,6 +366,7 @@ class Ui_MainWindow(object):
         font = QFont()
         font.setPointSize(12)
         self.ExitButtonMain.setFont(font)
+        self.ExitButtonMain.setMaximumWidth(int(self.target_width))
         self.ExitButtonMain.setObjectName("ExitButtonMain")
         self.horizontalLayout_2.addWidget(self.ExitButtonMain)
         spacerItem6 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -375,8 +392,9 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(3)
         sizePolicy.setHeightForWidth(self.Canvas.sizePolicy().hasHeightForWidth())
         self.Canvas.setSizePolicy(sizePolicy)
-        self.Canvas.setMinimumSize(QSize(200, 200))
-        self.Canvas.setMaximumWidth(550)
+        #self.Canvas.setMinimumSize(int(self.target_width * 0.5), int(self.target_height * 0.5))
+        self.Canvas.setMaximumWidth(int(self.target_width * 0.9))
+        self.Canvas.setMaximumHeight(int(self.target_height * 0.9))
         self.Canvas.setBaseSize(QSize(0, 0))
         self.Canvas.setMouseTracking(False)
         self.Canvas.setObjectName("Canvas")
@@ -403,6 +421,12 @@ class Ui_MainWindow(object):
         self.ClearGuessLayout.setObjectName("ClearGuessLayout")
         spacerItem7 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.ClearGuessLayout.addItem(spacerItem7)
+        self.ClearGuessButtonsContainer = QWidget(parent=self.DrawPageW)
+        self.ClearGuessButtonsContainer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.ClearGuessButtonsContainer.setMaximumWidth(int(self.target_width))
+        self.ClearGuessButtonsLayout = QHBoxLayout(self.ClearGuessButtonsContainer)
+        self.ClearGuessButtonsLayout.setContentsMargins(0, 0, 0, 0)
+        self.ClearGuessButtonsLayout.setSpacing(8)
         self.ClearButton = QPushButton(parent=self.DrawPageW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -410,9 +434,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.ClearButton.sizePolicy().hasHeightForWidth())
         self.ClearButton.setSizePolicy(sizePolicy)
         self.ClearButton.setObjectName("ClearButton")
-        self.ClearGuessLayout.addWidget(self.ClearButton)
-        spacerItem8 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.ClearGuessLayout.addItem(spacerItem8)
+        self.ClearGuessButtonsLayout.addWidget(self.ClearButton, 1)
         self.GuessButton = QPushButton(parent=self.DrawPageW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -420,7 +442,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.GuessButton.sizePolicy().hasHeightForWidth())
         self.GuessButton.setSizePolicy(sizePolicy)
         self.GuessButton.setObjectName("GuessButton")
-        self.ClearGuessLayout.addWidget(self.GuessButton)
+        self.ClearGuessButtonsLayout.addWidget(self.GuessButton, 1)
+        self.ClearGuessLayout.addWidget(self.ClearGuessButtonsContainer)
         spacerItem9 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.ClearGuessLayout.addItem(spacerItem9)
         self.DrawPageL.addLayout(self.ClearGuessLayout)
@@ -437,26 +460,33 @@ class Ui_MainWindow(object):
         self.ResultLabel.setSizePolicy(sizePolicy)
         self.ResultLabel.setFrameShape(QFrame.Shape.StyledPanel)
         self.ResultLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.ResultLabel.setMaximumWidth(int(self.target_width))
         self.ResultLabel.setObjectName("ResultLabel")
         self.ResultLayout.addWidget(self.ResultLabel)
         spacerItem11 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.ResultLayout.addItem(spacerItem11)
         self.DrawPageL.addLayout(self.ResultLayout)
 
+        self.BarChartLayout = QHBoxLayout()
+        self.BarChartLayout.addStretch()
         self.BarChart = ProbabilityBarChart()
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(self.BarChart.sizePolicy().hasHeightForWidth())
-        self.BarChart.setSizePolicy(sizePolicy)
-        self.BarChart.setSizeIncrement(QSize(0, 0))
+        self.BarChart.setMinimumWidth(int(self.target_width * 0.9))
+        self.BarChart.setMinimumHeight(int(self.target_height * 0.17))
         self.BarChart.setObjectName("BarChart")
-        self.DrawPageL.addWidget(self.BarChart)
+        self.BarChartLayout.addWidget(self.BarChart)
+        self.BarChartLayout.addStretch()
+        self.DrawPageL.addLayout(self.BarChartLayout)
 
         self.DataLayout = QHBoxLayout()
         self.DataLayout.setObjectName("DataLayout")
         spacerItem12 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DataLayout.addItem(spacerItem12)
+        self.DataButtonsContainer = QWidget(parent=self.DrawPageW)
+        self.DataButtonsContainer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.DataButtonsContainer.setMaximumWidth(int(self.target_width))
+        self.DataButtonsLayout = QHBoxLayout(self.DataButtonsContainer)
+        self.DataButtonsLayout.setContentsMargins(0, 0, 0, 0)
+        self.DataButtonsLayout.setSpacing(8)
         self.PretrainedButton = QPushButton(parent=self.DrawPageW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -466,9 +496,7 @@ class Ui_MainWindow(object):
         self.PretrainedButton.setCheckable(True)
         self.PretrainedButton.setChecked(True)
         self.PretrainedButton.setObjectName("PretrainedButton")
-        self.DataLayout.addWidget(self.PretrainedButton)
-        spacerItem13 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.DataLayout.addItem(spacerItem13)
+        self.DataButtonsLayout.addWidget(self.PretrainedButton, 1)
         self.YourNetworkButton = QPushButton(parent=self.DrawPageW)
         if not selfTrainedDataExists:
             self.YourNetworkButton.setEnabled(False)
@@ -479,7 +507,8 @@ class Ui_MainWindow(object):
         self.YourNetworkButton.setSizePolicy(sizePolicy)
         self.YourNetworkButton.setCheckable(True)
         self.YourNetworkButton.setObjectName("YourNetworkButton")
-        self.DataLayout.addWidget(self.YourNetworkButton)
+        self.DataButtonsLayout.addWidget(self.YourNetworkButton, 1)
+        self.DataLayout.addWidget(self.DataButtonsContainer)
         spacerItem14 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.DataLayout.addItem(spacerItem14)
         self.DrawPageL.addLayout(self.DataLayout)
@@ -496,15 +525,28 @@ class Ui_MainWindow(object):
         self.DrawPageL.addItem(spacerItem15)
 
         self.BackExitLayout = QHBoxLayout()
-        self.BackExitLayout.setSizeConstraint(QLayout.SizeConstraint.SetMaximumSize)
         self.BackExitLayout.setObjectName("BackExitLayout")
+        spacerItem24 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.BackExitLayout.addItem(spacerItem24)
+        self.BackExitButtonsContainer = QWidget(parent=self.DrawPageW)
+        self.BackExitButtonsContainer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.BackExitButtonsContainer.setMaximumWidth(int(self.target_width))
+        self.BackExitButtonsLayout = QHBoxLayout(self.BackExitButtonsContainer)
+        self.BackExitButtonsLayout.setContentsMargins(0, 0, 0, 0)
+        self.BackExitButtonsLayout.setSpacing(8)
         self.BackButtonDraw = QPushButton(parent=self.DrawPageW)
         self.BackButtonDraw.setObjectName("BackButtonDraw")
-        self.BackExitLayout.addWidget(self.BackButtonDraw)
+        self.BackButtonDraw.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.BackExitButtonsLayout.addWidget(self.BackButtonDraw, 1)
         self.ExitButtonDraw = QPushButton(parent=self.DrawPageW)
         self.ExitButtonDraw.setObjectName("ExitButtonDraw")
-        self.BackExitLayout.addWidget(self.ExitButtonDraw)
+        self.ExitButtonDraw.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.BackExitButtonsLayout.addWidget(self.ExitButtonDraw, 1)
+        self.BackExitLayout.addWidget(self.BackExitButtonsContainer)
+        spacerItem27 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.BackExitLayout.addItem(spacerItem27)
         self.DrawPageL.addLayout(self.BackExitLayout)
+
         self.verticalLayout_3.addLayout(self.DrawPageL)
         self.stackedWidget.addWidget(self.DrawPageW)
 
@@ -528,26 +570,42 @@ class Ui_MainWindow(object):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         self.CostPlotWidget.setSizePolicy(sizePolicy)
-        self.CostPlotWidget.setMaximumWidth(650)
+        self.CostPlotWidget.setMinimumWidth(int(self.target_width * 0.8))
+        self.CostPlotWidget.setMinimumHeight(int(self.target_width * 9/16 * 0.8))
         self.CostPlotWidget.setObjectName("CostPlotWidget")
         self.PlotLayout.addWidget(self.CostPlotWidget)
         self.PlotLayout.addStretch()
         self.TrainingPageL.addLayout(self.PlotLayout)
 
+        self.TrainingInfoLayout = QHBoxLayout()
+        self.TrainingInfoLayout.addStretch()
         self.TrainingLabel = QLabel(parent=self.TrainingPageW)
+        font = QFont()
+        font.setPointSize(10)
+        self.TrainingLabel.setFont(font)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.TrainingLabel.sizePolicy().hasHeightForWidth())
         self.TrainingLabel.setSizePolicy(sizePolicy)
         self.TrainingLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.TrainingLabel.setWordWrap(True)
+        self.TrainingLabel.setMaximumWidth(int(self.target_width))
         self.TrainingLabel.setObjectName("TrainingLabel")
-        self.TrainingPageL.addWidget(self.TrainingLabel)
+        self.TrainingInfoLayout.addWidget(self.TrainingLabel)
+        self.TrainingInfoLayout.addStretch()
+        self.TrainingPageL.addLayout(self.TrainingInfoLayout)
 
+        spacerItem72 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.TrainingPageL.addItem(spacerItem72)
+
+        self.ProgressLayout = QHBoxLayout()
+        self.ProgressLayout.addStretch()
         self.ProgressBar = QProgressBar(parent=self.TrainingPageW)
         self.ProgressBar.setObjectName("ProgressBar")
         self.ProgressBar.setValue(0)
-        self.TrainingPageL.addWidget(self.ProgressBar)
+        self.ProgressBar.setMinimumWidth(int(self.target_width * 0.9))
+        self.ProgressBar.setMaximumWidth(self.target_width)
+        self.ProgressLayout.addWidget(self.ProgressBar)
+        self.ProgressLayout.addStretch()
+        self.TrainingPageL.addLayout(self.ProgressLayout)
 
         self.CycleLabel = QLabel(parent=self.TrainingPageW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
@@ -566,31 +624,30 @@ class Ui_MainWindow(object):
         self.StopStartLayout.setObjectName("StopStartLayout")
         spacerItem22 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         self.StopStartLayout.addItem(spacerItem22)
-        self.StopButton = QPushButton(parent=self.DrawPageW)
+        self.StopStartButtonsContainer = QWidget(parent=self.TrainingPageW)
+        self.StopStartButtonsContainer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.StopStartButtonsContainer.setMaximumWidth(int(self.target_width))
+        self.StopStartButtonsLayout = QHBoxLayout(self.StopStartButtonsContainer)
+        self.StopStartButtonsLayout.setContentsMargins(0, 0, 0, 0)
+        self.StopStartButtonsLayout.setSpacing(self.ClearGuessLayout.spacing())
+        self.StopButton = QPushButton(parent=self.TrainingPageW)
         self.StopButton.setEnabled(False)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.StopButton.sizePolicy().hasHeightForWidth())
-        self.StopButton.setSizePolicy(sizePolicy)
         self.StopButton.setCheckable(True)
+        self.StopButton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.StopButton.setMaximumWidth(int((self.target_width - self.StopStartButtonsLayout.spacing()) / 2))
         self.StopButton.setObjectName("StopButton")
-        self.StopStartLayout.addWidget(self.StopButton)
-        spacerItem23 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.ClearGuessLayout.addItem(spacerItem23)
-        self.StartButton = QPushButton(parent=self.DrawPageW)
+        self.StopStartButtonsLayout.addWidget(self.StopButton, 1)
+        self.StartButton = QPushButton(parent=self.TrainingPageW)
         if not selfTrainedDataExists:
             self.StartButton.setEnabled(False)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.StartButton.sizePolicy().hasHeightForWidth())
-        self.StartButton.setSizePolicy(sizePolicy)
         self.StartButton.setCheckable(True)
+        self.StartButton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.StartButton.setMaximumWidth(int((self.target_width - self.StopStartButtonsLayout.spacing()) / 2))
         self.StartButton.setObjectName("StartButton")
-        self.StopStartLayout.addWidget(self.StartButton)
-        spacerItem24 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.StopStartLayout.addItem(spacerItem24)
+        self.StopStartButtonsLayout.addWidget(self.StartButton, 1)
+        self.StopStartLayout.addWidget(self.StopStartButtonsContainer)
+        spacerItem23 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.StopStartLayout.addItem(spacerItem23)
         self.TrainingPageL.addLayout(self.StopStartLayout)
 
         self.InitializeLayout = QHBoxLayout()
@@ -600,11 +657,12 @@ class Ui_MainWindow(object):
         self.InitializeButton = QPushButton(parent=self.TrainingPageW)
         if selfTrainedDataExists:
             self.InitializeButton.setEnabled(False)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.InitializeButton.sizePolicy().hasHeightForWidth())
         self.InitializeButton.setSizePolicy(sizePolicy)
+        self.InitializeButton.setMaximumWidth(int(self.target_width))
         self.InitializeButton.setObjectName("InitializeButton")
         self.InitializeLayout.addWidget(self.InitializeButton)
         spacerItem18 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -623,6 +681,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.DeleteButton.sizePolicy().hasHeightForWidth())
         self.DeleteButton.setSizePolicy(sizePolicy)
+        self.DeleteButton.setMaximumWidth(int(self.target_width))
         self.DeleteButton.setObjectName("DeleteButton")
         self.DeleteLayout.addWidget(self.DeleteButton)
         spacerItem26 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -642,6 +701,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.BackButtonTraining.sizePolicy().hasHeightForWidth())
         self.BackButtonTraining.setSizePolicy(sizePolicy)
+        self.BackButtonTraining.setMaximumWidth(int(self.target_width))
         self.BackButtonTraining.setObjectName("BackButtonTraining")
         self.BackButtonTrainingLayout.addWidget(self.BackButtonTraining)
 
@@ -675,22 +735,19 @@ class Ui_MainWindow(object):
         self.ClearButton.setText(_translate("MainWindow", "Clear"))
         self.GuessButton.setText(_translate("MainWindow", "Guess the number!"))
         self.CanvasInfoLabel.setText(_translate("MainWindow", "Try to draw large and precise. (1 & 9 are <i>problem numbers</i>.)"))
-        self.DataLabel.setText(_translate("MainWindow", "Choose between a pretrained network or a network you have trained"))
+        self.DataLabel.setText(_translate("MainWindow", "Choose between a pretrained network or a network you've trained."))
         self.PretrainedButton.setText(_translate("MainWindow", "Pretrained"))
         self.YourNetworkButton.setText(_translate("MainWindow", "Your Network"))
         self.BackButtonDraw.setText(_translate("MainWindow", "Back"))
         self.ExitButtonDraw.setText(_translate("MainWindow", "Exit"))
-        self.TrainingLabel.setText(_translate("MainWindow", "<br>The <b>Cost</b> values above show how your current network <br>" \
-                                                            "performs (on some hidden example numbers). These <i>cost <br> values</i> can be seen as a measure for the networks <br>" \
-                                                            "mistakes. The lower the value, the less mistakes it makes. <br> <br>" \
-                                                            "Start your network with <b>Initialize Randomly</b> for an <br>" \
-                                                            "untrained network with random value association, and <br>" \
-                                                            "check how it performs on the <b>Draw</b> page. <br>" \
-                                                            "<b>Start Training</b> and see how quickly the <i>cost value</i> drops <br>" \
-                                                            "after each training cycle and watch the networks growth <br>"
-                                                            "in confidence about your drawn numbers. <br> <br>" \
-                                                            "<b>Important!</b> Note that only <b>completed</b> training cycles will <br>" \
-                                                            "have an effect on your network! <br>"))
+        self.TrainingLabel.setText(_translate("MainWindow", "The <b>Cost</b> values above show how your current network performs (on some hidden example numbers). " \
+                                                            "These <i>cost <br> values</i> can be seen as a measure for the networks mistakes. " \
+                                                            "The lower the value, the less mistakes it makes. <br><br>" \
+                                                            "Start your network with <b>Initialize Randomly</b> for an untrained network with random value association, " \
+                                                            "and check how it performs on the <b>Draw</b> page. " \
+                                                            "<b>Start Training</b> and see how quickly the <i>cost value</i> drops after each training cycle and " \
+                                                            "watch the networks growth in confidence about your drawn numbers. <br><br>" \
+                                                            "<b>Important!</b> Note that only <b>completed</b> training cycles will have an effect on your network!"))
         self.CycleLabel.setText(_translate("MainWindow", f"Training Cycles: {self.CycleNum}"))
         self.StopButton.setText(_translate("MainWindow", "Stop Training"))
         if self.CycleNum > 0:
@@ -710,8 +767,7 @@ class MainWindow(QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
-        self.setMinimumSize(450, 850)
+        self.setMinimumSize(int(self.ui.target_width * 0.95), int(self.ui.target_height * 0.985))
 
         self.alrTrained = True
 
@@ -801,7 +857,9 @@ class MainWindow(QMainWindow):
 
             training(self.test, self.ActiveTraining, progress_callback=updateProgress)
             
-            self.ui.CostPlotWidget.load("Cost/cost_plot.svg")
+            if os.path.isfile("Cost/cost_plot.svg"):
+                self.ui.CostPlotWidget.load("Cost/cost_plot.svg")
+
             if self.ui.ProgressBar.value() >= 99:
                 self.ui.CycleNum += 1
                 with open("WeightsBiases/cycles.json", "w", encoding="utf-8") as file:
@@ -861,3 +919,4 @@ if __name__ == "__main__":
 
     #TODO: only necessary packages
     #TODO: Delete cost_plot.py and in DeleteButton remove Cost folder
+    #TODO: maybe add a "Are you sure?" popup when deleting the network
