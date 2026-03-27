@@ -8,7 +8,7 @@ The complete backend logic is manifested in <i>train.py</i>, where the network i
 
 In <i>test.py</i>, I test the network with the <b>MNIST</b> test dataset (10.000 datapoints). Overall I get a <b>94.84%</b> accuracy after training the network for ~ 60 hours in 281 training cycles. Below you can see the <b><i>cost value</i></b> trend during training.
 
-<img src="Images/cost_plot_trained.svg" width="700">
+<img src="Images/cost_plot_trained.svg" width="500">
 
 ### GUI
 
