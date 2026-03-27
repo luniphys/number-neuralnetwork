@@ -789,10 +789,10 @@ class Ui_MainWindow(object):
                                           "You can <b>Draw</b> digits and see a pretrained network's guess, or dive into <b>Training</b> to create your own network " \
                                           "and watch it becoming better at guessing numbers you have drawn after each training cycle."))
         self.InfoLabel2.setText(_translate("MainWindow", "Above you can see the layout of the neural network. Its input are 784 neurons from a 28x28 pixel canvas with values 0-1 representing the drawing intensity. " \
-                                            "After passing 2 mid layers with 16 neurons each, the network outputs a prediction for each digit from 0 to 9. " \
+                                            "After passing two mid layers with 16 neurons each, the network outputs a prediction for each digit from 0-9. " \
                                             "All these neuron layers are mathematically connected through the weights and biases (W & b), " \
                                             "which will be adjusted during each training cycle to minimize the network's error (<b><i>cost value</i></b>). <br>" \
-                                            "The pretrained network has been trained like that on the large <b>MNIST</b> dataset for ~ 60 hours." ))
+                                            "The pretrained network has been trained like that on the large <b>MNIST</b> training dataset for ~60 hours." ))
         self.DrawButton.setText(_translate("MainWindow", "Draw"))
         self.TrainingButton.setText(_translate("MainWindow", "Training"))
         self.ExitButtonMain.setText(_translate("MainWindow", "Exit"))
@@ -944,12 +944,18 @@ class MainWindow(QMainWindow):
 
 
     def DeleteButton_Clicked(self):
+
+        reply = QMessageBox.question(self, 'Delete Network', 'Are you sure you want to delete your network?',
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
+        
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
         if os.path.exists("WeightsBiases"):
             shutil.rmtree("WeightsBiases")
-        if os.path.isfile("Cost/cost.txt"):
-            os.remove("Cost/cost.txt")
-        if os.path.isfile("Cost/cost_plot.svg"):
-            os.remove("Cost/cost_plot.svg")
+        if os.path.exists("Cost"):
+            shutil.rmtree("Cost")
+
         self.ui.CostPlotWidget.load("Images/cost_plot_empty.svg")
 
         self.ui.ProgressBar.setValue(0)
@@ -982,5 +988,4 @@ if __name__ == "__main__":
 
 
     #TODO: only necessary packages
-    #TODO: Delete cost_plot.py and in DeleteButton remove Cost folder
-    #TODO: maybe add a "Are you sure?" popup when deleting the network
+    #TODO: GUI images into ReadMe
