@@ -316,30 +316,19 @@ class Ui_MainWindow(object):
         self.ImageLayout = QHBoxLayout()
         self.ImageLayout.addStretch()
         self.NetworkImageWidget = QSvgWidget()
-        self.NetworkImageWidget.load("Images/network_image.svg")
+        self.NetworkImageWidget.load("Images/network_image_reduced.svg")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         self.NetworkImageWidget.setSizePolicy(sizePolicy)
-        self.NetworkImageWidget.setMinimumWidth(int(self.target_width * 0.9))
-        self.NetworkImageWidget.setMinimumHeight(int(self.target_width * 9/16 * 0.9)) # 922/691: aspect ratio of original plot
+        self.NetworkImageWidget.setMinimumWidth(int(self.target_width * 0.75))
+        self.NetworkImageWidget.setMinimumHeight(int(self.target_width * 17/24 * 0.75))
         self.NetworkImageWidget.setMaximumWidth(int(self.target_width))
-        self.NetworkImageWidget.setMaximumHeight(int(self.target_width * 9/16))
+        self.NetworkImageWidget.setMaximumHeight(int(self.target_width * 17/24))
         self.NetworkImageWidget.setObjectName("NetworkImageWidget")
         self.ImageLayout.addWidget(self.NetworkImageWidget)
         self.ImageLayout.addStretch()
         self.MainMenuL.addLayout(self.ImageLayout)
-
-        #self.NetworkLabel = QLabel(parent=self.MainMenuW)
-        #self.NetworkLabel.setPixmap(QPixmap("Images/network_image.svg").scaledToWidth(self.target_width, Qt.TransformationMode.SmoothTransformation))
-        #sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        #sizePolicy.setHorizontalStretch(0)
-        #sizePolicy.setVerticalStretch(1)
-        #sizePolicy.setHeightForWidth(self.NetworkLabel.sizePolicy().hasHeightForWidth())
-        #self.NetworkLabel.setSizePolicy(sizePolicy)
-        #self.NetworkLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        #self.NetworkLabel.setObjectName("NetworkLabel")
-        #self.MainMenuL.addWidget(self.NetworkLabel)
 
         self.InfoLayout1 = QHBoxLayout()
         self.InfoLayout1.addStretch()
@@ -799,7 +788,7 @@ class Ui_MainWindow(object):
                                           "This interactive application allows you to train a simple neural network to recognize hand-drawn digits. <br><br>" \
                                           "You can <b>Draw</b> digits and see a pretrained network's guess, or dive into <b>Training</b> to create your own network " \
                                           "and watch it becoming better at guessing numbers you have drawn after each training cycle."))
-        self.InfoLabel2.setText(_translate("MainWindow", "Above you can see the layout of the neural network. <br> Its input are 784 (=28x28 pixels) neurons from a pixel canvas with values 0-1 representing the drawing intensity. " \
+        self.InfoLabel2.setText(_translate("MainWindow", "Above you can see the layout of the neural network. Its input are 784 neurons from a 28x28 pixel canvas with values 0-1 representing the drawing intensity. " \
                                             "After passing 2 mid layers with 16 neurons each, the network outputs a prediction for each digit from 0 to 9. " \
                                             "All these neuron layers are mathematically connected through the weights and biases (W & b), " \
                                             "which will be adjusted during each training cycle to minimize the network's error (<b><i>cost value</i></b>). <br>" \

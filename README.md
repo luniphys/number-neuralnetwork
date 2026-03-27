@@ -1,8 +1,22 @@
 # Neural network from scratch
 
-This network will detect drawn numbers based on the MNIST dataset. In this code I will only implement basic Python functions and math (no nerual network/AI packages).
+This network will detect drawn numbers based on the <b>MNIST</b> dataset. In this code I only implemented <b>basic</b> Python functionality and math (no neural network/AI packages).
 
-(Since training the weights and biases takes a couple of hours, an already trained set is provided.)
+### Training & Testing
+
+The complete backend logic is manifested in <i>train.py</i>, where the network is set up and all the weights and biases are trained with the large <b>MNIST</b> training dataset (60.000 datapoints) by a self implemented backpropagation.
+
+In <i>test.py</i>, I test the network with the <b>MNIST</b> test dataset (10.000 datapoints). Overall I get a <b>94.84%</b> accuracy after training the network for ~ 60 hours in 281 training cycles. Below you can see the <b><i>cost value</i></b> trend during training.
+
+<img src="Images/cost_plot_trained.svg" width="700">
+
+### GUI
+
+This application lets you/ the user draw on a canvas with its mouse and the trained network will guess the number.
+
+On top you can train a new network yourself. Start by initializing the network with random values and then train it cycle by cycle. Whenever you want, you can check how the network performs on you drawn numbers. It's nice to see the networks' growth in confidence!
+
+<img src="Images/gui_examples.png" width="700">
 
 ### Reference 3Blue1Brown
 
@@ -12,7 +26,7 @@ https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
 
 ### Mathematics & Theory
 
-<img src="Images/network_image.png" width="800">
+<img src="Images/network_image.png" width="900">
 
 The MNIST dataset provides a 28 x 28 = 784 pixel grid which are used as input neurons. Each pixel/neuron represents how "painted" the pixel is from 0-1. The two hidden layer sizes $n_1 = n_2 = 16$ are arbitrary. The activation of the last layer $a^{(3)}$ represents how sure the network is about each number being the drawn one.
 
