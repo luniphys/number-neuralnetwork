@@ -313,27 +313,75 @@ class Ui_MainWindow(object):
         self.MainMenuL.setSpacing(8)
         self.MainMenuL.setObjectName("MainMenuL")
 
-        self.NetworkLabel = QLabel(parent=self.MainMenuW)
-        self.NetworkLabel.setPixmap(QPixmap("Images/network_image.jpg").scaledToWidth(self.target_width, Qt.TransformationMode.SmoothTransformation))
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.ImageLayout = QHBoxLayout()
+        self.ImageLayout.addStretch()
+        self.NetworkImageWidget = QSvgWidget()
+        self.NetworkImageWidget.load("Images/network_image.svg")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(self.NetworkLabel.sizePolicy().hasHeightForWidth())
-        self.NetworkLabel.setSizePolicy(sizePolicy)
-        self.NetworkLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.NetworkLabel.setObjectName("NetworkLabel")
-        self.MainMenuL.addWidget(self.NetworkLabel)
+        sizePolicy.setVerticalStretch(0)
+        self.NetworkImageWidget.setSizePolicy(sizePolicy)
+        self.NetworkImageWidget.setMinimumWidth(int(self.target_width * 0.9))
+        self.NetworkImageWidget.setMinimumHeight(int(self.target_width * 9/16 * 0.9)) # 922/691: aspect ratio of original plot
+        self.NetworkImageWidget.setMaximumWidth(int(self.target_width))
+        self.NetworkImageWidget.setMaximumHeight(int(self.target_width * 9/16))
+        self.NetworkImageWidget.setObjectName("NetworkImageWidget")
+        self.ImageLayout.addWidget(self.NetworkImageWidget)
+        self.ImageLayout.addStretch()
+        self.MainMenuL.addLayout(self.ImageLayout)
 
-        self.InfoLabel = QLabel(parent=self.MainMenuW)
+        #self.NetworkLabel = QLabel(parent=self.MainMenuW)
+        #self.NetworkLabel.setPixmap(QPixmap("Images/network_image.svg").scaledToWidth(self.target_width, Qt.TransformationMode.SmoothTransformation))
+        #sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        #sizePolicy.setHorizontalStretch(0)
+        #sizePolicy.setVerticalStretch(1)
+        #sizePolicy.setHeightForWidth(self.NetworkLabel.sizePolicy().hasHeightForWidth())
+        #self.NetworkLabel.setSizePolicy(sizePolicy)
+        #self.NetworkLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        #self.NetworkLabel.setObjectName("NetworkLabel")
+        #self.MainMenuL.addWidget(self.NetworkLabel)
+
+        self.InfoLayout1 = QHBoxLayout()
+        self.InfoLayout1.addStretch()
+        self.InfoLabel1 = QLabel(parent=self.MainMenuW)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(self.InfoLabel.sizePolicy().hasHeightForWidth())
-        self.InfoLabel.setSizePolicy(sizePolicy)
-        self.InfoLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.InfoLabel.setWordWrap(True)
-        self.InfoLabel.setObjectName("InfoLabel")
-        self.MainMenuL.addWidget(self.InfoLabel)
+        sizePolicy.setHeightForWidth(self.InfoLabel1.sizePolicy().hasHeightForWidth())
+        self.InfoLabel1.setSizePolicy(sizePolicy)
+        self.InfoLabel1.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.InfoLabel1.setWordWrap(True)
+        self.InfoLabel1.setMaximumWidth(int(self.target_width))
+        self.InfoLabel1.setObjectName("InfoLabel1")
+        self.InfoLayout1.addWidget(self.InfoLabel1)
+        self.InfoLayout1.addStretch()
+        self.MainMenuL.addLayout(self.InfoLayout1)
+
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.MainMenuL.addItem(spacerItem)
+
+        self.InfoLayout2 = QHBoxLayout()
+        self.InfoLayout2.addStretch()
+        self.InfoLabel2 = QLabel(parent=self.MainMenuW)
+        font = QFont()
+        font.setPointSize(10)
+        self.InfoLabel2.setFont(font)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.InfoLabel2.sizePolicy().hasHeightForWidth())
+        self.InfoLabel2.setSizePolicy(sizePolicy)
+        self.InfoLabel2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.InfoLabel2.setWordWrap(True)
+        self.InfoLabel2.setMinimumWidth(int(self.target_width * 0.8))
+        self.InfoLabel2.setMaximumWidth(int(self.target_width))
+        self.InfoLabel2.setObjectName("InfoLabel2")
+        self.InfoLayout2.addWidget(self.InfoLabel2)
+        self.InfoLayout2.addStretch()
+        self.MainMenuL.addLayout(self.InfoLayout2)
+
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.MainMenuL.addItem(spacerItem)
 
         self.DrawLayout = QHBoxLayout()
         self.DrawLayout.setObjectName("DrawLayout")
@@ -615,9 +663,6 @@ class Ui_MainWindow(object):
         self.TrainingInfoLayout.addStretch()
         self.TrainingPageL.addLayout(self.TrainingInfoLayout)
 
-        #spacerItem72 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        #self.TrainingPageL.addItem(spacerItem72)
-
         self.ProgressLayout = QHBoxLayout()
         self.ProgressLayout.addStretch()
         self.ProgressBar = QProgressBar(parent=self.TrainingPageW)
@@ -750,7 +795,15 @@ class Ui_MainWindow(object):
         _translate = QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Number Neural Network"))
         MainWindow.setWindowIcon(QIcon("Images/neural_icon.png"))
-        self.InfoLabel.setText(_translate("MainWindow", "Info text."))
+        self.InfoLabel1.setText(_translate("MainWindow", "Welcome to the Number Neural Network! <br><br>" \
+                                          "This interactive application allows you to train a simple neural network to recognize hand-drawn digits. <br><br>" \
+                                          "You can <b>Draw</b> digits and see a pretrained network's guess, or dive into <b>Training</b> to create your own network " \
+                                          "and watch it becoming better at guessing numbers you have drawn after each training cycle."))
+        self.InfoLabel2.setText(_translate("MainWindow", "Above you can see the layout of the neural network. <br> Its input are 784 (=28x28 pixels) neurons from a pixel canvas with values 0-1 representing the drawing intensity. " \
+                                            "After passing 2 mid layers with 16 neurons each, the network outputs a prediction for each digit from 0 to 9. " \
+                                            "All these neuron layers are mathematically connected through the weights and biases (W & b), " \
+                                            "which will be adjusted during each training cycle to minimize the network's error (<b><i>cost value</i></b>). <br>" \
+                                            "The pretrained network has been trained like that on the large <b>MNIST</b> dataset for ~ 60 hours." ))
         self.DrawButton.setText(_translate("MainWindow", "Draw"))
         self.TrainingButton.setText(_translate("MainWindow", "Training"))
         self.ExitButtonMain.setText(_translate("MainWindow", "Exit"))
@@ -762,15 +815,15 @@ class Ui_MainWindow(object):
         self.YourNetworkButton.setText(_translate("MainWindow", "Your Network"))
         self.BackButtonDraw.setText(_translate("MainWindow", "Back"))
         self.ExitButtonDraw.setText(_translate("MainWindow", "Exit"))
-        self.TrainingLabel.setText(_translate("MainWindow", "The <b>Cost</b> values above shows your current network performance. " \
-                                                            "These <i>cost values</i> can are a measure for the networks mistakes. <br> " \
-                                                            "The lower the value, the less mistakes it makes. <br><br>" \
+        self.TrainingLabel.setText(_translate("MainWindow", "The <b>Cost</b> values above show your current network performance. " \
+                                                            "They can be seen as a measure for the networks mistakes. <br> " \
+                                                            "The lower the value, the less mistakes the network makes. <br><br>" \
                                                             "Start your network with <b>Initialize Randomly</b> for an untrained network with random value association, " \
                                                             "and check how it performs on the <b>Draw</b> page. " \
                                                             "<b>Start Training</b> and see how the <i>cost value</i> drops after each training cycle and " \
                                                             "watch the networks growth in confidence about your drawn numbers. <br><br>" \
                                                             "<b>Important!</b> Note that only <b>completed</b> training cycles will have an effect on your network!"))
-        self.CycleLabel.setText(_translate("MainWindow", f"Training Cycles: {self.CycleNum}"))
+        self.CycleLabel.setText(_translate("MainWindow", f"Completed Training Cycles: {self.CycleNum}"))
         self.StopButton.setText(_translate("MainWindow", "Stop Training"))
         if self.CycleNum > 0:
             self.StartButton.setText(_translate("MainWindow", "Continue Training"))
@@ -875,7 +928,7 @@ class MainWindow(QMainWindow):
 
             def updateProgress(percentage):
                 self.ui.ProgressBar.setValue(int(percentage))
-                self.ui.CycleLabel.setText("Training Cycles: " + str(self.ui.CycleNum))
+                self.ui.CycleLabel.setText("Completed Training Cycles: " + str(self.ui.CycleNum))
 
             training(self.test, self.ActiveTraining, progress_callback=updateProgress)
             
@@ -912,7 +965,7 @@ class MainWindow(QMainWindow):
 
         self.ui.ProgressBar.setValue(0)
         self.ui.CycleNum = 0
-        self.ui.CycleLabel.setText("Training Cycles: " + str(self.ui.CycleNum))
+        self.ui.CycleLabel.setText("Completed Training Cycles: " + str(self.ui.CycleNum))
         self.ui.StartButton.setText("Start Training")
 
         self.PretrainedButton_Clicked()
