@@ -6,11 +6,10 @@ import pandas as pd
 import json
 from threading import Thread
 
-from PyQt6.QtGui import *
-from PyQt6.QtCore import *
-from PyQt6.QtWidgets import *
-from PyQt6.QtCharts import *
-
+from PyQt6.QtWidgets import QWidget, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QStackedWidget, QSizePolicy, QSpacerItem, QFrame, QProgressBar, QLayout, QMessageBox, QButtonGroup
+from PyQt6.QtGui import QPainter, QColor, QFont, QIcon
+from PyQt6.QtCore import Qt, QSize, QMetaObject, QCoreApplication
+from PyQt6.QtCharts import QBarSet, QBarSeries, QChart, QChartView, QBarCategoryAxis, QValueAxis
 from PyQt6.QtSvgWidgets import QSvgWidget
 
 from train import makeRandomWeightsBiases, getActivations, training
@@ -987,5 +986,5 @@ if __name__ == "__main__":
     sys.exit(app.exec())
 
 
-    #TODO: only necessary packages
     #TODO: GUI images into ReadMe
+    #TODO: Ask Copilot for GitHub repo improvements and business standards

@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import random as rn
 import requests as req
 import os
 import shutil

@@ -3,11 +3,22 @@
 This network will detect drawn numbers based on the <b>MNIST</b> dataset. In this code I only implemented <b>basic</b> Python functionality and math (no neural network/AI packages).
 
 
+### Installation
+
+To install the necessary packages, run:
+
+```bash
+pip install -r requirements.txt
+```
+
+Then just execute ```gui.py``` for the application.
+
+
 ### Training & Testing
 
-The complete backend logic is manifested in <i>train.py</i>, where the network is set up and all the weights and biases are trained with the large <b>MNIST</b> training dataset (60.000 datapoints) by a self implemented backpropagation.
+The complete backend logic is manifested in ```train.py```, where the network is set up and all the weights and biases are trained with the large <b>MNIST</b> training dataset (60.000 datapoints) by a self implemented backpropagation.
 
-In <i>test.py</i>, the network is tested with the <b>MNIST</b> test dataset (10.000 datapoints). Overall the network has a <b>94.84%</b> accuracy after training  for ~60 hours in 281 training cycles. Below you can see the <b><i>cost value</i></b> trend during training.
+In ```test.py```, the network is tested with the <b>MNIST</b> test dataset (10.000 datapoints). Overall the network has a <b>94.84%</b> accuracy after training  for ~60 hours in 281 training cycles. Below you can see the <b><i>cost value</i></b> trend during training.
 
 <p align="center"> 
     <img src="Images/cost_plot_trained.svg" width="550">
@@ -16,7 +27,7 @@ In <i>test.py</i>, the network is tested with the <b>MNIST</b> test dataset (10.
 
 ### GUI
 
-The application lets the user draw on a canvas with its mouse and the trained network will guess the number.
+The application in ```gui.py``` lets the user draw on a canvas with its mouse and the trained network will guess the number.
 
 On top one can train a new network himself. Starting by initializing the network with random values and then train it cycle by cycle. Whenever the user wants, he can check how the network performs on his drawn numbers. It's nice to see the networks' growth in confidence!
 
