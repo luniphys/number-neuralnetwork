@@ -1,8 +1,7 @@
 venv/
-__pycache__
-MNIST
-WeightsBiases
-TrainedWBs/Trained_test
-Cost
-gui.ui
-Images/cost_plot.jpg
+src/neuralnetwork/__pycache__
+data/MNIST
+src/neuralnetwork/assets/cost.txt
+src/neuralnetwork/assets/cost_plot.svg
+data/models/trained/test
+data/models/current

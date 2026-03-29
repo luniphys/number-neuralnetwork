@@ -21,7 +21,7 @@ The complete backend logic is manifested in ```train.py```, where the network is
 In ```test.py```, the network is tested with the <b>MNIST</b> test dataset (10.000 datapoints). Overall the network has a <b>94.84%</b> accuracy after training  for ~60 hours in 281 training cycles. Below you can see the <b><i>cost value</i></b> trend during training.
 
 <p align="center"> 
-    <img src="Images/cost_plot_trained.svg" width="550">
+    <img src="docs/images/cost_plot_trained.svg" width="550">
 </p>
 
 
@@ -32,9 +32,10 @@ The application in ```gui.py``` lets the user draw on a canvas with its mouse an
 On top one can train a new network himself. Starting by initializing the network with random values and then train it cycle by cycle. Whenever the user wants, he can check how the network performs on his drawn numbers. It's nice to see the networks' growth in confidence!
 
 <p align="center">
-    <img src="Images/gui_examples.png" width="700">
+    <img src="docs/images/gui_examples.png" width="700">
 </p>
 
+(The network will be trained with the <b>MNIST</b> test dataset for time efficiency.)
 
 ### Reference 3Blue1Brown
 
@@ -46,7 +47,7 @@ https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
 ### Mathematics & Theory
 
 <p align="center">
-    <img src="Images/network_image.png" width="900">
+    <img src="docs/images/network_image.png" width="900">
 </p>
 
 The MNIST dataset provides a 28 x 28 = 784 pixel grid which are used as input neurons. Each pixel/neuron represents how "painted" the pixel is from 0-1. The two hidden layer sizes $n_1 = n_2 = 16$ are arbitrary. The activation of the last layer $a^{(3)}$ represents how sure the network is about each number being the drawn one.

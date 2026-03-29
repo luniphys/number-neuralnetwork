@@ -15,10 +15,10 @@ def getMNISTData():
     If the MNIST dataset is not on pc, this function will download and extract it
     """
 
-    if not os.path.exists("MNIST"):
-        os.mkdir("MNIST")
+    if not os.path.exists("data/MNIST"):
+        os.mkdir("data/MNIST")
 
-    if not os.path.isfile("MNIST/mnist_test.csv") or not os.path.isfile("MNIST/mnist_train.csv"):
+    if not os.path.isfile("data/MNIST/mnist_test.csv") or not os.path.isfile("data/MNIST/mnist_train.csv"):
 
         def downloadData(name):
             
@@ -27,19 +27,19 @@ def getMNISTData():
             response = req.get(url)
             response.raise_for_status()
 
-            with open(f"MNIST/mnist_{name}.csv.zip", "wb") as file:
+            with open(f"data/MNIST/mnist_{name}.csv.zip", "wb") as file:
                 file.write(response.content)
 
-            with zipf.ZipFile(f"MNIST/mnist_{name}.csv.zip") as file:
-                file.extractall("MNIST")
+            with zipf.ZipFile(f"data/MNIST/mnist_{name}.csv.zip") as file:
+                file.extractall("data/MNIST")
 
-            os.remove(f"MNIST/mnist_{name}.csv.zip")
+            os.remove(f"data/MNIST/mnist_{name}.csv.zip")
 
 
         downloadData("test")
         downloadData("train")
 
-        shutil.rmtree("MNIST/__MACOSX")
+        shutil.rmtree("data/MNIST/__MACOSX")
 
 
 
@@ -55,26 +55,26 @@ def makeRandomWeightsBiases():
     OUT_SIZE = 10 # number of output neurons
     SHAPE = (60000, 784) # dimensions of training data
 
-    if not os.path.exists("WeightsBiases"):
-        os.mkdir("WeightsBiases")
+    if not os.path.exists("data/models/current"):
+        os.mkdir("data/models/current")
 
     w1 = pd.DataFrame(np.random.randn(LAYER_SIZE, SHAPE[1]) * np.sqrt(1 / SHAPE[1])) # 16 x 784
-    w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
+    w1.to_csv("data/models/current/w1.csv", index=False, header=True)
 
     b1 = pd.DataFrame(np.random.randn(LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 16
-    b1.to_csv("WeightsBiases/b1.csv", index=False, header=True)
+    b1.to_csv("data/models/current/b1.csv", index=False, header=True)
 
     w2 = pd.DataFrame(np.random.randn(LAYER_SIZE, LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 16 x 16
-    w2.to_csv("WeightsBiases/w2.csv", index=False, header=True)
+    w2.to_csv("data/models/current/w2.csv", index=False, header=True)
 
     b2 = pd.DataFrame(np.random.randn(LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 16
-    b2.to_csv("WeightsBiases/b2.csv", index=False, header=True)
+    b2.to_csv("data/models/current/b2.csv", index=False, header=True)
 
     w3 = pd.DataFrame(np.random.randn(OUT_SIZE, LAYER_SIZE) * np.sqrt(1 / LAYER_SIZE)) # 10 x 16
-    w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
+    w3.to_csv("data/models/current/w3.csv", index=False, header=True)
 
     b3 = pd.DataFrame(np.random.randn(OUT_SIZE) * np.sqrt(1 / OUT_SIZE)) # 10
-    b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
+    b3.to_csv("data/models/current/b3.csv", index=False, header=True)
 
 
 
@@ -157,12 +157,12 @@ def training(data, active_flag=None, progress_callback=None):
 
     SHAPE = data.shape
 
-    w1 = np.array(pd.read_csv("WeightsBiases/w1.csv"))
-    b1 = np.array(pd.read_csv("WeightsBiases/b1.csv"))
-    w2 = np.array(pd.read_csv("WeightsBiases/w2.csv"))
-    b2 = np.array(pd.read_csv("WeightsBiases/b2.csv"))
-    w3 = np.array(pd.read_csv("WeightsBiases/w3.csv"))
-    b3 = np.array(pd.read_csv("WeightsBiases/b3.csv"))
+    w1 = np.array(pd.read_csv("data/models/current/w1.csv"))
+    b1 = np.array(pd.read_csv("data/models/current/b1.csv"))
+    w2 = np.array(pd.read_csv("data/models/current/w2.csv"))
+    b2 = np.array(pd.read_csv("data/models/current/b2.csv"))
+    w3 = np.array(pd.read_csv("data/models/current/w3.csv"))
+    b3 = np.array(pd.read_csv("data/models/current/b3.csv"))
 
     n3 = len(w3)
     n2 = len(w2)
@@ -266,17 +266,17 @@ def training(data, active_flag=None, progress_callback=None):
     dotplot(avg_cost)
 
     w1 = pd.DataFrame(w1)
-    w1.to_csv("WeightsBiases/w1.csv", index=False, header=True)
+    w1.to_csv("data/models/current/w1.csv", index=False, header=True)
     b1 = pd.DataFrame(b1)
-    b1.to_csv("WeightsBiases/b1.csv", index=False, header=True)
+    b1.to_csv("data/models/current/b1.csv", index=False, header=True)
     w2 = pd.DataFrame(w2)
-    w2.to_csv("WeightsBiases/w2.csv", index=False, header=True)
+    w2.to_csv("data/models/current/w2.csv", index=False, header=True)
     b2 = pd.DataFrame(b2)
-    b2.to_csv("WeightsBiases/b2.csv", index=False, header=True)
+    b2.to_csv("data/models/current/b2.csv", index=False, header=True)
     w3 = pd.DataFrame(w3)
-    w3.to_csv("WeightsBiases/w3.csv", index=False, header=True)
+    w3.to_csv("data/models/current/w3.csv", index=False, header=True)
     b3 = pd.DataFrame(b3)
-    b3.to_csv("WeightsBiases/b3.csv", index=False, header=True)
+    b3.to_csv("data/models/current/b3.csv", index=False, header=True)
 
 
 
@@ -345,13 +345,10 @@ def gradient(w1, b1, w2, b2, w3, b3, a_in, a1, a2, a3, drawn_num):
 
 def dotplot(avg_cost):
     
-    if not os.path.exists("Cost"):
-        os.mkdir("Cost")
-    
-    with open("Cost/cost.txt", "a", encoding="utf-8") as file:
+    with open("src/neuralnetwork/assets/cost.txt", "a", encoding="utf-8") as file:
         file.write(f"{avg_cost}" + "\n")
 
-    with open("Cost/cost.txt", "r", encoding="utf-8") as file:
+    with open("src/neuralnetwork/assets/cost.txt", "r", encoding="utf-8") as file:
         avg_cost_lst = file.readlines()
 
     avg_cost_lst = [float(line.strip()) for line in avg_cost_lst]
@@ -370,7 +367,7 @@ def dotplot(avg_cost):
     ymin = min(0, min(avg_cost_lst) - pad)
     plt.ylim(ymin, 1)
     plt.grid()
-    plt.savefig("Cost/cost_plot.svg")
+    plt.savefig("src/neuralnetwork/assets/cost_plot.svg")
     plt.close()
 
 
@@ -383,14 +380,14 @@ if __name__ == "__main__":
 
     PIX_MAX = 255 # pixel strength 0-255
 
-    train = pd.read_csv('MNIST/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = pixel number 0-784 (28*28=784) -> 60000 x 784
+    train = pd.read_csv('data/MNIST/mnist_train.csv', index_col=0, header=None) # index (first col) = drawn number, header (first row) = pixel number 0-784 (28*28=784) -> 60000 x 784
     train = train/PIX_MAX # set scale 0-1
 
 
-    WBExists =  os.path.exists("WeightsBiases") \
-                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b1.csv") \
-                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b2.csv") \
-                and os.path.isfile("WeightsBiases/w3.csv") and os.path.isfile("WeightsBiases/b3.csv")
+    WBExists =  os.path.exists("data/models/current/") \
+                and os.path.isfile("data/models/current/w1.csv") and os.path.isfile("data/models/current/b1.csv") \
+                and os.path.isfile("data/models/current/w2.csv") and os.path.isfile("data/models/current/b2.csv") \
+                and os.path.isfile("data/models/current/w3.csv") and os.path.isfile("data/models/current/b3.csv")
 
     if not WBExists:
         makeRandomWeightsBiases()

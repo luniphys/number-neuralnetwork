@@ -12,27 +12,27 @@ from PyQt6.QtCore import Qt, QSize, QMetaObject, QCoreApplication
 from PyQt6.QtCharts import QBarSet, QBarSeries, QChart, QChartView, QBarCategoryAxis, QValueAxis
 from PyQt6.QtSvgWidgets import QSvgWidget
 
-from train import makeRandomWeightsBiases, getActivations, training
+from train import getMNISTData, makeRandomWeightsBiases, getActivations, training
 
 
 
 def getGuess(sample, alrTrained):
 
     if alrTrained:
-        w1 = np.array(pd.read_csv("TrainedWBs/Trained_train/w1.csv"))
-        b1 = np.array(pd.read_csv("TrainedWBs/Trained_train/b1.csv"))
-        w2 = np.array(pd.read_csv("TrainedWBs/Trained_train/w2.csv"))
-        b2 = np.array(pd.read_csv("TrainedWBs/Trained_train/b2.csv"))
-        w3 = np.array(pd.read_csv("TrainedWBs/Trained_train/w3.csv"))
-        b3 = np.array(pd.read_csv("TrainedWBs/Trained_train/b3.csv"))
+        w1 = np.array(pd.read_csv("data/models/trained/training/w1.csv"))
+        b1 = np.array(pd.read_csv("data/models/trained/training/b1.csv"))
+        w2 = np.array(pd.read_csv("data/models/trained/training/w2.csv"))
+        b2 = np.array(pd.read_csv("data/models/trained/training/b2.csv"))
+        w3 = np.array(pd.read_csv("data/models/trained/training/w3.csv"))
+        b3 = np.array(pd.read_csv("data/models/trained/training/b3.csv"))
 
     else:
-        w1 = np.array(pd.read_csv("WeightsBiases/w1.csv"))
-        b1 = np.array(pd.read_csv("WeightsBiases/b1.csv"))
-        w2 = np.array(pd.read_csv("WeightsBiases/w2.csv"))
-        b2 = np.array(pd.read_csv("WeightsBiases/b2.csv"))
-        w3 = np.array(pd.read_csv("WeightsBiases/w3.csv"))
-        b3 = np.array(pd.read_csv("WeightsBiases/b3.csv"))
+        w1 = np.array(pd.read_csv("data/models/current/w1.csv"))
+        b1 = np.array(pd.read_csv("data/models/current/b1.csv"))
+        w2 = np.array(pd.read_csv("data/models/current/w2.csv"))
+        b2 = np.array(pd.read_csv("data/models/current/b2.csv"))
+        w3 = np.array(pd.read_csv("data/models/current/w3.csv"))
+        b3 = np.array(pd.read_csv("data/models/current/b3.csv"))
 
     if sum(sample) == 0:
         return None, [0] * 10
@@ -273,8 +273,8 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
 
-        if os.path.exists("WeightsBiases/cycles.json"):
-            with open("WeightsBiases/cycles.json", "r", encoding="utf-8") as file:
+        if os.path.exists("data/models/current/cycles.json"):
+            with open("data/models/current/cycles.json", "r", encoding="utf-8") as file:
                 self.CycleNum = json.load(file).get("cycles", 0)
         else:
             self.CycleNum = 0
@@ -298,10 +298,10 @@ class Ui_MainWindow(object):
         self.stackedWidget = QStackedWidget(parent=self.centralwidget)
         self.stackedWidget.setObjectName("stackedWidget")
 
-        selfTrainedDataExists = os.path.exists("WeightsBiases") \
-                                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b1.csv") \
-                                and os.path.isfile("WeightsBiases/w1.csv") and os.path.isfile("WeightsBiases/b2.csv") \
-                                and os.path.isfile("WeightsBiases/w3.csv") and os.path.isfile("WeightsBiases/b3.csv")
+        selfTrainedDataExists = os.path.exists("data/models/current/") \
+                                and os.path.isfile("data/models/current/w1.csv") and os.path.isfile("data/models/current/b1.csv") \
+                                and os.path.isfile("data/models/current/w2.csv") and os.path.isfile("data/models/current/b2.csv") \
+                                and os.path.isfile("data/models/current/w3.csv") and os.path.isfile("data/models/current/b3.csv")
 
         # Main Menu
         self.MainMenuW = QWidget()
@@ -315,7 +315,7 @@ class Ui_MainWindow(object):
         self.ImageLayout = QHBoxLayout()
         self.ImageLayout.addStretch()
         self.NetworkImageWidget = QSvgWidget()
-        self.NetworkImageWidget.load("Images/network_image_reduced.svg")
+        self.NetworkImageWidget.load("src/neuralnetwork/assets/network_image_reduced.svg")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -618,10 +618,10 @@ class Ui_MainWindow(object):
         self.PlotLayout = QHBoxLayout()
         self.PlotLayout.addStretch()
         self.CostPlotWidget = QSvgWidget()
-        if not os.path.isfile("Cost/cost_plot.svg"):
-            self.CostPlotWidget.load("Images/cost_plot_empty.svg")
+        if not os.path.isfile("src/neuralnetwork/assets/cost_plot.svg"):
+            self.CostPlotWidget.load("src/neuralnetwork/assets/cost_plot_empty.svg")
         else:
-            self.CostPlotWidget.load("Cost/cost_plot.svg")
+            self.CostPlotWidget.load("src/neuralnetwork/assets/cost_plot.svg")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -782,7 +782,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Number Neural Network"))
-        MainWindow.setWindowIcon(QIcon("Images/neural_icon.png"))
+        MainWindow.setWindowIcon(QIcon("src/neuralnetwork/assets/neural_icon.png"))
         self.InfoLabel1.setText(_translate("MainWindow", "Welcome to the Number Neural Network! <br><br>" \
                                           "This interactive application allows you to train a simple neural network to recognize hand-drawn digits. <br><br>" \
                                           "You can <b>Draw</b> digits and see a pretrained network's guess, or dive into <b>Training</b> to create your own network " \
@@ -834,8 +834,11 @@ class MainWindow(QMainWindow):
 
         self.alrTrained = True
 
+        if not os.path.isfile("data/MNIST/mnist_test.csv") or not os.path.isfile("data/MNIST/mnist_train.csv"):
+            getMNISTData()
+
         PIX_MAX = 255
-        self.test = pd.read_csv('MNIST/mnist_test.csv', index_col=0, header=None)
+        self.test = pd.read_csv('data/MNIST/mnist_test.csv', index_col=0, header=None)
         self.test = self.test/PIX_MAX
 
 
@@ -903,6 +906,8 @@ class MainWindow(QMainWindow):
 
     # Stop & Start Training Button
     def StartButton_Clicked(self):
+        self.ui.DeleteButton.setEnabled(False)
+
         self.ui.StopButton.setEnabled(True)
         self.ActiveTraining = {"Active": True}
 
@@ -920,15 +925,16 @@ class MainWindow(QMainWindow):
 
             training(self.test, self.ActiveTraining, progress_callback=updateProgress)
             
-            if os.path.isfile("Cost/cost_plot.svg"):
-                self.ui.CostPlotWidget.load("Cost/cost_plot.svg")
+            if os.path.isfile("src/neuralnetwork/assets/cost_plot.svg"):
+                self.ui.CostPlotWidget.load("src/neuralnetwork/assets/cost_plot.svg")
 
             if self.ui.ProgressBar.value() >= 99:
                 self.ui.CycleNum += 1
-                with open("WeightsBiases/cycles.json", "w", encoding="utf-8") as file:
+                with open("data/models/current/cycles.json", "w", encoding="utf-8") as file:
                     json.dump({"cycles": self.ui.CycleNum}, file)
 
     def StopButton_Clicked(self):
+        self.ui.DeleteButton.setEnabled(True)
         self.ActiveTraining["Active"] = False
         self.ui.ProgressBar.setValue(0)
         if self.ui.CycleNum > 0:
@@ -950,12 +956,14 @@ class MainWindow(QMainWindow):
         if reply != QMessageBox.StandardButton.Yes:
             return
 
-        if os.path.exists("WeightsBiases"):
-            shutil.rmtree("WeightsBiases")
-        if os.path.exists("Cost"):
-            shutil.rmtree("Cost")
+        if os.path.exists("data/models/current"):
+            shutil.rmtree("data/models/current")
+        if os.path.isfile("src/neuralnetwork/assets/cost_plot.svg"):
+            os.remove("src/neuralnetwork/assets/cost_plot.svg")
+        if os.path.isfile("src/neuralnetwork/assets/cost.txt"):
+            os.remove("src/neuralnetwork/assets/cost.txt")
 
-        self.ui.CostPlotWidget.load("Images/cost_plot_empty.svg")
+        self.ui.CostPlotWidget.load("src/neuralnetwork/assets/cost_plot_empty.svg")
 
         self.ui.ProgressBar.setValue(0)
         self.ui.CycleNum = 0
