@@ -35,7 +35,7 @@ On top one can train a new network himself. Starting by initializing the network
     <img src="docs/images/gui_examples.png" width="700">
 </p>
 
-(The network will be trained with the <b>MNIST</b> test dataset for time efficiency.)
+(The self-trainable network will be trained with the <b>MNIST</b> test dataset for time efficiency.)
 
 ### Reference 3Blue1Brown
 
