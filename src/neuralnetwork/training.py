@@ -136,7 +136,7 @@ def cost(drawn_num, a3):
     Returns squared sum of neural output and the actual drawn number as vector [0,0,..., 1,...] as measure of network performance for 1 single case
     """
 
-    drawn_lst = [0 for j in range(len(a3))]
+    drawn_lst = [0 for _ in range(len(a3))]
     drawn_lst[drawn_num] = 1
 
     squared_sum = 0

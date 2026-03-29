@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import random as rn
 
-from train import getActivations, cost
+from neuralnetwork.training import getActivations, cost
 
 
 

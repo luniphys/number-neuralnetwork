@@ -12,7 +12,7 @@ from PyQt6.QtCore import Qt, QSize, QMetaObject, QCoreApplication
 from PyQt6.QtCharts import QBarSet, QBarSeries, QChart, QChartView, QBarCategoryAxis, QValueAxis
 from PyQt6.QtSvgWidgets import QSvgWidget
 
-from train import getMNISTData, makeRandomWeightsBiases, getActivations, training
+from neuralnetwork.training import getMNISTData, makeRandomWeightsBiases, getActivations, training
 
 
 
@@ -995,4 +995,4 @@ if __name__ == "__main__":
 
 
     #TODO: GUI images into ReadMe
-    #TODO: Ask Copilot for GitHub repo improvements and business standards
+    #TODO: Add README for every directory

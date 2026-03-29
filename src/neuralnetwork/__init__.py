@@ -4,7 +4,7 @@ Public API for the neuralnetwork package.
 Keeps package imports lightweight by exporting only core training/inference helpers.
 """
 
-from .train import (
+from .training import (
     getMNISTData,
     makeRandomWeightsBiases,
     getActivations,
