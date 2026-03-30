@@ -1,7 +1,8 @@
+[![CI](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml)
+
 # Neural network from scratch
 
 This network will detect drawn numbers based on the <b>MNIST</b> dataset. In this code I only implemented <b>basic</b> Python functionality and math (no neural network/AI packages).
-
 
 ### Installation
 
@@ -11,19 +12,22 @@ To install the necessary packages, run:
 pip install -r requirements.txt
 ```
 
-Then just execute ```gui.py``` for the application.
+Launch the application from the project root:
+```bash
+python src/neuralnetwork/gui.py
+```
 
+### Training & Evaluation
 
-### Training & Testing
+The complete backend logic is manifested in ```training.py```, where the network is set up and all the weights and biases are trained with the large <b>MNIST</b> training dataset (60.000 datapoints) by a self implemented backpropagation.
 
-The complete backend logic is manifested in ```train.py```, where the network is set up and all the weights and biases are trained with the large <b>MNIST</b> training dataset (60.000 datapoints) by a self implemented backpropagation.
-
-In ```test.py```, the network is tested with the <b>MNIST</b> test dataset (10.000 datapoints). Overall the network has a <b>94.84%</b> accuracy after training  for ~60 hours in 281 training cycles. Below you can see the <b><i>cost value</i></b> trend during training.
+In ```evaluation.py```, the network is tested with the <b>MNIST</b> test dataset (10.000 datapoints). Overall the network has a <b>94.84%</b> accuracy after training  for ~60 hours in 281 training cycles. Below you can see the <b><i>cost value</i></b> trend during training.
 
 <p align="center"> 
     <img src="docs/images/cost_plot_trained.svg" width="550">
 </p>
 
+The <b>MNIST</b> datasets will download automatically once ```training.py``` or ```gui.py``` are executed.
 
 ### GUI
 

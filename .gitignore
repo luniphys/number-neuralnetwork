@@ -1,4 +1,5 @@
 venv/
+__pycache__
 src/neuralnetwork/__pycache__
 data/MNIST
 src/neuralnetwork/assets/cost.txt
@@ -6,3 +7,4 @@ src/neuralnetwork/assets/cost_plot.svg
 data/models/trained/test
 data/models/current
 tests/__pycache__
+.pytest_cache/
