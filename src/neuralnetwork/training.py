@@ -7,7 +7,7 @@ import zipfile as zipf
 import matplotlib.pyplot as plt
 import time
 
-from paths import ASSETS_DIR, CURRENT_DIR, MNIST_DIR
+from neuralnetwork.paths import ASSETS_DIR, CURRENT_DIR, MNIST_DIR
 
 def getMNISTData():
 
