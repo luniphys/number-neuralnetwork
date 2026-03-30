@@ -1001,3 +1001,4 @@ if __name__ == "__main__":
     #TODO: GUI images into ReadMe
     #TODO: Improve top-level README text
     #TODO: Improve GUI texts
+    #TODO: In training.py: When neuralnetwork.paths gui wont start. When only paths, CI will fail

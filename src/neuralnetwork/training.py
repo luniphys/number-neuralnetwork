@@ -9,6 +9,8 @@ import time
 
 from neuralnetwork.paths import ASSETS_DIR, CURRENT_DIR, MNIST_DIR
 
+
+
 def getMNISTData():
 
     """
