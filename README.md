@@ -1,6 +1,6 @@
-[![CI](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml)
-
 # Neural network from scratch
+
+[![CI](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml)
 
 This network will detect drawn numbers based on the <b>MNIST</b> dataset. In this code I only implemented <b>basic</b> Python functionality and math (no neural network/AI packages).
 

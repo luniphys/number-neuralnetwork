@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import random as rn
 
-from neuralnetwork.training import getActivations, cost
+from training import getActivations, cost
+from paths import MNIST_DIR, TRAINED_DIR
 
 
 
@@ -81,18 +82,18 @@ if __name__ == "__main__":
 
     PIX_MAX = 255 # pixel strength 0-255
 
-    test = pd.read_csv('data/MNIST/mnist_test.csv', index_col=0, header=None) # -""- -> 10000 x 784
+    test = pd.read_csv(MNIST_DIR / "mnist_test.csv", index_col=0, header=None) # -""- -> 10000 x 784
     test = test/PIX_MAX
 
     SHAPE = test.shape
 
 
-    w1 = np.array(pd.read_csv("data/models/trained/training/w1.csv"))
-    b1 = np.array(pd.read_csv("data/models/trained/training/b1.csv"))
-    w2 = np.array(pd.read_csv("data/models/trained/training/w2.csv"))
-    b2 = np.array(pd.read_csv("data/models/trained/training/b2.csv"))
-    w3 = np.array(pd.read_csv("data/models/trained/training/w3.csv"))
-    b3 = np.array(pd.read_csv("data/models/trained/training/b3.csv"))
+    w1 = np.array(pd.read_csv(TRAINED_DIR / "w1.csv"))
+    b1 = np.array(pd.read_csv(TRAINED_DIR / "b1.csv"))
+    w2 = np.array(pd.read_csv(TRAINED_DIR / "w2.csv"))
+    b2 = np.array(pd.read_csv(TRAINED_DIR / "b2.csv"))
+    w3 = np.array(pd.read_csv(TRAINED_DIR / "w3.csv"))
+    b3 = np.array(pd.read_csv(TRAINED_DIR / "b3.csv"))
 
 
     average_cost()
