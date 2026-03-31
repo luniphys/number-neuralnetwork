@@ -467,6 +467,7 @@ class Ui_MainWindow(object):
         font.setPointSize(10)
         self.CanvasInfoLabel.setFont(font)
         self.CanvasInfoLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.CanvasInfoLabel.setWordWrap(True)
         self.CanvasInfoLabel.setObjectName("CanvasInfoLabel")
         self.DrawPageL.addWidget(self.CanvasInfoLabel)
 
@@ -790,20 +791,19 @@ class Ui_MainWindow(object):
         _translate = QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Number Neural Network"))
         MainWindow.setWindowIcon(QIcon("src/neuralnetwork/assets/neural_icon.png"))
-        self.InfoLabel1.setText(_translate("MainWindow", "Welcome to Number Neural Network. <br><br>" \
+        self.InfoLabel1.setText(_translate("MainWindow", "<b>Welcome to the Number Neural Network!</b> <br><br>" \
                           "This application demonstrates handwritten digit recognition with a feed-forward neural network. <br><br>" \
                           "Use <b>Draw</b> to test predictions in real time with the pretrained model, or open <b>Training</b> to initialize and improve your own model cycle by cycle."))
         self.InfoLabel2.setText(_translate("MainWindow", "The diagram above summarizes the model architecture: 784 input neurons (28x28 pixels with normalized values from 0 to 1), " \
                             "two hidden layers with 16 neurons each, and 10 output neurons representing digits 0-9. " \
-                            "Predictions are determined by weights and biases (W and b), which are updated during training to reduce the network's " \
-                            "error (<b><i>cost</i></b>). <br>" \
+                            "Predictions are determined by weights and biases (W and b), which are updated during training to reduce the network's error (<b><i>cost</i></b>). <br>" \
                             "The pretrained model was trained on the <b>MNIST</b> dataset for approximately 60 hours." ))
         self.DrawButton.setText(_translate("MainWindow", "Draw"))
         self.TrainingButton.setText(_translate("MainWindow", "Training"))
         self.ExitButtonMain.setText(_translate("MainWindow", "Exit"))
         self.ClearButton.setText(_translate("MainWindow", "Clear"))
         self.GuessButton.setText(_translate("MainWindow", "Run Prediction"))
-        self.CanvasInfoLabel.setText(_translate("MainWindow", "For best results, draw large and centered digits. The model may confuse visually similar digits such as 1 and 9."))
+        self.CanvasInfoLabel.setText(_translate("MainWindow", "For best results, draw large and centered digits. <br> (The model may confuse visually similar digits such as 1 and 9.)"))
         self.DataLabel.setText(_translate("MainWindow", "Select which model to use for inference."))
         self.PretrainedButton.setText(_translate("MainWindow", "Pretrained Model"))
         self.YourNetworkButton.setText(_translate("MainWindow", "Your Trained Model"))
@@ -992,10 +992,11 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     
     app = QApplication(sys.argv)
+    with open(ASSETS_DIR / "style.qss", "r", encoding="utf-8") as file:
+        app.setStyleSheet(file.read())
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
 
 
     #TODO: GUI images into ReadMe
-    #TODO: In training.py: When neuralnetwork.paths gui wont start. When only paths, CI will fail
