@@ -1,83 +1,189 @@
-# Neural network from scratch
+# Number Neural Network (From Scratch)
 
 [![CI](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-This network will detect drawn numbers based on the <b>MNIST</b> dataset. In this code I only implemented <b>basic</b> Python functionality and math (no neural network/AI packages).
+A handwritten digit recognizer built from scratch in Python using the MNIST dataset.
+
+The project implements forward propagation, backpropagation, training, and evaluation without machine learning frameworks (no TensorFlow, PyTorch, etc.). A PyQt6 GUI is included for interactive drawing and prediction.
+
+<p align="center">
+    <img src="docs/images/network_image.png" width="900" alt="Network diagram">
+</p>
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Results](#results)
+- [Mathematics](#mathematics)
+- [Testing](#testing)
+- [Acknowledgments](#acknowledgments)
+- [License](#license)
+
+## Overview
+
+This repository demonstrates a compact, educational neural network for digit classification:
+
+- Input: MNIST grayscale images (28 x 28 pixels, represented by 784 input neurons)
+- Architecture: 784 -> 16 -> 16 -> 10
+- Activation: sigmoid
+- Loss: squared error
+- Training: self-implemented custom gradient-based backpropagation
+
+## Features
+
+- Implementation in plain Python and NumPy
+- Automatic MNIST data download when required
+- GUI based training workflow backed by reusable training logic
+- Training and evaluation scripts
+- Interactive PyQt6 app with possibilities to draw digits and view output probabilities, and training a fresh model
+- Saved model weights and biases for a pre-trained state
+
+<p align="center">
+    <img src="docs/images/gui_examples.png" width="700" alt="GUI">
+</p>
+
+## Project Structure
+
+```text
+src/neuralnetwork/
+|- training.py      # Network setup + training with backpropagation on MNIST training data (used by GUI)
+|- evaluation.py    # Accuracy and cost evaluation on MNIST test data
+|- gui.py           # GUI application: drawing, prediction, and training controls
+|- paths.py         # Centralized path definitions
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.8+
+- pip
 
 ### Installation
 
-To install the necessary packages, run:
+From the project root:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Launch the application from the project root:
+## Usage
+
+Run all commands from the repository root.
+
+### Launch GUI
+
 ```bash
 python src/neuralnetwork/gui.py
 ```
 
-### Training & Evaluation
+Draw a digit on the canvas and the model will output predicted probabilities for the digits 0-9. Train a fresh model and see its prediction improvements.
 
-The complete backend logic is manifested in ```training.py```, where the network is set up and all the weights and biases are trained with the large <b>MNIST</b> training dataset (60.000 datapoints) by a self implemented backpropagation.
+### Train a Model
 
-In ```evaluation.py```, the network is tested with the <b>MNIST</b> test dataset (10.000 datapoints). Overall the network has a <b>94.84%</b> accuracy after training  for ~60 hours in 281 training cycles. Below you can see the <b><i>cost value</i></b> trend during training.
+```bash
+python src/neuralnetwork/training.py
+```
 
-<p align="center"> 
-    <img src="docs/images/cost_plot_trained.svg" width="550">
-</p>
+Training can also happen inside the GUI application, where `training.py` acts as the backend engine.
 
-The <b>MNIST</b> datasets will download automatically once ```training.py``` or ```gui.py``` are executed.
 
-### GUI
+Notes:
 
-The application in ```gui.py``` lets the user draw on a canvas with its mouse and the trained network will guess the number.
+- If MNIST is missing, it is downloaded automatically.
+- Training from scratch is computationally expensive and can take many hours depending on hardware.
+- In the GUI the models are trained by <b>MNIST</b> test data, in `training.py` by <b>MNIST</b> training data which is 6 times bigger. Therefore GUI is significantly faster. 
 
-On top one can train a new network himself. Starting by initializing the network with random values and then train it cycle by cycle. Whenever the user wants, he can check how the network performs on his drawn numbers. It's nice to see the networks' growth in confidence!
+### Evaluate a Trained Model
+
+```bash
+python src/neuralnetwork/evaluation.py
+```
+
+This reports average cost, total misclassifications, and accuracy on the <b>MNIST</b> test data. On top a random sample is shown more in detail.
+
+## Results
+
+The included pre-trained model, reaches approximately 94.84% accuracy after 281 training cycles (about 60 hours total training time).
 
 <p align="center">
-    <img src="docs/images/gui_examples.png" width="700">
+    <img src="docs/images/cost_plot_trained.svg" width="550" alt="Training cost curve">
 </p>
 
-(The self-trainable network will be trained with the <b>MNIST</b> test dataset for time efficiency.)
+## Mathematics
 
-### Reference 3Blue1Brown
+The network computes each layer activation as:
 
-The mathematics and understanding behind the code and this network in general are based on the neural network series by 3Blue1Brown on YouTube.
+$$
+a^{(n)} = \sigma \left( W^{(n)} a^{(n-1)} + b^{(n)} \right), \quad n = 1,2,3
+$$
+
+with sigmoid activation:
+
+$$
+\sigma(x) = \frac{1}{1 + e^{-x}}
+$$
+
+The objective is to minimize the squared error:
+
+$$
+C = \sum_{k=1}^{n_3} \left(a_k^{(3)} - y_k\right)^2
+$$
+
+where $y$ is the one-hot encoded target vector for the true digit.
+
+To minimize $C$, the implementation uses the following gradients (with $\sigma$ as sigmoid):
+
+$$
+\frac{\partial C}{\partial w_{ij}^{(3)}} = 2 \left(a_i^{(3)} - y_i \right) \cdot \sigma^{\prime} \left(z_i^{(3)} \right) \cdot a_j^{(2)}
+$$
+
+$$
+\frac{\partial C}{\partial b_{i}^{(3)}} = 2 \left(a_i^{(3)} - y_i \right) \cdot \sigma^{\prime} \left(z_i^{(3)} \right)
+$$
+
+$$
+\frac{\partial C}{\partial w_{ij}^{(2)}} = \sigma^{\prime} \left(z_i^{(2)} \right) \cdot a_j^{(1)} \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot w_{ki}^{(3)}
+$$
+
+$$
+\frac{\partial C}{\partial b_{i}^{(2)}} = \sigma^{\prime} \left(z_i^{(2)} \right) \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot w_{ki}^{(3)}
+$$
+
+$$
+\frac{\partial C}{\partial w_{ij}^{(1)}} = \sigma^{\prime} \left(z_i^{(1)} \right) \cdot a_j^{(\text{in})} \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime} \left(z_l^{(2)} \right) \cdot w_{li}^{(2)}
+$$
+
+$$
+\frac{\partial C}{\partial b_{i}^{(1)}} = \sigma^{\prime} \left(z_i^{(1)} \right) \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime} \left(z_l^{(2)} \right) \cdot w_{li}^{(2)}
+$$
+
+## Testing
+
+Install test dependency:
+
+```bash
+pip install pytest
+```
+
+Run tests:
+
+```bash
+pytest
+```
+
+## Acknowledgments
+
+The mathematical intuition and learning approach are inspired by the excellent 3Blue1Brown neural network series:
 
 https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
 
+## License
 
-### Mathematics & Theory
-
-<p align="center">
-    <img src="docs/images/network_image.png" width="900">
-</p>
-
-The MNIST dataset provides a 28 x 28 = 784 pixel grid which are used as input neurons. Each pixel/neuron represents how "painted" the pixel is from 0-1. The two hidden layer sizes $n_1 = n_2 = 16$ are arbitrary. The activation of the last layer $a^{(3)}$ represents how sure the network is about each number being the drawn one.
-
-The activation $a^{(n)}$ of layer $n$ is calculated with the weight matrix $W^{(n)}$, its bias $b^{(n)}$ and the previous activation vector $a^{(n-1)}$ via the following equation.
-
-$$a^{(n)} = \sigma \left( W^{(n)} \cdot a^{(n-1)} + b^{(n)} \right), \qquad n = 1,2,3$$
-
-Our goal is to minimize the cost function $C$, which is a measure on how well the network performs. The smaller the better.
-
-$$C = \sum_{k=1}^{n_3} \left(a_k^{(3)} - y_k \right)^2$$
-
-$y$ is a vector that represents the actual drawn number. For example if the number is $3$, $y = (0,0,0,1,0,0,...)^{T} $.
-
-To minimize $C$ we need formulas for the gradient $\nabla C$, which are are listed below. ($\sigma$ represents the sigmoid function.)
-
-$$\frac{\partial C}{\partial w_{ij}^{(3)}} = 2 \left(a_i^{(3)} - y_i \right) \cdot \sigma^{\prime} \left(z_i^{(3)} \right) \cdot a_j^{(2)}$$
-
-$$\frac{\partial C}{\partial b_{i}^{(3)}} = 2 \left(a_i^{(3)} - y_i \right) \cdot \sigma^{\prime} \left(z_i^{(3)} \right)$$
-
-$$\frac{\partial C}{\partial w_{ij}^{(2)}} = \sigma^{\prime} \left(z_i^{(2)} \right) \cdot a_j^{(1)} \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot w_{ki}^{(3)}$$
-
-$$\frac{\partial C}{\partial b_{i}^{(2)}} = \sigma^{\prime} \left(z_i^{(2)} \right) \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot w_{ki}^{(3)}$$
-
-$$\frac{\partial C}{\partial w_{ij}^{(1)}} = \sigma^{\prime} \left(z_i^{(1)} \right) \cdot a_j^{(\text{in})} \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime} \left(z_l^{(2)} \right) \cdot w_{li}^{(2)}$$
-
-$$\frac{\partial C}{\partial b_{i}^{(1)}} = \sigma^{\prime} \left(z_i^{(1)} \right) \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime} \left(z_l^{(2)} \right) \cdot w_{li}^{(2)}$$
-
-$$\sigma(x) = \frac{1}{1+\text{e}^{-x}}$$
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.

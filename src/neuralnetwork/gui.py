@@ -787,42 +787,38 @@ class Ui_MainWindow(object):
         _translate = QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Number Neural Network"))
         MainWindow.setWindowIcon(QIcon("src/neuralnetwork/assets/neural_icon.png"))
-        self.InfoLabel1.setText(_translate("MainWindow", "Welcome to the Number Neural Network! <br><br>" \
-                                          "This interactive application allows you to train a simple neural network to recognize hand-drawn digits. <br><br>" \
-                                          "You can <b>Draw</b> digits and see a pretrained network's guess, or dive into <b>Training</b> to create your own network " \
-                                          "and watch it becoming better at guessing numbers you have drawn after each training cycle."))
-        self.InfoLabel2.setText(_translate("MainWindow", "Above you can see the layout of the neural network. Its input are 784 neurons from a 28x28 pixel canvas with values 0-1 representing the drawing intensity. " \
-                                            "After passing two mid layers with 16 neurons each, the network outputs a prediction for each digit from 0-9. " \
-                                            "All these neuron layers are mathematically connected through the weights and biases (W & b), " \
-                                            "which will be adjusted during each training cycle to minimize the network's error (<b><i>cost value</i></b>). <br>" \
-                                            "The pretrained network has been trained like that on the large <b>MNIST</b> training dataset for ~60 hours." ))
+        self.InfoLabel1.setText(_translate("MainWindow", "Welcome to Number Neural Network. <br><br>" \
+                          "This application demonstrates handwritten digit recognition with a feed-forward neural network. <br><br>" \
+                          "Use <b>Draw</b> to test predictions in real time with the pretrained model, or open <b>Training</b> to initialize and improve your own model cycle by cycle."))
+        self.InfoLabel2.setText(_translate("MainWindow", "The diagram above summarizes the model architecture: 784 input neurons (28x28 pixels with normalized values from 0 to 1), " \
+                            "two hidden layers with 16 neurons each, and 10 output neurons representing digits 0-9. " \
+                            "Predictions are determined by weights and biases (W and b), which are updated during training to reduce the network's " \
+                            "error (<b><i>cost</i></b>). <br>" \
+                            "The pretrained model was trained on the <b>MNIST</b> dataset for approximately 60 hours." ))
         self.DrawButton.setText(_translate("MainWindow", "Draw"))
         self.TrainingButton.setText(_translate("MainWindow", "Training"))
         self.ExitButtonMain.setText(_translate("MainWindow", "Exit"))
         self.ClearButton.setText(_translate("MainWindow", "Clear"))
-        self.GuessButton.setText(_translate("MainWindow", "Guess the number!"))
-        self.CanvasInfoLabel.setText(_translate("MainWindow", "Try to draw large and precise. (1 & 9 are <i>problem numbers</i>.)"))
-        self.DataLabel.setText(_translate("MainWindow", "Choose between a pretrained network or a network you've trained."))
-        self.PretrainedButton.setText(_translate("MainWindow", "Pretrained"))
-        self.YourNetworkButton.setText(_translate("MainWindow", "Your Network"))
+        self.GuessButton.setText(_translate("MainWindow", "Run Prediction"))
+        self.CanvasInfoLabel.setText(_translate("MainWindow", "For best results, draw large and centered digits. The model may confuse visually similar digits such as 1 and 9."))
+        self.DataLabel.setText(_translate("MainWindow", "Select which model to use for inference."))
+        self.PretrainedButton.setText(_translate("MainWindow", "Pretrained Model"))
+        self.YourNetworkButton.setText(_translate("MainWindow", "Your Trained Model"))
         self.BackButtonDraw.setText(_translate("MainWindow", "Back"))
         self.ExitButtonDraw.setText(_translate("MainWindow", "Exit"))
-        self.TrainingLabel.setText(_translate("MainWindow", "The <b>Cost</b> values above show your current network performance. " \
-                                                            "They can be seen as a measure for the networks mistakes. <br> " \
-                                                            "The lower the value, the less mistakes the network makes. <br><br>" \
-                                                            "Start your network with <b>Initialize Randomly</b> for an untrained network with random value association, " \
-                                                            "and check how it performs on the <b>Draw</b> page. " \
-                                                            "<b>Start Training</b> and see how the <i>cost value</i> drops after each training cycle and " \
-                                                            "watch the networks growth in confidence about your drawn numbers. <br><br>" \
-                                                            "<b>Important!</b> Note that only <b>completed</b> training cycles will have an effect on your network!"))
-        self.CycleLabel.setText(_translate("MainWindow", f"Completed Training Cycles: {self.CycleNum}"))
-        self.StopButton.setText(_translate("MainWindow", "Stop Training"))
+        self.TrainingLabel.setText(_translate("MainWindow", "The <b>cost</b> plot above reflects your model's current performance and serves as an indicator of prediction error. " \
+                                    "In general, lower cost means fewer mistakes. <br><br>" \
+                                    "Use <b>Initialize Randomly</b> to create a new untrained model, then evaluate it on the <b>Draw</b> page. " \
+                                    "Select <b>Start Training</b> to run training cycles and monitor how the cost changes over time. <br><br>" \
+                                    "<b>Note:</b> Only <b>completed</b> training cycles are saved and applied to your model."))
+        self.CycleLabel.setText(_translate("MainWindow", f"Completed training cycles: {self.CycleNum}"))
+        self.StopButton.setText(_translate("MainWindow", "Stop"))
         if self.CycleNum > 0:
-            self.StartButton.setText(_translate("MainWindow", "Continue Training"))
+            self.StartButton.setText(_translate("MainWindow", "Resume Training"))
         else:
             self.StartButton.setText(_translate("MainWindow", "Start Training"))
-        self.InitializeButton.setText(_translate("MainWindow", "Initialize Randomly"))
-        self.DeleteButton.setText(_translate("MainWindow", "Delete Network"))
+        self.InitializeButton.setText(_translate("MainWindow", "Initialize New Model"))
+        self.DeleteButton.setText(_translate("MainWindow", "Delete Saved Model"))
         self.BackButtonTraining.setText(_translate("MainWindow", "Back"))
 
 
@@ -925,7 +921,7 @@ class MainWindow(QMainWindow):
 
             def updateProgress(percentage):
                 self.ui.ProgressBar.setValue(int(percentage))
-                self.ui.CycleLabel.setText("Completed Training Cycles: " + str(self.ui.CycleNum))
+                self.ui.CycleLabel.setText("Completed training cycles: " + str(self.ui.CycleNum))
 
             training(self.test, self.ActiveTraining, progress_callback=updateProgress)
             
@@ -954,7 +950,7 @@ class MainWindow(QMainWindow):
 
     def DeleteButton_Clicked(self):
 
-        reply = QMessageBox.question(self, 'Delete Network', 'Are you sure you want to delete your network?',
+        reply = QMessageBox.question(self, 'Delete Network', 'Are you sure you want to delete your saved model?',
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
         
         if reply != QMessageBox.StandardButton.Yes:
@@ -971,7 +967,7 @@ class MainWindow(QMainWindow):
 
         self.ui.ProgressBar.setValue(0)
         self.ui.CycleNum = 0
-        self.ui.CycleLabel.setText("Completed Training Cycles: " + str(self.ui.CycleNum))
+        self.ui.CycleLabel.setText("Completed training cycles: " + str(self.ui.CycleNum))
         self.ui.StartButton.setText("Start Training")
 
         self.PretrainedButton_Clicked()
@@ -999,6 +995,4 @@ if __name__ == "__main__":
 
 
     #TODO: GUI images into ReadMe
-    #TODO: Improve top-level README text
-    #TODO: Improve GUI texts
     #TODO: In training.py: When neuralnetwork.paths gui wont start. When only paths, CI will fail
