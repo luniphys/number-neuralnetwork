@@ -1,9 +1,14 @@
 import numpy as np
 import pandas as pd
 import random as rn
+import os
+import sys
 
-from training import getActivations, cost
-from paths import MNIST_DIR, TRAINED_DIR
+if __name__ == "__main__":
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+
+from neuralnetwork.training import getActivations, cost
+from neuralnetwork.paths import MNIST_DIR, TRAINED_DIR
 
 
 

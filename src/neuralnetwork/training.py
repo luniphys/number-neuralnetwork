@@ -2,10 +2,14 @@ import numpy as np
 import pandas as pd
 import requests as req
 import os
+import sys
 import shutil
 import zipfile as zipf
 import matplotlib.pyplot as plt
 import time
+
+if __name__ == "__main__":
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 from neuralnetwork.paths import ASSETS_DIR, CURRENT_DIR, MNIST_DIR
 

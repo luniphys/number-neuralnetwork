@@ -6,14 +6,17 @@ import pandas as pd
 import json
 from threading import Thread
 
+if __name__ == "__main__":
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+
 from PyQt6.QtWidgets import QWidget, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QStackedWidget, QSizePolicy, QSpacerItem, QFrame, QProgressBar, QLayout, QMessageBox, QButtonGroup
 from PyQt6.QtGui import QPainter, QColor, QFont, QIcon
 from PyQt6.QtCore import Qt, QSize, QMetaObject, QCoreApplication
 from PyQt6.QtCharts import QBarSet, QBarSeries, QChart, QChartView, QBarCategoryAxis, QValueAxis
 from PyQt6.QtSvgWidgets import QSvgWidget
 
-from training import getMNISTData, makeRandomWeightsBiases, getActivations, training
-from paths import ASSETS_DIR, CURRENT_DIR, MNIST_DIR, TRAINED_DIR
+from neuralnetwork.training import getMNISTData, makeRandomWeightsBiases, getActivations, training
+from neuralnetwork.paths import ASSETS_DIR, CURRENT_DIR, MNIST_DIR, TRAINED_DIR
 
 
 
@@ -980,10 +983,10 @@ class MainWindow(QMainWindow):
         self.ui.InitializeButton.setEnabled(True)
         self.ui.YourNetworkButton.setEnabled(False)
         self.ui.DeleteButton.setEnabled(False)
-        
 
 
-        
+
+
 
 
 if __name__ == "__main__":
