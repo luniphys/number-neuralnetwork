@@ -363,8 +363,7 @@ def dotplot(avg_cost):
     x_values = range(1, len(avg_cost_lst) + 1)
 
     plt.figure()
-    #plt.scatter(x_values, avg_cost_lst, s=100, color="red", zorder=3)
-    plt.plot(x_values, avg_cost_lst, marker="o", linestyle="-", color="red")
+    plt.plot(x_values, avg_cost_lst, marker="o", linestyle="-", color=(230/255, 50/255, 50/255))
     plt.ylabel("Cost")
     plt.xlabel("Training cycles")
     if len(avg_cost_lst) < 5:

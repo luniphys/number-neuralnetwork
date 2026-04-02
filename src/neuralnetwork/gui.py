@@ -236,6 +236,7 @@ class ProbabilityBarChart(QWidget):
 
         self.barset = QBarSet("Probabilities")
         self.barset.append([0] * 10)
+        self.barset.setColor(QColor(70, 170, 255))
 
         self.series = QBarSeries()
         self.series.append(self.barset)
@@ -802,9 +803,9 @@ class Ui_MainWindow(object):
         self.TrainingButton.setText(_translate("MainWindow", "Training"))
         self.ExitButtonMain.setText(_translate("MainWindow", "Exit"))
         self.ClearButton.setText(_translate("MainWindow", "Clear"))
-        self.GuessButton.setText(_translate("MainWindow", "Run Prediction"))
-        self.CanvasInfoLabel.setText(_translate("MainWindow", "For best results, draw large and centered digits. <br> (The model may confuse visually similar digits such as 1 and 9.)"))
-        self.DataLabel.setText(_translate("MainWindow", "Select which model to use for inference."))
+        self.GuessButton.setText(_translate("MainWindow", "Prediction"))
+        self.CanvasInfoLabel.setText(_translate("MainWindow", "For best results, draw large and centered digits. <br> (1 and 9 are <i>problem numbers</i>.)"))
+        self.DataLabel.setText(_translate("MainWindow", "Select which model to use for prediction."))
         self.PretrainedButton.setText(_translate("MainWindow", "Pretrained Model"))
         self.YourNetworkButton.setText(_translate("MainWindow", "Your Trained Model"))
         self.BackButtonDraw.setText(_translate("MainWindow", "Back"))
@@ -912,6 +913,7 @@ class MainWindow(QMainWindow):
         self.ui.DeleteButton.setEnabled(False)
 
         self.ui.StopButton.setEnabled(True)
+        self.ui.StartButton.setEnabled(False)
         self.ActiveTraining = {"Active": True}
 
         self.trainingThread = Thread(target=self.trainInThread, daemon=True)
@@ -937,6 +939,8 @@ class MainWindow(QMainWindow):
                     json.dump({"cycles": self.ui.CycleNum}, file)
 
     def StopButton_Clicked(self):
+        self.ui.StartButton.setEnabled(True)
+        self.ui.StopButton.setEnabled(False)
         self.ui.DeleteButton.setEnabled(True)
         self.ActiveTraining["Active"] = False
         self.ui.ProgressBar.setValue(0)
