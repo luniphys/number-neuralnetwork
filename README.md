@@ -47,7 +47,7 @@ This repository demonstrates a compact, educational neural network for digit cla
 ## GUI
 
 <p align="center">
-    <img src="docs/images/gui_examples.png" width="800" alt="GUI">
+    <img src="docs/images/gui_example.png" width="800" alt="GUI">
 </p>
 
 ## Project Structure
