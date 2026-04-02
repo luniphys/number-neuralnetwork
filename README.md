@@ -45,7 +45,7 @@ This repository demonstrates a compact, educational neural network for digit cla
 - Saved model weights and biases for a pre-trained state
 
 <p align="center">
-    <img src="docs/images/gui_examples.png" width="700" alt="GUI">
+    <img src="docs/images/gui_examples.png" width="800" alt="GUI">
 </p>
 
 ## Project Structure

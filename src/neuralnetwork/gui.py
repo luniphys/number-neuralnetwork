@@ -1001,6 +1001,3 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
-
-
-    #TODO: GUI images into ReadMe
