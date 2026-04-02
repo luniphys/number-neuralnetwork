@@ -44,6 +44,8 @@ This repository demonstrates a compact, educational neural network for digit cla
 - Interactive PyQt6 app with possibilities to draw digits and view output probabilities, and training a fresh model
 - Saved model weights and biases for a pre-trained state
 
+## GUI
+
 <p align="center">
     <img src="docs/images/gui_examples.png" width="800" alt="GUI">
 </p>

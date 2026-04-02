@@ -794,7 +794,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowIcon(QIcon("src/neuralnetwork/assets/neural_icon.png"))
         self.InfoLabel1.setText(_translate("MainWindow", "<b>Welcome to the Number Neural Network!</b> <br><br>" \
                           "This application demonstrates handwritten digit recognition with a feed-forward neural network. <br><br>" \
-                          "Use <b>Draw</b> to test predictions in real time with the pretrained model, or open <b>Training</b> to initialize and improve your own model cycle by cycle."))
+                          "Use <b>Draw</b> to test predictions in real time with a pretrained model, or open <b>Training</b> to initialize and improve your own model cycle by cycle."))
         self.InfoLabel2.setText(_translate("MainWindow", "The diagram above summarizes the model architecture: 784 input neurons (28x28 pixels with normalized values from 0 to 1), " \
                             "two hidden layers with 16 neurons each, and 10 output neurons representing digits 0-9. " \
                             "Predictions are determined by weights and biases (W and b), which are updated during training to reduce the network's error (<b><i>cost</i></b>). <br>" \
@@ -812,8 +812,8 @@ class Ui_MainWindow(object):
         self.ExitButtonDraw.setText(_translate("MainWindow", "Exit"))
         self.TrainingLabel.setText(_translate("MainWindow", "The <b>cost</b> plot above reflects your model's current performance and serves as an indicator of prediction error. " \
                                     "In general, lower cost means fewer mistakes. <br><br>" \
-                                    "Use <b>Initialize Randomly</b> to create a new untrained model, then evaluate it on the <b>Draw</b> page. " \
-                                    "Select <b>Start Training</b> to run training cycles and monitor how the cost changes over time. <br><br>" \
+                                    "Use <b>Initialize New Model</b> to create a new untrained model. Select <b>Start Training</b> to run training cycles and then evaluate your network on the <b>Draw</b> page. <br>" \
+                                    "Monitor how the cost changes over time. <br><br>" \
                                     "<b>Note:</b> Only <b>completed</b> training cycles are saved and applied to your model."))
         self.CycleLabel.setText(_translate("MainWindow", f"Completed training cycles: {self.CycleNum}"))
         self.StopButton.setText(_translate("MainWindow", "Stop"))
