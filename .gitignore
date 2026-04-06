@@ -2,6 +2,7 @@ venv/
 __pycache__
 src/neuralnetwork/__pycache__
 data/MNIST
+gui.ui
 src/neuralnetwork/assets/cost.txt
 src/neuralnetwork/assets/cost_plot.svg
 data/models/trained/test
