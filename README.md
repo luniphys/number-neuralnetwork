@@ -1,8 +1,9 @@
-# Number Neural Network
-
 [![CI](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+
+# Number Neural Network
 
 A handwritten digit recognizer built from scratch in Python using the MNIST dataset.
 
@@ -11,6 +12,7 @@ The project implements forward propagation, backpropagation, training, and evalu
 <p align="center">
     <img src="docs/images/network_image.png" width="900" alt="Network diagram">
 </p>
+
 
 ## Table of Contents
 
@@ -25,6 +27,7 @@ The project implements forward propagation, backpropagation, training, and evalu
 - [Acknowledgments](#acknowledgments)
 - [License](#license)
 
+
 ## Overview
 
 This repository demonstrates a compact, educational neural network for digit classification:
@@ -35,6 +38,7 @@ This repository demonstrates a compact, educational neural network for digit cla
 - Loss: squared error
 - Training: self-implemented custom gradient-based backpropagation
 
+
 ## Features
 
 - Implementation in plain Python and NumPy
@@ -44,11 +48,13 @@ This repository demonstrates a compact, educational neural network for digit cla
 - Interactive PyQt6 app with possibilities to draw digits and view output probabilities, and training a fresh model
 - Saved model weights and biases for a pre-trained state
 
+
 ## GUI
 
 <p align="center">
     <img src="docs/images/gui_example.png" width="800" alt="GUI">
 </p>
+
 
 ## Project Structure
 
@@ -59,6 +65,7 @@ src/neuralnetwork/
 |- gui.py           # GUI application: drawing, prediction, and training controls
 |- paths.py         # Centralized path definitions
 ```
+
 
 ## Getting Started
 
@@ -74,6 +81,7 @@ From the project root:
 ```bash
 pip install -r requirements.txt
 ```
+
 
 ## Usage
 
@@ -110,6 +118,22 @@ python src/neuralnetwork/evaluation.py
 
 This reports average cost, total misclassifications, and accuracy on the <b>MNIST</b> test data. On top a random sample is shown more in detail.
 
+
+## Testing
+
+Install test dependency:
+
+```bash
+pip install pytest
+```
+
+Run tests:
+
+```bash
+pytest
+```
+
+
 ## Results
 
 The included pre-trained model, reaches approximately 94.84% accuracy after 281 training cycles (about 60 hours total training time).
@@ -117,6 +141,7 @@ The included pre-trained model, reaches approximately 94.84% accuracy after 281 
 <p align="center">
     <img src="docs/images/cost_plot_trained.svg" width="550" alt="Training cost curve">
 </p>
+
 
 ## Mathematics
 
@@ -166,25 +191,13 @@ $$
 \frac{\partial C}{\partial b_{i}^{(1)}} = \sigma^{\prime} \left(z_i^{(1)} \right) \cdot \sum_{k=1}^{n_3} 2 \left(a_k^{(3)} - y_k \right) \cdot \sigma^{\prime} \left(z_k^{(3)} \right) \cdot \sum_{l=1}^{n_2} w_{kl}^{(3)} \cdot \sigma^{\prime} \left(z_l^{(2)} \right) \cdot w_{li}^{(2)}
 $$
 
-## Testing
-
-Install test dependency:
-
-```bash
-pip install pytest
-```
-
-Run tests:
-
-```bash
-pytest
-```
 
 ## Acknowledgments
 
 The mathematical intuition and learning approach are inspired by the excellent 3Blue1Brown neural network series:
 
 https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
+
 
 ## License
 
