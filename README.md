@@ -1,5 +1,6 @@
 [![CI](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![PyQt](https://img.shields.io/badge/PyQt-6.x-green.svg)](https://www.qt.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 
@@ -71,7 +72,7 @@ src/neuralnetwork/
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.x
 - pip
 
 ### Installation
