@@ -1,5 +1,5 @@
 from pathlib import Path
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages # type: ignore[import]
 
 BASE_DIR = Path(__file__).resolve().parent
 
