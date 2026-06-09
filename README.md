@@ -1,5 +1,5 @@
 [![CI](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml/badge.svg)](https://github.com/luniphys/number-neuralnetwork/actions/workflows/ci.yml)
-[![Docker](https://img.shields.io/badge/Docker-%230db7ed.svg?&logo=docker&logoColor=white)]()
+[![Docker](https://img.shields.io/badge/Docker-%230db7ed.svg?&logo=docker&logoColor=white)](https://hub.docker.com/r/luniphys/number-neuralnetwork)
 [![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff)](https://www.python.org/)
 [![Qt](https://img.shields.io/badge/PyQt-2CDE85?logo=Qt&logoColor=fff)](https://www.qt.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -20,12 +20,14 @@ The project implements forward propagation, backpropagation, training, and evalu
 
 - [Overview](#overview)
 - [Features](#features)
+- [GUI](#gui)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
+- [Testing](#testing)
 - [Usage](#usage)
+- [Docker](#docker)
 - [Results](#results)
 - [Mathematics](#mathematics)
-- [Testing](#testing)
 - [Acknowledgments](#acknowledgments)
 - [License](#license)
 
@@ -134,6 +136,56 @@ Run tests:
 ```bash
 pytest
 ```
+
+
+## Docker
+
+A Dockerfile is included to provide a reproducible runtime environment with all required dependencies and project data.
+
+### Build the image
+
+From the repository root, build the Docker image with:
+
+```bash
+docker build -t number-neuralnetwork .
+```
+
+### Pull from Docker Hub
+
+A prebuilt image is also available on [Docker Hub](https://hub.docker.com/r/luniphys/number-neuralnetwork):
+
+```bash
+docker pull luniphys/number-neuralnetwork
+```
+
+### Run the container
+
+This project uses a PyQt6 GUI, so the container needs access to the host display.
+
+The following commands were tested on **Linux Mint**. First allow Docker to access the display by:
+
+```bash
+xhost +local:docker
+```
+
+To run the container:
+
+```bash
+docker run --rm \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  number-neuralnetwork
+```
+
+After run, revoke display access:
+
+```bash
+xhost -local:docker
+```
+
+### Notes
+
+- Running GUI applications in Docker may require different display configuration for other Linux distributions or desktop sessions. The above should work for **Mint** and other **Ubuntu**-based distributions.
 
 
 ## Results
