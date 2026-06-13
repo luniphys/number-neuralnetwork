@@ -11,7 +11,7 @@ import time
 if __name__ == "__main__":
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-from neuralnetwork.paths import ASSETS_DIR, CURRENT_DIR, MNIST_DIR
+from neuralnetwork.paths import BASE, ASSETS_DIR, CURRENT_DIR, MNIST_DIR
 
 
 
@@ -408,6 +408,10 @@ if __name__ == "__main__":
         end = time.time()
         print(f"Cycle {i} took {round((end-start) / 60, 2)} min.")
 
+    if os.path.exists(BASE / "src/neuralnetwork/__pycache__/"):
+        shutil.rmtree(BASE / "src/neuralnetwork/__pycache__/")
+    if os.path.exists(BASE / "__pycache__/"):
+        shutil.rmtree(BASE / "__pycache__/")
 
 
 # Total training time for training data in 281 cycles: ~ 60 hours

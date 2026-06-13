@@ -16,7 +16,7 @@ from PyQt6.QtCharts import QBarSet, QBarSeries, QChart, QChartView, QBarCategory
 from PyQt6.QtSvgWidgets import QSvgWidget
 
 from neuralnetwork.training import getMNISTData, makeRandomWeightsBiases, getActivations, training
-from neuralnetwork.paths import ASSETS_DIR, CURRENT_DIR, MNIST_DIR, TRAINED_DIR
+from neuralnetwork.paths import BASE, ASSETS_DIR, CURRENT_DIR, MNIST_DIR, TRAINED_DIR
 
 
 
@@ -1002,3 +1002,8 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+
+    if os.path.exists(BASE / "src/neuralnetwork/__pycache__/"):
+        shutil.rmtree(BASE / "src/neuralnetwork/__pycache__/")
+    if os.path.exists(BASE / "__pycache__/"):
+        shutil.rmtree(BASE / "__pycache__/")
